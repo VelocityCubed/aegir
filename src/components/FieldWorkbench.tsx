@@ -18,6 +18,8 @@ import {
   type FieldSettings,
 } from "../field/types";
 import { fieldPixels, fieldScale } from "../field/pixels";
+import { driverMotionAt } from "../field/driverMotion";
+import { driverColour } from "../core/driverVisuals";
 import type { Command, ViewState, WorkspaceState } from "../agent/contracts";
 
 export function FieldWorkbench({
@@ -114,12 +116,17 @@ export function FieldWorkbench({
       result ? fieldSolidContours(result.meta.project, result.meta.plane) : [],
     [result],
   );
+  const driverMotion = useMemo(
+    () => (result ? driverMotionAt(result, safeFrame) : []),
+    [result, safeFrame],
+  );
   useEffect(() => {
     if (!result || !pixels || !canvas.current) return;
     const el = canvas.current,
       {
         width,
         height,
+        originMm,
         u,
         w: vAxis,
       } = { ...result.meta.plane, w: result.meta.plane.v },
@@ -212,13 +219,48 @@ export function FieldWorkbench({
         ctx.stroke();
       }
     ctx.globalAlpha = 1;
+    if (v.showDrivers)
+      geometry?.mounts.forEach((mount, index) => {
+        const delta = mount.center.map((p, i) => p - originMm[i]);
+        const x =
+          (delta.reduce((s, p, i) => s + p * u[i], 0) /
+            result.meta.plane.pitchMm +
+            0.5) *
+          scale;
+        const y =
+          (height -
+            0.5 -
+            delta.reduce((s, p, i) => s + p * vAxis[i], 0) /
+              result.meta.plane.pitchMm) *
+          scale;
+        ctx.strokeStyle = driverColour(index);
+        ctx.fillStyle = "#0c141c";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.font = `bold ${Math.max(12, scale * 1.2)}px sans-serif`;
+        ctx.fillStyle = driverColour(index);
+        ctx.textBaseline = "bottom";
+        ctx.fillText(`D${index + 1}`, x + 9, y - 5);
+      });
     if (sample !== null) {
       const x = sample % width,
         y = Math.floor(sample / width);
       ctx.strokeStyle = "#fff";
       ctx.strokeRect(x * scale, (height - 1 - y) * scale, scale, scale);
     }
-  }, [result, pixels, safeFrame, sample, v.metric, contours]);
+  }, [
+    result,
+    pixels,
+    safeFrame,
+    sample,
+    v.metric,
+    v.showDrivers,
+    contours,
+    geometry,
+  ]);
   const run = () => {
     setError("");
     void command({
@@ -541,6 +583,9 @@ export function FieldWorkbench({
                     key: id!,
                     plane: meta!.plane,
                     pixels: pixels!,
+                    drivers: driverMotion,
+                    motionScale: v.driverMotionScale,
+                    showDrivers: v.showDrivers,
                   }}
                 />
                 <article className="surface field-map">
@@ -590,6 +635,8 @@ export function FieldWorkbench({
                     , not particles travelling with the wave.{" "}
                     {v.metric === "pressure" &&
                       "Blue is negative pressure; amber is positive pressure."}
+                    {v.showDrivers &&
+                      " D labels are projected mount positions."}
                   </p>
                   <p className="field-sample">
                     {result.mask[sampleIndex]
@@ -598,6 +645,68 @@ export function FieldWorkbench({
                   </p>
                 </article>
               </div>
+              <article className="surface field-drivers">
+                <div className="field-driver-controls">
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={v.showDrivers}
+                      onChange={(e) =>
+                        change({ showDrivers: e.target.checked })
+                      }
+                    />{" "}
+                    Show drivers
+                  </label>
+                  <Field
+                    label="Cone motion magnification"
+                    value={v.driverMotionScale}
+                    onChange={(n) => change({ driverMotionScale: n })}
+                    min={1}
+                    max={500}
+                    unit="×"
+                  />
+                  <p className="field-help">
+                    Cones move at {v.driverMotionScale}× recorded displacement.
+                    Use 1× for physical scale. Readouts and the sound field keep
+                    their physical values.
+                  </p>
+                </div>
+                <div className="field-driver-readouts">
+                  {geometry!.mounts.map((mount, index) => {
+                    const motion = driverMotion.find((m) => m.id === mount.id);
+                    return (
+                      <div
+                        key={mount.id}
+                        className="field-driver-card"
+                        data-driver-id={mount.id}
+                        data-displacement-mm={motion?.displacementMm ?? 0}
+                        data-motion-scale={v.driverMotionScale}
+                        style={{ borderColor: driverColour(index) }}
+                      >
+                        <b style={{ color: driverColour(index) }}>
+                          D{index + 1} · {mount.driver.name}
+                        </b>
+                        <span>
+                          {mount.id} · {mount.face} mount
+                        </span>
+                        <span>
+                          Frame Ø{mount.driver.frame} · cutout Ø
+                          {mount.driver.cutout} · depth {mount.driver.depth} mm
+                        </span>
+                        <strong>
+                          {(motion?.displacementMm ?? 0).toFixed(4)} mm ·{" "}
+                          {(motion?.current ?? 0).toFixed(3)} A
+                        </strong>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="field-help">
+                  Driver shapes are schematic. Frame, cutout and depth follow
+                  the driver data; basket/magnet profiles are illustrative and
+                  do not add acoustic obstructions.
+                </p>
+              </article>
               <div className="field-playback-options surface">
                 <Field
                   label="Colour range · 0 is automatic"

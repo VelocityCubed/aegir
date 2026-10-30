@@ -70,6 +70,18 @@ try {
   const project = JSON.parse(
     await readFile("research/tapered-fold.aegir.json", "utf8"),
   );
+  // Distinct physical drivers on opposite faces exercise size and orientation.
+  project.mounts[1].face = "back";
+  project.mounts[1].driver = {
+    ...project.mounts[1].driver,
+    name: "Synthetic 125 mm secondary",
+    frame: 140,
+    cutout: 116,
+    depth: 60,
+    sd: 80,
+    fs: 55,
+    qes: 0.55,
+  };
   await call("project_replace", { project, requireValidGeometry: true });
   const cpuJob = await complete(
     (await call("field_run", { settings: { ...settings, backend: "cpu" } })).id,
@@ -89,7 +101,76 @@ try {
     .waitFor({ timeout: 15000 });
   await page.getByLabel("Wave time frame").fill("14");
   await page.getByLabel("Field quantity").selectOption("velocity");
+  assert.equal(await page.locator(".field-driver-card").count(), 2);
+  await page
+    .getByText("D2 · Synthetic 125 mm secondary", { exact: true })
+    .waitFor();
+  const driverCard = page.locator(
+    '.field-driver-card[data-driver-id="primary"]',
+  );
+  const recordedDisplacement = Number(
+    await driverCard.getAttribute("data-displacement-mm"),
+  );
+  assert.ok(Math.abs(recordedDisplacement) > 0);
+  await call("view_set", {
+    field: {
+      driverMotionScale: 100,
+      showDrivers: true,
+      playing: false,
+      frame: 14,
+    },
+  });
+  await page.waitForFunction(
+    () =>
+      document
+        .querySelector(".field-driver-card")
+        ?.getAttribute("data-motion-scale") === "100",
+  );
+  assert.equal(
+    Number(await driverCard.getAttribute("data-displacement-mm")),
+    recordedDisplacement,
+  );
+  await page.waitForTimeout(200);
+  const withDrivers = await page.locator(".three-mount canvas").screenshot();
+  await page.getByLabel("Show drivers", { exact: true }).click();
+  await page.waitForFunction(
+    () =>
+      !document.querySelector('.field-driver-controls input[type="checkbox"]')
+        ?.checked,
+  );
+  await page.waitForTimeout(200);
+  const withoutDrivers = await page.locator(".three-mount canvas").screenshot();
+  assert.ok(
+    !withDrivers.equals(withoutDrivers),
+    "Driver models must change the actual rendered 3D image.",
+  );
+  await page.getByLabel("Show drivers", { exact: true }).click();
+  await page.waitForFunction(
+    () =>
+      document.querySelector('.field-driver-controls input[type="checkbox"]')
+        ?.checked,
+  );
+  await page.getByLabel("Wave time frame").fill("2");
+  await page.waitForFunction(
+    (x) =>
+      Number(
+        document
+          .querySelector(".field-driver-card")
+          ?.getAttribute("data-displacement-mm"),
+      ) !== x,
+    recordedDisplacement,
+  );
+  await page.getByLabel("Wave time frame").fill("14");
   await page.screenshot({ path: join(out, "cpu-desktop.png"), fullPage: true });
+  await call("view_set", {
+    camera: { eye: [900, 700, 1700], target: [207, 560, 110] },
+  });
+  await page.waitForTimeout(250);
+  await page.screenshot({
+    path: join(out, "rear-drivers-desktop.png"),
+    fullPage: true,
+  });
+  await call("view_set", { camera: null });
   const capabilities = await call("field_capabilities");
   console.log("Field capabilities:", JSON.stringify(capabilities.gpu));
   assert.equal(

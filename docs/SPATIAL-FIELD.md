@@ -1,4 +1,4 @@
-# Spatial wave propagation in ÆGIR 0.4.0
+# Spatial wave propagation in ÆGIR 0.4.1
 
 **Wave propagation** is a separate, experimental **3D** time-domain solver. It
 uses the actual cabinet solids and surrounding air. The route line does not
@@ -28,6 +28,30 @@ and interference emerge from the pressure/velocity calculation.
 6. Inspect full-rate pressure probes and each driver's peak displacement/current.
    A study keeps its input project. If the live design changes, the old study
    continues to display its original geometry with a stale-result notice.
+
+### Visible driver models (0.4.1)
+
+Each mount now has a colour-coded 3D driver, including its frame, cone, surround,
+open basket and magnet. Frame/cutout diameters, depth, position and front/back
+orientation come from that mount's own driver data. Models remain visible in
+cutaway mode; orbit to inspect rear-mounted drivers. Matching D1–D8 labels,
+projected mount markers on the field slice, and named dimension/readout cards
+identify each source. Existing study archives work without rerunning the solver.
+
+The cones follow **recorded, signed displacement at the displayed pressure
+timestamp**, keyed by mount ID. They pause and scrub with the field. The default
+visual displacement multiplier is 50×; **Cone motion magnification** accepts
+1–500×, with 1× showing physical motion. Readouts remain physical mm/current and
+the pressure calculation is unchanged. **Show drivers** hides the 3D models and
+slice markers. Both settings persist and can be set through `view.set` with
+`field:{showDrivers:true,driverMotionScale:50}`.
+
+These are schematic driver shapes, not manufacturer meshes. Basket/magnet
+profiles are illustrative; showing them does not include their displacement in
+the acoustic grid or fabrication exports. The current readout is the electrical
+midpoint sample associated with the displayed end-step displacement.
+
+![Two different driver sizes and mounting faces in the desktop](media/rendered-drivers.png)
 
 The colour range is fixed across a recording, adjustable by the user, and may
 clip near-source peaks. Raw samples remain unclipped. Pressure fields in Pa are

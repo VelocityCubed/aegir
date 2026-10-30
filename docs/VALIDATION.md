@@ -1,5 +1,18 @@
 # Verification record
 
+## ÆGIR 0.4.1: rendered driver models
+
+43 regression tests pass. New checks cover independent driver dimensions,
+front/back orientation, signed per-ID cone motion and alignment to recorded
+pressure timestamps. The real Electron/MCP field harness uses differently sized
+drivers on opposite faces, verifies actual rendered-image changes when drivers
+are hidden, preserves physical readouts while changing magnification, exercises
+scrubbing, captures front/rear views and retains settings across restart. The
+existing Electron editing/optimisation/CAD export workflow also passes.
+
+Driver meshes are schematic visual geometry. No basket/magnet displacement has
+been added to the numerical field or panel exports.
+
 ## ÆGIR 0.4.0: integrated 3D field solver
 
 The spatial tests and real Electron/MCP CPU/GPU harness cover solved 3D waves, two coupled drivers, physical cabinet solids, field playback/capture, study persistence, cancellation and stale-source handling. At the initial two-driver parity run, sampled GPU pressure differed from the CPU reference by a relative L2 error of 2.33e-6 (about 0.00023%). This is implementation consistency, not physical validation. All 40 regression tests pass, including rigid reflection sign/arrival, analytic mode/energy, 3D PML decay, unpowered coupled passivity, pressure/velocity time alignment, voltage scaling, archives and legacy workspace migration. See [SPATIAL-FIELD.md](SPATIAL-FIELD.md) and `test-results/field/` for reproduction and scope.

@@ -14,7 +14,7 @@ This is **source-available, not OSI open source**. See [licensing details](docs/
 
 ## Run from source
 
-Open `release/AEONFORGE-Aegir-0.4.0-x64.exe` after packaging, or use the unpacked executable in `release/win-unpacked/`. Install the optional CadQuery runtime with the setup command below if STEP export is needed. Generated binaries and private runtime profiles are excluded from this repository.
+Open `release/AEONFORGE-Aegir-0.4.1-x64.exe` after packaging, or use the unpacked executable in `release/win-unpacked/`. Install the optional CadQuery runtime with the setup command below if STEP export is needed. Generated binaries and private runtime profiles are excluded from this repository.
 
 From source (Node 22.12+):
 
@@ -110,6 +110,12 @@ Original app code uses the custom [personal-use and contribution-back licence](L
 ## Spatial sound waves
 
 Version 0.4.0 adds an experimental **3D CPU/WebGPU wave solver** in the **Wave propagation** tab: solved reflections/interference, two-way driver coupling, pressure/velocity/intensity slices, playback, probes, study exports and MCP controls. See [the spatial field guide](docs/SPATIAL-FIELD.md) for operation, numerical quality and model limits. The fast optimiser retains the 1D model.
+
+Version 0.4.1 renders each mounted driver using its own dimensions and orientation,
+with coloured source labels and cone motion from the recorded simulation. The
+visible motion multiplier is adjustable; physical readouts and sound pressure
+remain unchanged. Basket/magnet shapes are illustrative, with no new acoustic
+obstructions or fabrication parts implied.
 
 ![Integrated 3D field workbench, two-driver synthetic example](docs/media/spatial-workbench.png)
 

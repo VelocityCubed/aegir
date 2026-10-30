@@ -1,8 +1,8 @@
 {
   "name": "wavelab-tl-studio",
   "productName": "AEONFORGE Aegir",
-  "version": "0.4.0",
-  "description": "Aeonforge Aegir \u2014 personal-use acoustic engineering, transmission-line design and MCP automation",
+  "version": "0.4.1",
+  "description": "Aeonforge Aegir — personal-use acoustic engineering, transmission-line design and MCP automation",
   "author": "Aeonforge",
   "type": "module",
   "main": "electron/main.cjs",
