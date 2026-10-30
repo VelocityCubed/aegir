@@ -145,3 +145,8 @@ All drivers share the solved line pressures, so a source changes the loading of 
 The pressure probe reconstructs pressures from the solved network matrices, including all injection junctions, then normalises the maximum to one. Search excursion penalties compare each driver's target-band excursion with its own Xmax. Hard route-length constraints use actual geometry length, not the dormant generated `design.length` field. Searches with explicit parameter ranges are deterministic; `retrace` optionally derives the route for each changed cavity. Invalid candidate geometry is rejected, and acceptance still requires measurements.
 
 Preview, STL, SCAD and STEP use the same exact clipped footprint polygons. Angled panel local meshes use the inverse world transform; CAD rotation order is X then Y then Z (Three.js Euler ZYX). DXF/SVG remain rectangular stock-face profiles for those boards; end mitres/bevels are described by the 3D solids and panel notes. A manifest is mandatory for custom STEP export, preventing a Python backend from silently regenerating a different fixed-pass cabinet.
+
+
+## Spatial time-domain model (0.4.0)
+
+The separate field solver now implements a 3D staggered pressure/velocity FDTD grid, exact solid-crossing face barriers, exterior split-field PML and two-way electromechanical piston ports. See [SPATIAL-FIELD.md](SPATIAL-FIELD.md) for equations, half-step timing, implicit midpoint port coupling, numerical constraints, recorded quantities and limitations. The frequency-domain definitions above still describe the fast 1D analysis/optimiser, not the new spatial field.

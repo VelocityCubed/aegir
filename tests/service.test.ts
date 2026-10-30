@@ -7,6 +7,19 @@ import {DesignService} from '../src/agent/service';
 const setup=async()=>new DesignService({directory:await mkdtemp(path.join(tmpdir(),'aegir-service-')),workerPath:path.resolve('engine/worker.cjs')}).initialize();
 async function done(service:DesignService,id:string){for(let i=0;i<500;i++){const job=await service.dispatch({name:'job.get',args:{id,includeResult:true}});if(job.status!=='running')return job;await new Promise(r=>setTimeout(r,20));}throw Error('Job timeout');}
 describe('canonical agent workspace',()=>{
+  it('migrates pre-field view state without changing the project',async()=>{
+    const service=await setup(),legacy=structuredClone(service.state);delete (legacy.view as any).field;await writeFile(path.join(service.options.directory,'workspace.json'),JSON.stringify(legacy));
+    const restored=await new DesignService(service.options).initialize();expect(restored.state.project).toEqual(service.state.project);expect(restored.state.view.field).toMatchObject({jobId:null,frame:0,playing:false});await restored.close();await service.close();
+  });
+  it('persists spatial recordings with their source revision and merges field view patches',async()=>{
+    const service=await setup(),source=structuredClone(service.state.project),job=await service.dispatch({name:'field.run',args:{settings:{cellMm:30,paddingMm:300,durationMs:8,frames:12,backend:'cpu'}}});
+    await service.dispatch({name:'project.patch',args:{name:'Edited while solving'}});const result=await done(service,job.id);expect(result.status).toBe('completed');expect(result.result.artifact.projectRevision).toBe(0);
+    await service.dispatch({name:'field.open',args:{id:job.id}});await service.dispatch({name:'view.set',args:{field:{frame:2}}});expect(service.state.view.field.jobId).toBe(job.id);
+    const field=await service.dispatch({name:'field.result',args:{id:job.id,frame:2,traces:true}});expect(field.stale).toBe(true);expect(field.meta.project).toEqual(source);expect(field.frame.data.length).toBeGreaterThan(0);
+    const chunks:Buffer[]=[];let offset:number|null=0;while(offset!==null){const chunk=await service.dispatch({name:'artifact.read',args:{id:field.artifact.id,offset,length:65536}});expect(chunk.offset).toBe(offset);chunks.push(Buffer.from(chunk.data,'base64'));offset=chunk.nextOffset;}expect(Buffer.concat(chunks)).toEqual(await readFile(field.artifact.path));
+    await expect(service.dispatch({name:'artifact.read',args:{id:field.artifact.id,offset:field.artifact.size+1,length:10}})).rejects.toMatchObject({code:'ARTIFACT_RANGE'});await service.close();
+    const restored=await new DesignService(service.options).initialize();expect((await restored.dispatch({name:'field.result',args:{id:job.id,frame:2}})).frame).toEqual(field.frame);await restored.close();
+  },20000);
   it('commits atomic edits, rejects stale revisions, undoes/redoes and persists the same project',async()=>{
     const service=await setup();const initial=service.state.project.design.length;
     const changed=await service.dispatch({name:'workspace.batch',expectedRevision:0,args:{commands:[{name:'project.patch',args:{name:'Agent test',design:{length:2.2}}},{name:'layout.convert'}],requireValidGeometry:true}});

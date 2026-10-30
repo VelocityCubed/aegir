@@ -1,6 +1,6 @@
 # Control ÆGIR with an agent
 
-Version 0.3.0 exposes the live desktop through a local stdio MCP server. The agent and GUI use the same revisioned workspace; edits appear in the app and survive restart. No API key, cloud account or paid licence is required. Your MCP client supplies the language model; ÆGIR supplies deterministic geometry, physics, search and manufacturing exports.
+Version 0.4.0 exposes the live desktop through a local stdio MCP server. The agent and GUI use the same revisioned workspace; edits appear in the app and survive restart. No API key, cloud account or paid licence is required. Your MCP client supplies the language model; ÆGIR supplies deterministic geometry, physics, search and manufacturing exports.
 
 ## Connect
 
@@ -106,3 +106,8 @@ npm run test:cad
 ```
 
 The MCP acceptance harness uses the official MCP SDK client over actual stdio, isolated profiles, live Electron state, two different sources, phase sweep, comparison, screenshots, artifacts/resources, conflict recovery, cancellation and restart. CAD verification reimports the resulting STEP and checks all exported STL shells against the same geometry manifest. Set `AEGIR_TEST_APP`, `AEGIR_TEST_SERVER` and `AEGIR_TEST_OUT` to repeat against the unpacked release. See [VALIDATION.md](VALIDATION.md) and [requirements audit](MCP-IMPLEMENTATION.md).
+
+
+## Spatial wave fields (0.4.0)
+
+The server now exposes 52 tools, including `field.capabilities`, `field.run`, `field.result` and `field.open`. These use actual 3D FDTD air/solid geometry, GPU or CPU, two-way T/S sources, bounded jobs/recordings and revision-labelled artifacts. `view.set` accepts a partial `field` patch and tab `field`; `view.capture` accepts region `field`. See [SPATIAL-FIELD.md](SPATIAL-FIELD.md) for settings, samples, timing, numerical limits and honest model scope. The original 1D workflow remains available for fast searches.

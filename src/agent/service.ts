@@ -1,3 +1,5 @@
+import {encodeField,decodeField} from '../field/archive';
+import type {FieldResult,FieldSettings} from '../field/types';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {Worker} from 'node:worker_threads';
@@ -16,18 +18,19 @@ export {buildGeometry};
 export class DomainError extends Error {constructor(public code:string,message:string,public details?:unknown){super(message);}}
 export interface Artifact {id:string;name:string;path:string;mimeType:string;size:number;projectRevision:number;createdAt:string}
 export interface AnalysisJob {id:string;kind:string;status:'running'|'completed'|'failed'|'cancelled'|'interrupted';progress:number;valid?:number;projectRevision:number;createdAt:string;finishedAt?:string;error?:string;result?:any}
-export interface ServiceOptions {directory:string;workerPath:string;capture?:(region:string,revision:number)=>Promise<Uint8Array>;exportStep?:(manifest:unknown,destination:string)=>Promise<void>;cadStatus?:()=>Promise<boolean>}
+export interface ServiceOptions {directory:string;workerPath:string;capture?:(region:string,revision:number)=>Promise<Uint8Array>;exportStep?:(manifest:unknown,destination:string)=>Promise<void>;cadStatus?:()=>Promise<boolean>;runField?:(id:string,project:Project,settings:Partial<FieldSettings>,progress:(value:number)=>void,signal:AbortSignal)=>Promise<FieldResult>;fieldCapabilities?:()=>unknown}
 export class DesignService extends EventEmitter {
   state:WorkspaceState={version:1,revision:0,projectRevision:0,project:structuredClone(defaultProject),library:[],snapshots:[],view:structuredClone(defaultView),updatedAt:new Date().toISOString(),initialized:false};
   readonly jobs=new Map<string,AnalysisJob>();readonly artifacts=new Map<string,Artifact>();
-  private workers=new Map<string,Worker>();private undoStack:WorkspaceState[]=[];private redoStack:WorkspaceState[]=[];private queue:Promise<unknown>=Promise.resolve();
+  private workers=new Map<string,{terminate:()=>Promise<unknown>}>();private undoStack:WorkspaceState[]=[];private redoStack:WorkspaceState[]=[];private queue:Promise<unknown>=Promise.resolve();
+  private fieldCache=new Map<string,FieldResult>();
   private writes=new Map<string,Promise<void>>();
   private computations=new Set<Worker>();
   readonly files:string;
   constructor(readonly options:ServiceOptions){super();this.files=path.join(options.directory,'files');}
   async initialize(){
     await fs.mkdir(this.files,{recursive:true});
-    try{const data=JSON.parse(await fs.readFile(path.join(this.options.directory,'workspace.json'),'utf8'));parseProject(data.project);viewSchema.parse(data.view);this.state=data;}catch(error:any){if(error.code!=='ENOENT')throw new DomainError('PERSISTENCE_INVALID','Workspace file is invalid; it was preserved for recovery.',String(error.message));}
+    try{const data=JSON.parse(await fs.readFile(path.join(this.options.directory,'workspace.json'),'utf8'));parseProject(data.project);data.view=viewSchema.parse(data.view);this.state=data;}catch(error:any){if(error.code!=='ENOENT')throw new DomainError('PERSISTENCE_INVALID','Workspace file is invalid; it was preserved for recovery.',String(error.message));}
     for(const [filename,target] of [['artifacts.json',this.artifacts],['jobs.json',this.jobs]] as const){try{const rows=JSON.parse(await fs.readFile(path.join(this.options.directory,filename),'utf8'));for(const row of rows){if(filename==='jobs.json'&&row.status==='running'){row.status='interrupted';row.error='Application stopped before this worker completed.';}target.set(row.id,row);}}catch(error:any){if(error.code!=='ENOENT')this.emit('diagnostic',`${filename}: ${error.message}`);}}
     try{const history=JSON.parse(await fs.readFile(path.join(this.options.directory,'history.json'),'utf8'));for(const key of ['undo','redo']){if(!Array.isArray(history[key]))throw Error('Invalid history.');history[key].forEach((state:any)=>parseProject(state.project));}this.undoStack=history.undo.slice(-50);this.redoStack=history.redo.slice(-50);}catch(error:any){if(error.code!=='ENOENT')this.emit('diagnostic','History unavailable: '+error.message);}
     return this;
@@ -35,7 +38,7 @@ export class DesignService extends EventEmitter {
   private async persist(name:string,value:unknown){const data=JSON.stringify(value,null,2),previous=this.writes.get(name)??Promise.resolve();const operation=previous.catch(()=>{}).then(async()=>{const dest=path.join(this.options.directory,name),tmp=dest+'.'+randomUUID()+'.tmp';await fs.writeFile(tmp,data,'utf8');for(let i=0;;i++){try{await fs.rename(tmp,dest);break;}catch(error:any){if(i>=8||!['EPERM','EACCES','EBUSY'].includes(error.code))throw error;await new Promise(r=>setTimeout(r,10*(i+1)));}}});this.writes.set(name,operation);await operation;}
   private async commit(next:WorkspaceState,history=true){
     if(next.project.mounts?.length){const primary=next.project.mounts.find(m=>m.id==='primary')??next.project.mounts[0];if(JSON.stringify(next.project.driver)!==JSON.stringify(this.state.project.driver))primary.driver=structuredClone(next.project.driver);else next.project.driver=structuredClone(primary.driver);}
-    parseProject(next.project);viewSchema.parse(next.view);
+    parseProject(next.project);next.view=viewSchema.parse(next.view);
     if(history){this.undoStack.push(structuredClone(this.state));if(this.undoStack.length>50)this.undoStack.shift();this.redoStack=[];}
     next.revision=this.state.revision+1;next.projectRevision=this.state.projectRevision+(JSON.stringify(next.project)!==JSON.stringify(this.state.project)?1:0);next.updatedAt=new Date().toISOString();next.initialized=true;
     next.view.comparisons=next.view.comparisons.filter(id=>next.snapshots.some(s=>s.id===id));
@@ -58,15 +61,15 @@ export class DesignService extends EventEmitter {
     try{const real=await fs.realpath(result);if(real!==base&&!real.startsWith(base+path.sep))throw new DomainError('INVALID_PATH','Symlink file escapes the workspace.');}catch(error:any){if(error.code!=='ENOENT'||existing)throw error;}
     return result;
   }
-  private async artifact(filename:string,data:Uint8Array|string,mimeType:string){
-    const destination=await this.reserveOutput(filename);await fs.writeFile(destination,data);return this.registerArtifact(destination,mimeType);
+  private async artifact(filename:string,data:Uint8Array|string,mimeType:string,projectRevision=this.state.projectRevision){
+    const destination=await this.reserveOutput(filename);await fs.writeFile(destination,data);return this.registerArtifact(destination,mimeType,projectRevision);
   }
   private async reserveOutput(filename:string){
     const requested=await this.checkedFile(filename),parts=path.parse(requested);
     for(let i=0;i<1000;i++){const destination=i?path.join(parts.dir,parts.name+'-'+(i+1)+parts.ext):requested;try{const file=await fs.open(destination,'wx');await file.close();return destination;}catch(error:any){if(error.code!=='EEXIST')throw error;}}
     throw new DomainError('OUTPUT_LIMIT','Too many files with this name. Choose another output filename.');
   }
-  private async registerArtifact(destination:string,mimeType:string){const stat=await fs.stat(destination);const artifact:Artifact={id:randomUUID(),name:path.basename(destination),path:destination,mimeType,size:stat.size,projectRevision:this.state.projectRevision,createdAt:new Date().toISOString()};this.artifacts.set(artifact.id,artifact);await this.persist('artifacts.json',[...this.artifacts.values()]);return artifact;}
+  private async registerArtifact(destination:string,mimeType:string,projectRevision=this.state.projectRevision){const stat=await fs.stat(destination);const artifact:Artifact={id:randomUUID(),name:path.basename(destination),path:destination,mimeType,size:stat.size,projectRevision,createdAt:new Date().toISOString()};this.artifacts.set(artifact.id,artifact);await this.persist('artifacts.json',[...this.artifacts.values()]);return artifact;}
   private requireValid(){const g=buildGeometry(this.state.project);if(g.errors.length)throw new DomainError('INVALID_GEOMETRY','Resolve physical geometry before simulation or manufacturing.',g.errors);return g;}
   private compute<T=Simulation>(project:Project,samples=240,kind='simulation',args:Record<string,unknown>={samples}):Promise<T>{
     return new Promise((resolve,reject)=>{
@@ -79,15 +82,35 @@ export class DesignService extends EventEmitter {
   }
   private async startJob(kind:string,args:any){
     if(this.workers.size>=3)throw new DomainError('JOB_LIMIT','At most three analysis jobs may run at once.');
-    if(!['sweep','optimisation'].includes(kind))this.requireValid();
+    if(kind==='field'&&[...this.jobs.values()].some(j=>j.kind==='field'&&j.status==='running'))throw new DomainError('JOB_LIMIT','One spatial study may run at a time. Cancel the existing study first.');
+    if(!['sweep','optimisation','field'].includes(kind))this.requireValid();
+    if(kind==='field'&&args.backend==='webgpu'&&!this.options.runField)throw new DomainError('NO_GPU_DESKTOP','WebGPU requires the live desktop.');
     const job:AnalysisJob={id:randomUUID(),kind,status:'running',progress:0,projectRevision:this.state.projectRevision,createdAt:new Date().toISOString()};
-    this.jobs.set(job.id,job);const worker=new Worker(this.options.workerPath,{workerData:{kind,args,project:structuredClone(this.state.project)}});this.workers.set(job.id,worker);
-    const finish=async(status:AnalysisJob['status'],error?:string,result?:unknown)=>{if(job.status!=='running')return;job.status=status;job.error=error;job.result=result;job.progress=status==='completed'?1:job.progress;job.finishedAt=new Date().toISOString();this.workers.delete(job.id);await worker.terminate();await this.persist('jobs.json',[...this.jobs.values()]);this.emit('job',structuredClone(job));};
-    const complete=(status:AnalysisJob['status'],error?:string,result?:unknown)=>{void finish(status,error,result).catch(e=>{this.emit('diagnostic','Job persistence failed: '+e.message);this.emit('job',structuredClone(job));});};
-    worker.on('message',message=>{if(job.status!=='running')return;if(message.type==='progress'){job.progress=message.progress;job.valid=message.valid;this.emit('job',{...job,result:undefined});}else if(message.type==='done')complete('completed',undefined,message.result);else if(message.type==='error')complete('failed',message.error);});
-    worker.on('error',error=>complete('failed',(error as Error).message));worker.on('exit',code=>{if(job.status==='running')complete('failed','Worker exited before returning a result (code '+code+').');});
-    while(this.jobs.size>24){const key=[...this.jobs.values()].find(v=>v.status!=='running')?.id;if(!key)break;this.jobs.delete(key);}
-    await this.persist('jobs.json',[...this.jobs.values()]);return {...job};
+    this.jobs.set(job.id,job);const project=structuredClone(this.state.project),controller=new AbortController();
+    const external=kind==='field'&&this.options.runField&&args.backend!=='cpu';
+    const worker=external?null:new Worker(this.options.workerPath,{workerData:{kind,args,project}});
+    const execution=worker??{terminate:async()=>controller.abort()};this.workers.set(job.id,execution);
+    const finish=async(status:AnalysisJob['status'],error?:string,result?:any)=>{
+      if(job.status!=='running')return;
+      if(status==='completed'&&kind==='field'){
+        const artifact=await this.artifact('fields/'+job.id+'.aegir-field.zip',encodeField(result),'application/zip',job.projectRevision);
+        if(job.status!=='running')return;this.fieldCache.set(job.id,result);while(this.fieldCache.size>2)this.fieldCache.delete(this.fieldCache.keys().next().value!);
+        result={artifact,meta:result.meta};
+      }
+      job.status=status;job.error=error;job.result=result;job.progress=status==='completed'?1:job.progress;job.finishedAt=new Date().toISOString();this.workers.delete(job.id);await execution.terminate();await this.persist('jobs.json',[...this.jobs.values()]);this.emit('job',structuredClone(job));
+    };
+    let finalizing=false;
+    const complete=(status:AnalysisJob['status'],error?:string,result?:unknown)=>{if(finalizing)return;finalizing=true;void finish(status,error,result).catch(e=>{if(job.status==='running'){job.status='failed';job.error=e.message;job.finishedAt=new Date().toISOString();this.workers.delete(job.id);void execution.terminate();}this.emit('diagnostic','Job finalization: '+e.message);this.emit('job',structuredClone(job));});};
+    const progress=(value:number,valid?:number)=>{if(job.status!=='running')return;job.progress=value;job.valid=valid;this.emit('job',{...job,result:undefined});};
+    if(worker){worker.on('message',m=>{if(m.type==='progress')progress(m.progress,m.valid);else if(m.type==='done')complete('completed',undefined,m.result);else if(m.type==='error')complete('failed',m.error);});worker.on('error',e=>complete('failed',(e as Error).message));worker.on('exit',code=>{if(job.status==='running'&&!finalizing)complete('failed','Worker exited before returning a result (code '+code+').');});}
+    else void this.options.runField!(job.id,project,args,progress,controller.signal).then(result=>complete('completed',undefined,result)).catch(error=>complete('failed',error.message));
+    while(this.jobs.size>24){const key=[...this.jobs.values()].find(v=>v.status!=='running'&&v.id!==this.state.view.field.jobId&&v.kind!=='field')?.id??[...this.jobs.values()].find(v=>v.status!=='running'&&v.id!==this.state.view.field.jobId)?.id;if(!key)break;this.jobs.delete(key);}
+    await this.persist('jobs.json',[...this.jobs.values()]);this.emit('job',{...job,result:undefined});return {...job};
+  }
+  private async fieldResult(id:string){
+    const job=this.jobs.get(id);if(!job||job.kind!=='field'||job.status!=='completed')throw new DomainError('FIELD_NOT_READY','A completed spatial study is required. Poll job.get first.');
+    let result=this.fieldCache.get(id);if(!result){const artifact=this.artifacts.get(job.result?.artifact?.id);if(!artifact)throw new DomainError('NOT_FOUND','Field recording is unavailable.');const filename=await this.checkedFile(path.relative(this.files,artifact.path),true);result=decodeField(new Uint8Array(await fs.readFile(filename)));this.fieldCache.set(id,result);while(this.fieldCache.size>2)this.fieldCache.delete(this.fieldCache.keys().next().value!);}
+    return {job,result};
   }
   private async execute(command:Command):Promise<any>{
     if(!command||!Object.hasOwn(commands,command.name))throw new DomainError('UNKNOWN_COMMAND','Unknown ÆGIR command.');
@@ -97,7 +120,7 @@ export class DesignService extends EventEmitter {
     const next=structuredClone(this.state),p=next.project;
     switch(command.name){
       case 'workspace.batch':{const draft=new DesignService(this.options);draft.state=structuredClone(this.state);draft.persist=async()=>{};const allowed=/^(project\.(new|replace|patch)|layout\.(set|convert)|cabinet\.set|baffle\.(upsert|remove)|route\.(set|trace)|mouth\.set|driver\.(set|select)|mount\.(upsert|remove)|library\.(upsert|remove|replace)|snapshot\.(create|restore|remove|replace)|view\.set)$/;for(const item of args.commands){if(!allowed.test(item.name))throw new DomainError('BATCH_OPERATION','Operation is not allowed in atomic edits: '+item.name);await draft.execute(item);}if(args.requireValidGeometry&&buildGeometry(draft.state.project).errors.length)throw new DomainError('INVALID_GEOMETRY','Atomic edit has geometry errors.',buildGeometry(draft.state.project).errors);await this.commit(draft.state);return structuredClone(this.state);}
-      case 'status.get':return {name:'ÆONFORGE ÆGIR',revision:this.state.revision,projectRevision:this.state.projectRevision,filesDirectory:this.files,liveDesktop:Boolean(this.options.capture),cadAvailable:this.options.cadStatus?await this.options.cadStatus():false,model:'Geometry-derived segmented 1D linear transmission line; up to 8 coupled driver mounts. Not FEM, room, nonlinear or structural analysis.',runningJobs:this.workers.size};
+      case 'status.get':return {name:'ÆONFORGE ÆGIR',revision:this.state.revision,projectRevision:this.state.projectRevision,filesDirectory:this.files,liveDesktop:Boolean(this.options.capture),cadAvailable:this.options.cadStatus?await this.options.cadStatus():false,model:'Fast geometry-derived 1D line model plus experimental 3D linear FDTD field studies with coupled T/S pistons and exterior PML. Up to 8 drivers. No calibrated stuffing, nonlinear or structural prediction.',runningJobs:this.workers.size};
       case 'workspace.get':return structuredClone(this.state);
       case 'workspace.bootstrap':if(this.state.initialized)return structuredClone(this.state);next.project=parseProject(args.project);next.library=args.library;next.snapshots=args.snapshots;break;
       case 'project.new':next.project=structuredClone(defaultProject);if(args.name!==undefined)next.project.name=args.name;if(args.driverId){const driver=[...drivers,...next.library].find(d=>d.id===args.driverId);if(!driver)throw new DomainError('NOT_FOUND','Unknown driver.');next.project.driver=driver;}break;
@@ -131,8 +154,14 @@ export class DesignService extends EventEmitter {
       case 'history.undo':{const before=this.undoStack.pop();if(!before)throw new DomainError('NO_HISTORY','Nothing to undo.');this.redoStack.push(structuredClone(this.state));await this.commit(before,false);return this.summary();}
       case 'history.redo':{const after=this.redoStack.pop();if(!after)throw new DomainError('NO_HISTORY','Nothing to redo.');this.undoStack.push(structuredClone(this.state));await this.commit(after,false);return this.summary();}
       case 'view.get':return next.view;
-      case 'view.set':Object.assign(next.view,args);if(args.selectedPanel&&!buildGeometry(p).panels.some(v=>v.id===args.selectedPanel))throw new DomainError('NOT_FOUND','Panel selection does not exist.');if(args.comparisons?.some((id:string)=>!next.snapshots.some(s=>s.id===id)))throw new DomainError('NOT_FOUND','Comparison selection does not exist.');await this.commit(next,false);return structuredClone(this.state);
+      case 'view.set':{const field=args.field?{...next.view.field,...args.field}:next.view.field;Object.assign(next.view,args);next.view.field=field;if(field.jobId){const study=this.jobs.get(field.jobId);if(!study||study.kind!=='field')throw new DomainError('NOT_FOUND','Selected spatial study does not exist.');if(study.status==='completed'&&field.frame>=study.result.meta.times.length)throw new DomainError('FRAME_RANGE','Frame index exceeds the selected study.');}if(args.selectedPanel&&!buildGeometry(p).panels.some(v=>v.id===args.selectedPanel))throw new DomainError('NOT_FOUND','Panel selection does not exist.');if(args.comparisons?.some((id:string)=>!next.snapshots.some(s=>s.id===id)))throw new DomainError('NOT_FOUND','Comparison selection does not exist.');await this.commit(next,false);return structuredClone(this.state);}
       case 'view.capture':{if(!this.options.capture)throw new DomainError('NO_DESKTOP','A live desktop is required for screenshots.');const png=await this.options.capture(args.region??'window',this.state.revision);return this.artifact('captures/'+Date.now()+'-'+(args.region??'window')+'.png',png,'image/png');}
+      case 'field.capabilities':return {cpu:true,desktop:Boolean(this.options.runField),gpu:this.options.fieldCapabilities?.()??null,maxCells:4000000,cpuMaxCellUpdates:300000000,gpuMaxCellUpdates:15000000000,model:'Experimental 3D linear FDTD, rigid solids and two-way T/S piston coupling, exterior split-field PML. No calibrated stuffing, structural/nonlinear model or physical validation.'};
+      case 'field.run':{const job=await this.startJob('field',args.settings??{});if(args.show!==false){next.view.tab='field';next.view.field={...next.view.field,jobId:job.id,frame:0,playing:false,range:0};await this.commit(next,false);}return job;}
+      case 'field.open':{await this.fieldResult(args.id);next.view.tab='field';next.view.field={...next.view.field,jobId:args.id,frame:0,playing:false,range:0};await this.commit(next,false);return structuredClone(this.state);}
+      case 'field.result':{const {job,result}=await this.fieldResult(args.id),{meta,data,mask}=result,output:any={id:job.id,projectRevision:job.projectRevision,stale:job.projectRevision!==this.state.projectRevision,meta,artifact:job.result.artifact};
+        if(args.frame!==undefined){if(args.frame>=meta.times.length)throw new DomainError('FRAME_RANGE','Frame index exceeds this recording.');const {width,height}=meta.plane,stride=Math.max(1,Math.ceil(Math.sqrt(width*height/4096))),values:number[]=[],air:number[]=[];for(let y=0;y<height;y+=stride)for(let x=0;x<width;x+=stride){const at=(args.frame*width*height+y*width+x)*4;values.push(...data.subarray(at,at+4));air.push(mask[y*width+x]);}output.frame={index:args.frame,time:meta.times[args.frame],width:Math.ceil(width/stride),height:Math.ceil(height/stride),stride,components:['pressure_pa','vx_m_s','vy_m_s','vz_m_s'],data:values,air};}
+        if(args.traces){const stride=Math.max(1,Math.ceil(meta.steps/1000)),times:number[]=[],sources=meta.sources.map(s=>({id:s.id,xMm:[] as number[],velocity:[] as number[],current:[] as number[],voltage:[] as number[]})),probes=meta.probes.map(s=>({name:s.name,pressure:[] as number[]}));for(let i=0;i<meta.steps;i+=stride){times.push((i+1)*meta.dt);sources.forEach((s,d)=>{const a=meta.layout.driverOffset+(i*meta.sources.length+d)*4;s.xMm.push(data[a]*1000);s.velocity.push(data[a+1]);s.current.push(data[a+2]);s.voltage.push(data[a+3]);});probes.forEach((p,k)=>p.pressure.push(data[meta.layout.probeOffset+i*meta.probes.length+k]));}output.traces={times,electricalTimes:times.map((t:number)=>t-meta.dt/2),stride,sources,probes};}return output;}
       case 'analysis.run':return this.startJob('simulation',args);
       case 'analysis.sweep':return this.startJob('sweep',args);
       case 'analysis.optimise':return this.startJob('optimisation',args);
@@ -144,7 +173,9 @@ export class DesignService extends EventEmitter {
       case 'job.apply':{const job=this.jobs.get(args.id);if(!job||job.status!=='completed'||job.kind!=='optimisation')throw new DomainError('JOB_NOT_READY','A completed optimisation job is required.');if(job.projectRevision!==this.state.projectRevision&&!args.allowStale)throw new DomainError('STALE_RESULT','Project changed since this search. Rerun it or explicitly allowStale.');const candidate=job.result?.[args.candidate??0];if(!candidate)throw new DomainError('NOT_FOUND','No candidate at that index.');next.project=structuredClone(candidate.project);break;}
       case 'export.create':return this.export(args.format,args.filename);
       case 'artifact.list':return [...this.artifacts.values()];
-      case 'artifact.read':{const artifact=this.artifacts.get(args.id);if(!artifact)throw new DomainError('NOT_FOUND','Unknown artifact.');const relative=path.relative(this.files,artifact.path);const file=await this.checkedFile(relative,true);if(artifact.size>16*1024*1024)throw new DomainError('ARTIFACT_LARGE','Artifact exceeds 16 MiB inline limit; use its local path.');const buffer=await fs.readFile(file);return {...artifact,encoding:artifact.mimeType.startsWith('text/')||artifact.mimeType==='application/json'?'utf8':'base64',data:artifact.mimeType.startsWith('text/')||artifact.mimeType==='application/json'?buffer.toString('utf8'):buffer.toString('base64')};}
+      case 'artifact.read':{const artifact=this.artifacts.get(args.id);if(!artifact)throw new DomainError('NOT_FOUND','Unknown artifact.');const relative=path.relative(this.files,artifact.path);const file=await this.checkedFile(relative,true);
+        if(args.offset!==undefined||args.length!==undefined){const offset=args.offset??0,length=args.length??1048576,handle=await fs.open(file,'r');try{const stat=await handle.stat();if(offset>stat.size)throw new DomainError('ARTIFACT_RANGE','Offset exceeds artifact size.');const buffer=Buffer.alloc(Math.min(length,stat.size-offset));const {bytesRead}=await handle.read(buffer,0,buffer.length,offset),next=offset+bytesRead;return {...artifact,encoding:'base64',data:buffer.subarray(0,bytesRead).toString('base64'),offset,length:bytesRead,totalSize:stat.size,nextOffset:next<stat.size?next:null,complete:next>=stat.size};}finally{await handle.close();}}
+        if(artifact.size>16*1024*1024)throw new DomainError('ARTIFACT_LARGE','Artifact exceeds 16 MiB inline limit; use offset/length chunks or its local path.');const buffer=await fs.readFile(file);return {...artifact,encoding:artifact.mimeType.startsWith('text/')||artifact.mimeType==='application/json'?'utf8':'base64',data:artifact.mimeType.startsWith('text/')||artifact.mimeType==='application/json'?buffer.toString('utf8'):buffer.toString('base64')};}
       default:throw new DomainError('NOT_IMPLEMENTED','Command is not implemented.');
     }
     await this.commit(next);return structuredClone(this.state);

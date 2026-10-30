@@ -1,5 +1,9 @@
 # Verification record
 
+## ÆGIR 0.4.0: integrated 3D field solver
+
+The spatial tests and real Electron/MCP CPU/GPU harness cover solved 3D waves, two coupled drivers, physical cabinet solids, field playback/capture, study persistence, cancellation and stale-source handling. At the initial two-driver parity run, sampled GPU pressure differed from the CPU reference by a relative L2 error of 2.33e-6 (about 0.00023%). This is implementation consistency, not physical validation. All 40 regression tests pass, including rigid reflection sign/arrival, analytic mode/energy, 3D PML decay, unpowered coupled passivity, pressure/velocity time alignment, voltage scaling, archives and legacy workspace migration. See [SPATIAL-FIELD.md](SPATIAL-FIELD.md) and `test-results/field/` for reproduction and scope.
+
 ## ÆGIR 0.3.0: live MCP control and custom layouts
 
 Verified on Windows x64, 30 October 2026. Production TypeScript/renderer/service/worker/MCP builds pass and 29 regression tests cover analytic physics, coupled sources, geometry, manufacturing meshes, input boundaries, deterministic search, revisioned persistence, atomic recovery, artifacts and bridge/file containment.

@@ -45,20 +45,23 @@ const workflow=`You control the live ÆONFORGE ÆGIR desktop, not a separate cal
 1. Read aegir_workspace_get, aegir_status_get and aegir://schema. Reuse existing work unless a new project is requested.
 2. Translate the user's brief into explicit driver data, target band, stock thickness, outer dimensions, baffle endpoints, physical mouth and intended route. Units: geometry mm, driver Sd cm², Vas L, Le mH, route-position fractions and V RMS excitation. Never invent manufacturer specifications; examples are synthetic.
 3. Use generated project parameters or layout.convert/layout.set for custom baffles. Custom XY coordinates begin at the inner bottom-left; y points upward. route points run from a closed wall to the mouth centre. Moving a board does not silently move the route. Use route.trace when appropriate and inspect the resulting sampled sections.
-4. Read every returned geometry error. Correct collisions, source fit, mouth placement and blocked paths before simulation/export. The solver is segmented 1D with ideal radiation, not FEM or validated room/structural/nonlinear prediction.
+4. Read every returned geometry error. Correct collisions, source fit, mouth placement and blocked paths before simulation/export. The fast solver is segmented 1D. For spatial reflections/interference, use field.run, poll job.get, then field.result and field.open. The experimental 3D field uses actual solids/exterior air and two-way T/S piston coupling; inspect grid/PML/volume quality and warnings. Do not use it as validated stuffing/structural/nonlinear prediction.
 5. Use expectedRevision for edits when competing with a user/another agent. Preserve a snapshot before alternatives; history.undo/redo recover mistakes. Read again after REVISION_CONFLICT rather than overwriting newer work.
 6. Analysis and optimisation return job IDs. Poll job.get with includeResult, handle failure/cancellation, and apply a candidate explicitly. Results become stale if the project changes. Sweeps use existing numeric paths; custom search requires bounded numeric parameters.
-7. Set view/camera/section/graph/probe and capture actual rendered PNGs. Verify the user can see the design and that baffles, driver openings and wave travel match the brief.
+7. Set view/camera/section/graph/probe and capture actual rendered PNGs. In Wave propagation use view.set field.frame/metric/range/playing to control recorded physical time and quantities; region field captures the actual field workbench. field.result can return a bounded frame or pressure/driver traces, and its artifact is the complete study ZIP. Verify the user can see the design and that baffles, driver openings and wave travel match the brief.
 8. Export the engineering report, project and fabrication bundle, plus STEP if CAD is available. Angled board end mitres are encoded in the 3D solids; flat stock DXF is not a bevel toolpath. Report source-data assumptions, geometry/model limitations, artifact paths and prototype checks honestly.`;
 
 export function createServer(){
-  const server=new McpServer({name:'aeonforge-aegir',version:'0.3.1'},{instructions:workflow});
+  const server=new McpServer({name:'aeonforge-aegir',version:'0.4.0'},{instructions:workflow});
   for(const [name,definition] of Object.entries(commands)){
     if(name==='workspace.bootstrap')continue;
     const schema=definition.schema.extend({expectedRevision:z.number().int().nonnegative().optional().describe('Optimistic workspace revision; stale edits fail instead of overwriting changes.'),expectedProjectRevision:z.number().int().nonnegative().optional().describe('Guard the project revision only, allowing unrelated viewport changes.')});
     server.registerTool('aegir_'+name.replaceAll('.','_'),{description:definition.description,inputSchema:schema,annotations:{readOnlyHint:'read' in definition&&Boolean(definition.read),destructiveHint:/remove|replace|project.new|project.open|snapshot.restore/.test(name),idempotentHint:'read' in definition&&Boolean(definition.read),openWorldHint:false}},async(input:any)=>{
       const {expectedRevision,expectedProjectRevision,...args}=input;
       try{
+        // Stdio clients commonly bound messages to 10 MiB. Base64 plus the
+        // text/structured representations must stay below that bound.
+        if(name==='artifact.read'&&args.offset===undefined&&args.length===undefined){const artifact=(await call('artifact.list')).find((a:any)=>a.id===args.id);if(artifact?.size>2*1024*1024){args.offset=0;args.length=1048576;}}
         let value=await call(name as CommandName,args,expectedRevision,expectedProjectRevision);
         if(name==='view.capture'){const artifact=await call('artifact.read',{id:value.id});return {content:[{type:'image' as const,data:artifact.data,mimeType:'image/png' as const},{type:'text' as const,text:JSON.stringify(value)}]};}
         return {content:[{type:'text' as const,text:JSON.stringify(value)}],structuredContent:{result:value}};
@@ -71,7 +74,7 @@ export function createServer(){
     ['capabilities','aegir://capabilities','Tool names, input units, model scope and desktop availability',()=>call('status.get')],
     ['workflow','aegir://workflow','Recommended agent workflow and modelling assumptions',()=>Promise.resolve(workflow)],
   ] as const)server.registerResource(name,uri,{description,mimeType:'application/json'},async url=>({contents:[{uri:url.href,mimeType:'application/json',text:JSON.stringify(await reader())}]}));
-  server.registerResource('artifact',new ResourceTemplate('aegir://artifacts/{id}',{list:async()=>({resources:(await call('artifact.list')).map((a:any)=>({uri:'aegir://artifacts/'+a.id,name:a.name,mimeType:a.mimeType}))})}),{description:'Created project, CAD, report, numerical or screenshot artifact by stable ID'},async(uri,{id})=>{const artifact=await call('artifact.read',{id});return {contents:[artifact.encoding==='base64'?{uri:uri.href,mimeType:artifact.mimeType,blob:artifact.data}:{uri:uri.href,mimeType:artifact.mimeType,text:artifact.data}]};});
+  server.registerResource('artifact',new ResourceTemplate('aegir://artifacts/{id}',{list:async()=>({resources:(await call('artifact.list')).map((a:any)=>({uri:'aegir://artifacts/'+a.id,name:a.name,mimeType:a.mimeType}))})}),{description:'Created project, CAD, report, numerical or screenshot artifact by stable ID; above 2 MiB use artifact_read byte chunks.'},async(uri,{id})=>{const info=(await call('artifact.list')).find((a:any)=>a.id===id);if(info?.size>2*1024*1024)throw Error('Large artifact: use aegir_artifact_read with offset/length and follow nextOffset until complete.');const artifact=await call('artifact.read',{id});return {contents:[artifact.encoding==='base64'?{uri:uri.href,mimeType:artifact.mimeType,blob:artifact.data}:{uri:uri.href,mimeType:artifact.mimeType,text:artifact.data}]};});
   server.registerPrompt('design-speaker',{description:'Plan and execute a complete live ÆGIR design from a user brief.',argsSchema:z.object({brief:z.string().max(16000)})},({brief})=>({messages:[{role:'user' as const,content:{type:'text' as const,text:workflow+'\n\nUser design brief:\n'+brief}}]}));
   return server;
 }

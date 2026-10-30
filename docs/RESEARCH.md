@@ -8,6 +8,8 @@ Build an Electron application using TypeScript/React and Three.js. Use an indepe
 
 ## Spatial wave-field extension: research and prototype, 30 October 2026
 
+Implementation update: ÆGIR 0.4.0 now includes a 3D CPU/WebGPU FDTD field workbench with coupled T/S pistons and MCP control. See [SPATIAL-FIELD.md](SPATIAL-FIELD.md). The research decisions and earlier 2D prototype below remain the source trail; they are not a claim that the new solver has physical validation.
+
 The next visualisation should solve pressure and particle velocity throughout the air inside and around the enclosure. The existing centreline animation is a route guide. A spatial solver must use actual solid/air geometry, allowing diffraction at turns, reflections, interference, standing waves and unintended bypasses to emerge from the calculation. A user-specified route must not force the simulated sound to follow that route.
 
 ### Recommended physics

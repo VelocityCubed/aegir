@@ -1,5 +1,11 @@
 # Agent control: requirements and acceptance
 
+**0.4.0 extension:** the original acceptance record below describes the 0.3.0
+1D design workflow. There are now 52 MCP tools, including a separate experimental
+3D pressure/velocity solver, two-way driver coupling, field playback, archives
+and capture. Its geometry is spatially solved rather than forced along the
+route. See [the spatial guide](SPATIAL-FIELD.md) and [current validation](VALIDATION.md).
+
 Objective: a user describes a speaker to their agent; the agent can construct and inspect the actual ÆGIR design, including specified baffles, wave travel and driver(s), simulate it, revise it, and produce the CAD/manufacturing handoff. A headless calculator with a disconnected GUI, or a wrapper around the old fixed-pass inputs, does not satisfy this objective.
 
 ## Required outcomes

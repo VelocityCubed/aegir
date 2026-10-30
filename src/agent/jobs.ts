@@ -1,3 +1,4 @@
+import {runFieldCpu} from '../field/cpu';
 import {parentPort,workerData} from 'node:worker_threads';
 import {simulate,standingWave} from '../core/acoustics';
 import {buildGeometry} from '../core/geometry';
@@ -12,6 +13,7 @@ export function numericPath(p:Project,path:string,value?:number):number {
   if(value!==undefined){if(!Number.isFinite(value))throw Error('Parameter value must be finite.');at[last]=value;if(parts[0]==='driver'&&p.mounts?.length){const primary=p.mounts.find(m=>m.id==='primary')??p.mounts[0];primary.driver=structuredClone(p.driver);}if(parts[0]==='design'&&parts[1]==='driverPosition'&&p.mounts?.length)(p.mounts.find(m=>m.id==='primary')??p.mounts[0]).position=value;}return at[last];
 }
 export async function runJob(kind:string,project:Project,args:any,progress:(progress:number,valid?:number)=>void) {
+  if(kind==='field')return runFieldCpu(project,args,progress);
   if(kind==='simulation'){progress(.05);return simulate(project,args.samples??240);}
   if(kind==='sweep'){
     const results=[];for(let i=0;i<args.values.length;i++){const p=structuredClone(project);try{numericPath(p,args.path,args.values[i]);validateProject(p);const g=buildGeometry(p);if(g.errors.length)throw Error(g.errors.join(' '));const s=simulate(p,args.samples??100);results.push({value:args.values[i],project:p,bandMean:s.bandMean,ripple:s.ripple,f3:s.f3,peakExcursion:s.peakExcursion,peakVelocity:s.peakVelocity,errors:[]});}catch(error){results.push({value:args.values[i],errors:[String((error as Error).message)]});}progress((i+1)/args.values.length);await new Promise(r=>setTimeout(r,0));}return results;

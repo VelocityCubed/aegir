@@ -1,7 +1,7 @@
 {
   "name": "wavelab-tl-studio",
   "productName": "AEONFORGE Aegir",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Aeonforge Aegir \u2014 personal-use acoustic engineering, transmission-line design and MCP automation",
   "author": "Aeonforge",
   "type": "module",
@@ -22,7 +22,8 @@
     "test:mcp": "node scripts/mcp-e2e.mjs",
     "test:cad": "node scripts/verify-cad.mjs",
     "licenses": "node scripts/collect-licenses.mjs",
-    "test:lifecycle": "node scripts/mcp-autolaunch.mjs"
+    "test:lifecycle": "node scripts/mcp-autolaunch.mjs",
+    "test:field": "node scripts/field-e2e.mjs"
   },
   "build": {
     "appId": "org.wavelab.tlstudio",
@@ -73,6 +74,7 @@
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "@webgpu/types": "^0.1.74",
     "electron": "^45.1.0",
     "electron-builder": "^26.18.0",
     "esbuild": "^0.28.2",
