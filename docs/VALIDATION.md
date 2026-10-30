@@ -1,5 +1,13 @@
 # Verification record
 
+## ÆGIR 0.6.0: guided workflow and pressure appearance
+
+51 regression tests pass. The additions verify that opacity/mapping changes preserve signed samples, cancellation nodes and physical time, and that partial view edits and restart retain Advanced mode and appearance settings. The existing acoustic, driver, energy and CAD regressions remain in the suite.
+
+A dedicated real Electron workflow covers manual driver entry without invented defaults, invalid-fit blocking, live preview, draft cancellation, keyboard Escape/focus return, concurrent project-edit rejection, custom layout/mount preservation, canonical primary-driver selection despite reordered mounts, searchable contextual help, real wave playback and display persistence. Native screenshots show the guided design, wizard, wave player, help and minimum-size layout. The test compares actual rendered PNGs after opacity and gradient shading changes, while requiring exact unchanged raw frame samples and source project. It verifies that bundled fonts load and that both typical and 1120 × 760 windows avoid horizontal overflow. See `scripts/guided-e2e.mjs` and `test-results/guided/`.
+
+The existing editing/library/comparison/optimisation/ZIP/STEP desktop workflow and full CPU/GPU spatial harness also pass with the new UI. The latter retains its two differently sized front/back drivers, archival compatibility, cancellation, stale studies, restart and shader-error checks. These are implementation/interaction checks, not user-study evidence or independent acoustic validation.
+
 ## ÆGIR 0.5.0: data-driven volume and particle visualization
 
 49 regression tests pass, including passive-observer invariance of the acoustic

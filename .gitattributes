@@ -2,3 +2,9 @@
 *.png binary
 *.ico binary
 *.gif binary
+# Keep supplied identity masters and upstream font notices byte-for-byte intact.
+public/brand/*.svg -text -whitespace
+public/brand/brand-tokens.json -text -whitespace
+electron/icon.svg -text -whitespace
+public/fonts/*-OFL.txt -text -whitespace
+docs/licenses/*-OFL.txt -text -whitespace

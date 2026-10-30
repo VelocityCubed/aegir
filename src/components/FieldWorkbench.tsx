@@ -23,6 +23,7 @@ import { PressureContours } from "../field/contours";
 import { driverMotionAt } from "../field/driverMotion";
 import { driverColour } from "../core/driverVisuals";
 import type { Command, ViewState, WorkspaceState } from "../agent/contracts";
+import type { ViewPatch } from "../agent/useWorkspace";
 
 export function FieldWorkbench({
   state,
@@ -33,7 +34,7 @@ export function FieldWorkbench({
   state: WorkspaceState;
   jobs: any[];
   command: (command: Command) => Promise<any>;
-  setView: (patch: Partial<ViewState>) => void;
+  setView: (patch: ViewPatch) => void;
 }) {
   const id = state.view.field.jobId,
     selectedJob = jobs.find((j) => j.id === id),
@@ -48,12 +49,13 @@ export function FieldWorkbench({
     [probe, setProbe] = useState(0);
   const result = loadedId === id ? loadedResult : null;
   const canvas = useRef<HTMLCanvasElement>(null),
+    qualityPanel = useRef<HTMLDetailsElement>(null),
     latest = useRef(v),
     currentFrame = useRef(frame);
   latest.current = v;
 
   const change = (patch: Partial<ViewState["field"]>) =>
-    setView({ field: { ...latest.current, ...patch } });
+    setView({ field: patch });
   useEffect(() => setFrame(v.frame), [v.frame, id]);
   useEffect(() => {
     let cancelled = false;
@@ -122,8 +124,24 @@ export function FieldWorkbench({
     [result],
   );
   const displayed = useMemo(
-    () => playback?.update(safeFrame, v.metric, v.range, v.interpolation),
-    [playback, safeFrame, v.metric, v.range, v.interpolation],
+    () =>
+      playback?.update(
+        safeFrame,
+        v.metric,
+        v.range,
+        v.interpolation,
+        v.opacity,
+        v.pressureCurve,
+      ),
+    [
+      playback,
+      safeFrame,
+      v.metric,
+      v.range,
+      v.interpolation,
+      v.opacity,
+      v.pressureCurve,
+    ],
   );
   const physicalTime = result
     ? frameBlend(result, safeFrame, v.interpolation).time
@@ -215,7 +233,7 @@ export function FieldWorkbench({
       ctx.stroke();
       ctx.globalAlpha = 1;
     }
-    ctx.fillStyle = "#bba27e";
+    ctx.fillStyle = "#8c979f";
     for (const polygon of contours) {
       ctx.beginPath();
       polygon.forEach(([x, y], i) =>
@@ -394,7 +412,7 @@ export function FieldWorkbench({
     sampleAt = sampleIndex * 4;
   return (
     <section
-      className="field-workbench"
+      className={"field-workbench" + (result ? " has-result" : "")}
       data-field-state={result ? "ready" : (selectedJob?.status ?? "empty")}
       data-study-id={result ? id : undefined}
     >
@@ -402,190 +420,233 @@ export function FieldWorkbench({
         <span className="eyebrow">
           SPATIAL ACOUSTICS / SOLVED 3D PRESSURE + VELOCITY
         </span>
-        <h2>See the enclosure shape the wave.</h2>
+        <h2>Watch sound move through your cabinet.</h2>
         <p>
-          A moving driver excites the actual air volume. Reflections, spreading
-          and interference emerge from the calculation. Playback slows physical
-          milliseconds for inspection.
+          Choose a signal, calculate a recording, then press Play. The colours
+          show pressure changing inside the air channel and around its opening.
         </p>
       </div>
       <div className="field-layout">
-        <aside className="surface field-settings">
-          <h3>Wave study</h3>
-          <div className="field-grid">
-            <Field
-              label="Wave frequency"
-              value={settings.frequency}
-              onChange={(n) => update("frequency", n)}
-              unit="Hz"
-              min={20}
-              max={2000}
-            />
-            <Field
-              label="Physical duration"
-              value={settings.durationMs}
-              onChange={(n) => update("durationMs", n)}
-              unit="ms"
-              min={5}
-              max={500}
-            />
-            <Field
-              label="Grid cell size"
-              value={settings.cellMm}
-              onChange={(n) => update("cellMm", n)}
-              unit="mm"
-              min={6}
-              max={40}
-            />
-            <Field
-              label="Exterior padding"
-              value={settings.paddingMm}
-              onChange={(n) => update("paddingMm", n)}
-              unit="mm"
-              min={80}
-              max={600}
-            />
-            <Field
-              label="Recorded frames"
-              value={settings.frames}
-              onChange={(n) => update("frames", Math.round(n))}
-              min={12}
-              max={640}
-            />
-            <Field
-              label="Uniform attenuation"
-              value={settings.attenuation}
-              onChange={(n) => update("attenuation", n)}
-              unit="Np/m"
-              min={0}
-              max={2}
-              step={0.01}
-            />
-          </div>
-          <label className="select-field">
-            Excitation
-            <select
-              aria-label="Field excitation"
-              value={settings.signal}
-              onChange={(e) => update("signal", e.target.value)}
-            >
-              <option value="burst">Gaussian tone burst</option>
-              <option value="tone">Ramped continuous tone</option>
-            </select>
-          </label>
-          <label className="select-field">
-            Calculation backend
-            <select
-              aria-label="Field backend"
-              value={settings.backend}
-              onChange={(e) => update("backend", e.target.value)}
-            >
-              <option value="auto">Automatic · GPU preferred</option>
-              <option value="webgpu">WebGPU</option>
-              <option value="cpu">CPU reference</option>
-            </select>
-          </label>
-          <label className="select-field">
-            Recorded plane
-            <select
-              aria-label="Field plane"
-              value={settings.axis}
-              onChange={(e) => update("axis", e.target.value)}
-            >
-              <option value="xy">XY · front cutaway</option>
-              <option value="xz">XZ · horizontal slice</option>
-              <option value="yz">YZ · side slice</option>
-            </select>
-          </label>
-          <Field
-            label="Slice position"
-            value={settings.slice}
-            onChange={(n) => update("slice", n)}
-            min={0}
-            max={1}
-            step={0.05}
-          />
-          <p className="field-help">
-            Fraction across the cabinet. A plane change requires a new
-            recording; the solver remains 3D.
-          </p>
-          <label className="field-check">
-            <input
-              type="checkbox"
-              checked={settings.volume ?? true}
-              onChange={(e) =>
-                setSettings((s) => ({ ...s, volume: e.target.checked }))
-              }
-            />{" "}
-            Record 3D pressure and air motion
-          </label>
-          <p className="field-help">
-            Recording resolution is bounded independently of the solver grid.
-            More frames or a shorter duration improve playback sampling.
-          </p>
-          <button
-            className="primary"
-            disabled={!window.desktop || selectedJob?.status === "running"}
-            onClick={run}
-          >
-            <Activity size={15} />
-            Run spatial study
-          </button>
-          {selectedJob?.status === "running" && (
-            <>
-              <progress max={1} value={selectedJob.progress} />
-              <p>Calculating · {Math.round(selectedJob.progress * 100)}%</p>
-              <button
-                onClick={() =>
-                  void command({ name: "job.cancel", args: { id: id! } })
-                }
-              >
-                <Square size={13} />
-                Cancel study
-              </button>
-            </>
-          )}
-          <label className="select-field">
-            Recorded studies
-            <select
-              aria-label="Field study"
-              value={id ?? ""}
-              onChange={(e) => {
-                if (e.target.value)
-                  change({
-                    jobId: e.target.value,
-                    frame: 0,
-                    playing: false,
-                    range: 0,
-                  });
-              }}
-            >
-              <option value="">Choose a study</option>
-              {jobs
-                .filter((j) => j.kind === "field")
-                .map((j) => (
-                  <option key={j.id} value={j.id}>
-                    {new Date(j.createdAt).toLocaleTimeString([], {
-                      hour12: false,
-                    })}{" "}
-                    · {j.status} · r{j.projectRevision}
+        <details
+          className="surface field-settings"
+          open={!result || state.view.mode === "advanced" ? true : undefined}
+        >
+          <summary>
+            Study settings
+            <span>
+              {settings.frequency} Hz ·{" "}
+              {settings.signal === "burst" ? "pulse" : "tone"} ·{" "}
+              {settings.durationMs.toFixed(0)} ms
+            </span>
+          </summary>
+          <div className="field-settings-content">
+            <div className="field-start-copy">
+              <span className="step-label">01 / SET THE SIGNAL</span>
+              <h3>What would you like to explore?</h3>
+              <p>
+                A pulse reveals reflections. A tone reveals a developing
+                standing wave.
+              </p>
+            </div>
+            <div className="field-signal-inputs">
+              <Field
+                label="Wave frequency"
+                value={settings.frequency}
+                onChange={(n) => update("frequency", n)}
+                unit="Hz"
+                min={20}
+                max={2000}
+                step={10}
+              />
+              <label className="select-field">
+                Excitation
+                <select
+                  aria-label="Field excitation"
+                  value={settings.signal}
+                  onChange={(e) => update("signal", e.target.value)}
+                >
+                  <option value="burst">Pulse · see reflections</option>
+                  <option value="tone">
+                    Continuous tone · see interference
                   </option>
-                ))}
-            </select>
-          </label>
-          <p className="field-help">
-            Driver type, mount, phase and base voltage come from the project.
-            Both cone faces exchange pressure with the electromechanical model.
-          </p>
-          {error && (
-            <p className="error-text" role="alert">
-              {error}
-            </p>
-          )}
-          {selectedJob?.error && (
-            <p className="error-text">{selectedJob.error}</p>
-          )}
-        </aside>
+                </select>
+              </label>
+            </div>
+            <div className="field-run-actions">
+              <button
+                className="primary"
+                disabled={!window.desktop || selectedJob?.status === "running"}
+                onClick={run}
+              >
+                <Activity size={16} />
+                {selectedJob?.status === "running"
+                  ? "Calculating…"
+                  : "Run spatial study"}
+              </button>
+              <p>
+                {settings.durationMs.toFixed(0)} ms of physical sound, slowed
+                down for playback.
+              </p>
+            </div>
+            {selectedJob?.status === "running" && (
+              <div className="field-run-progress" role="status">
+                <progress max={1} value={selectedJob.progress} />
+                <span>
+                  Calculating the air volume ·{" "}
+                  {Math.round(selectedJob.progress * 100)}%
+                </span>
+                <button
+                  onClick={() =>
+                    void command({ name: "job.cancel", args: { id: id! } })
+                  }
+                >
+                  <Square size={13} />
+                  Cancel study
+                </button>
+              </div>
+            )}
+            <details
+              className="field-calculation-settings"
+              open={state.view.mode === "advanced" ? true : undefined}
+            >
+              <summary>
+                Calculation settings<span>Grid, duration & recording</span>
+              </summary>
+              <div className="field-calculation-grid">
+                <Field
+                  label="Physical duration"
+                  value={settings.durationMs}
+                  onChange={(n) => update("durationMs", n)}
+                  unit="ms"
+                  min={5}
+                  max={500}
+                />
+                <Field
+                  label="Grid cell size"
+                  value={settings.cellMm}
+                  onChange={(n) => update("cellMm", n)}
+                  unit="mm"
+                  min={6}
+                  max={40}
+                />
+                <Field
+                  label="Exterior padding"
+                  value={settings.paddingMm}
+                  onChange={(n) => update("paddingMm", n)}
+                  unit="mm"
+                  min={80}
+                  max={600}
+                />
+                <Field
+                  label="Recorded frames"
+                  value={settings.frames}
+                  onChange={(n) => update("frames", Math.round(n))}
+                  min={12}
+                  max={640}
+                />
+                <Field
+                  label="Uniform attenuation"
+                  value={settings.attenuation}
+                  onChange={(n) => update("attenuation", n)}
+                  unit="Np/m"
+                  min={0}
+                  max={2}
+                  step={0.01}
+                />
+                <label className="select-field">
+                  Calculation backend
+                  <select
+                    aria-label="Field backend"
+                    value={settings.backend}
+                    onChange={(e) => update("backend", e.target.value)}
+                  >
+                    <option value="auto">Automatic · GPU preferred</option>
+                    <option value="webgpu">WebGPU</option>
+                    <option value="cpu">CPU reference</option>
+                  </select>
+                </label>
+                <label className="select-field">
+                  Recorded plane
+                  <select
+                    aria-label="Field plane"
+                    value={settings.axis}
+                    onChange={(e) => update("axis", e.target.value)}
+                  >
+                    <option value="xy">XY · front cutaway</option>
+                    <option value="xz">XZ · horizontal slice</option>
+                    <option value="yz">YZ · side slice</option>
+                  </select>
+                </label>
+                <Field
+                  label="Slice position"
+                  value={settings.slice}
+                  onChange={(n) => update("slice", n)}
+                  min={0}
+                  max={1}
+                  step={0.05}
+                />
+                <label className="field-check">
+                  <input
+                    type="checkbox"
+                    checked={settings.volume ?? true}
+                    onChange={(e) =>
+                      setSettings((v) => ({ ...v, volume: e.target.checked }))
+                    }
+                  />
+                  Record 3D pressure and air motion
+                </label>
+              </div>
+              <p className="field-help">
+                Smaller cells need more calculation. Drawing quality is
+                separate. A plane change needs a new recording. Attenuation is
+                an assumption, not calibrated stuffing.
+              </p>
+            </details>
+            <label className="select-field field-study-picker">
+              Recorded studies
+              <select
+                aria-label="Field study"
+                value={id ?? ""}
+                onChange={(e) => {
+                  if (e.target.value)
+                    change({
+                      jobId: e.target.value,
+                      frame: 0,
+                      playing: false,
+                      range: 0,
+                    });
+                }}
+              >
+                <option value="">Choose a study</option>
+                {jobs
+                  .filter((j) => j.kind === "field")
+                  .map((j) => (
+                    <option key={j.id} value={j.id}>
+                      {new Date(j.createdAt).toLocaleTimeString([], {
+                        hour12: false,
+                      })}{" "}
+                      · {j.status} · r{j.projectRevision}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            {!window.desktop && (
+              <p className="field-help">
+                Open the Electron desktop to calculate a spatial study.
+              </p>
+            )}
+            {error && (
+              <p className="error-text" role="alert">
+                {error}
+              </p>
+            )}
+            {selectedJob?.error && (
+              <p className="error-text" role="alert">
+                {selectedJob.error}
+              </p>
+            )}
+          </div>
+        </details>
         <div className="field-results">
           {!result ? (
             <div className="surface field-empty">
@@ -666,9 +727,9 @@ export function FieldWorkbench({
                   </option>
                 </select>
               </div>
-              <div className="surface field-render-controls">
+              <div className="field-display-row">
                 <label className="select-field">
-                  3D display
+                  Show
                   <select
                     aria-label="Field display"
                     value={
@@ -693,69 +754,82 @@ export function FieldWorkbench({
                     </option>
                   </select>
                 </label>
-                <label className="select-field">
-                  Drawing quality
-                  <select
-                    aria-label="Field drawing quality"
-                    value={v.renderQuality}
-                    onChange={(e) =>
-                      change({
-                        renderQuality: e.target.value as typeof v.renderQuality,
-                      })
-                    }
-                  >
-                    <option value="auto">Adaptive</option>
-                    <option value="high">High</option>
-                    <option value="low">Low</option>
-                  </select>
-                </label>
-                <label className="field-check">
-                  <input
-                    type="checkbox"
-                    checked={v.interpolation}
-                    onChange={(e) =>
-                      change({ interpolation: e.target.checked })
-                    }
-                  />{" "}
-                  Smooth physical-time playback
-                </label>
-                <label className="field-check">
-                  <input
-                    type="checkbox"
-                    checked={v.contours}
-                    onChange={(e) => change({ contours: e.target.checked })}
-                  />{" "}
-                  Pressure contours
-                </label>
                 <label className="field-check">
                   <input
                     type="checkbox"
                     checked={v.particles && Boolean(meta!.particles)}
                     disabled={!meta!.particles}
                     onChange={(e) => change({ particles: e.target.checked })}
-                  />{" "}
+                  />
                   Air particles
                 </label>
-                {v.particles && meta!.particles && (
-                  <Field
-                    label="Air motion magnification"
-                    value={v.particleScale}
-                    onChange={(n) => change({ particleScale: n })}
-                    min={1}
-                    max={10000}
-                    unit="×"
-                  />
+                <details className="wave-reading-help">
+                  <summary>What am I seeing?</summary>
+                  <p>
+                    Blue is lower pressure (−), silver is higher pressure (+).
+                    Fronts join equal-pressure locations; they are not rays. Air
+                    markers oscillate locally at {v.particleScale}×
+                    displacement. The wave travels through the channel while air
+                    moves back and forth. At pressure nodes, opposing waves can
+                    cancel while air still moves.
+                  </p>
+                </details>
+              </div>
+              <div className="field-legend" aria-label="Field colour scale">
+                {v.metric === "pressure" ? (
+                  <>
+                    <span>
+                      <i className="negative-swatch" />−{scale.toPrecision(3)}{" "}
+                      Pa · rarefaction
+                    </span>
+                    <span>0 · equilibrium</span>
+                    <span>
+                      <i className="positive-swatch" />+{scale.toPrecision(3)}{" "}
+                      Pa · compression
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span>0</span>
+                    <span>
+                      {v.metric === "velocity"
+                        ? "Air speed"
+                        : "Instantaneous energy flux"}
+                    </span>
+                    <span>
+                      {scale.toPrecision(3)} {unit}
+                    </span>
+                  </>
                 )}
-                <p className="field-help">
-                  Drawing quality never changes the acoustic grid or time step.
-                  Contours and colours use the fixed display range.{" "}
-                  {meta!.volume
-                    ? `3D recording: ${meta!.volume.dimensions.join(" × ")} samples at ${meta!.volume.pitchMm} mm; pressure interpolation adds no new spatial detail.`
-                    : "This older study contains a slice. Run again with 3D recording enabled for pressure volumes and air motion."}{" "}
-                  {v.particles &&
-                    meta!.particles &&
-                    `Air motion is ${v.particleScale}× linear small-signal displacement about fixed equilibrium positions; amplified drawing is clipped at cabinet solids.`}
-                </p>
+              </div>
+              <div className="field-study-note">
+                <span>
+                  Experimental preview · {meta!.settings.cellMm} mm calculation
+                  grid
+                </span>
+                <span>
+                  {v.showDrivers ? `Cone motion ${v.driverMotionScale}×` : ""}
+                  {v.particles && meta!.particles
+                    ? ` · air motion ${v.particleScale}×`
+                    : ""}
+                </span>
+                <button
+                  onClick={() => {
+                    if (qualityPanel.current) {
+                      qualityPanel.current.open = true;
+                      qualityPanel.current.scrollIntoView({
+                        block: "center",
+                        behavior: window.matchMedia(
+                          "(prefers-reduced-motion: reduce)",
+                        ).matches
+                          ? "auto"
+                          : "smooth",
+                      });
+                    }
+                  }}
+                >
+                  View calculation checks
+                </button>
               </div>
               <div className="field-views">
                 <ModelView
@@ -763,6 +837,7 @@ export function FieldWorkbench({
                   driver={meta!.project.driver}
                   view={state.view}
                   onViewChange={setView}
+                  simple={state.view.mode !== "advanced"}
                   fieldOverlay={{
                     key: id!,
                     result: result!,
@@ -777,6 +852,9 @@ export function FieldWorkbench({
                     particles: v.particles,
                     particleScale: v.particleScale,
                     interpolation: v.interpolation,
+                    opacity: v.opacity,
+                    pressureCurve: v.pressureCurve,
+                    frontShading: v.frontShading,
                     renderQuality: v.renderQuality,
                     drivers: driverMotion,
                     motionScale: v.driverMotionScale,
@@ -829,7 +907,7 @@ export function FieldWorkbench({
                       : "particle velocity"}
                     , not particles travelling with the wave.{" "}
                     {v.metric === "pressure" &&
-                      "Blue is negative pressure; amber is positive pressure."}
+                      "Blue is rarefaction (−); silver is compression (+)."}
                     {v.showDrivers &&
                       " D labels are projected mount positions."}
                   </p>
@@ -840,7 +918,119 @@ export function FieldWorkbench({
                   </p>
                 </article>
               </div>
-              <article className="surface field-drivers">
+              <details
+                className="surface field-appearance"
+                open={state.view.mode === "advanced" ? true : undefined}
+              >
+                <summary>
+                  Appearance & playback
+                  <span>Visibility, air motion & drawing quality</span>
+                </summary>
+                <div className="field-render-controls">
+                  <Field
+                    label="Field opacity"
+                    value={v.opacity}
+                    onChange={(opacity) => change({ opacity })}
+                    min={0}
+                    max={3}
+                    step={0.1}
+                    unit="×"
+                  />
+                  <label className="select-field">
+                    Opacity response
+                    <select
+                      aria-label="Pressure opacity mapping"
+                      disabled={
+                        v.metric === "pressure" && v.displayMode === "fronts"
+                      }
+                      value={v.pressureCurve}
+                      onChange={(e) =>
+                        change({
+                          pressureCurve: e.target
+                            .value as typeof v.pressureCurve,
+                        })
+                      }
+                    >
+                      <option value="soft">Reveal weaker pressure</option>
+                      <option value="linear">Linear</option>
+                    </select>
+                  </label>
+                  <label className="select-field">
+                    Drawing quality
+                    <select
+                      aria-label="Field drawing quality"
+                      value={v.renderQuality}
+                      onChange={(e) =>
+                        change({
+                          renderQuality: e.target
+                            .value as typeof v.renderQuality,
+                        })
+                      }
+                    >
+                      <option value="auto">Adaptive</option>
+                      <option value="high">High</option>
+                      <option value="low">Low</option>
+                    </select>
+                  </label>
+                  <label className="field-check">
+                    <input
+                      type="checkbox"
+                      checked={v.frontShading}
+                      disabled={!meta!.volume}
+                      onChange={(e) =>
+                        change({ frontShading: e.target.checked })
+                      }
+                    />
+                    Shade pressure fronts
+                  </label>
+                  <label className="field-check">
+                    <input
+                      type="checkbox"
+                      checked={v.interpolation}
+                      onChange={(e) =>
+                        change({ interpolation: e.target.checked })
+                      }
+                    />
+                    Smooth physical-time playback
+                  </label>
+                  <label className="field-check">
+                    <input
+                      type="checkbox"
+                      checked={v.contours}
+                      onChange={(e) => change({ contours: e.target.checked })}
+                    />
+                    Pressure contours
+                  </label>
+                  {v.particles && meta!.particles && (
+                    <Field
+                      label="Air motion magnification"
+                      value={v.particleScale}
+                      onChange={(particleScale) => change({ particleScale })}
+                      min={1}
+                      max={10000}
+                      step={100}
+                      unit="×"
+                    />
+                  )}
+                  <p className="field-help">
+                    Opacity and shading change the drawing only. The pressure
+                    scale, sign and recorded values stay fixed. Fronts use ±35%
+                    of the colour range. The opacity response applies to volumes
+                    and slices; front levels stay fixed.{" "}
+                    {meta!.volume
+                      ? `3D recording: ${meta!.volume.dimensions.join(" × ")} samples at ${meta!.volume.pitchMm} mm. Interpolation adds no new spatial detail.`
+                      : "This older study contains a slice. Run again with 3D recording enabled for pressure volumes and air motion."}{" "}
+                    {v.particles &&
+                      meta!.particles &&
+                      `Air motion is ${v.particleScale}× linear displacement about equilibrium; amplified drawing is clipped at cabinet solids.`}
+                  </p>
+                </div>
+              </details>
+              <details
+                className="surface field-drivers field-detail"
+                open={state.view.mode === "advanced" ? true : undefined}
+              >
+                <summary>Driver motion & values</summary>
                 <div className="field-driver-controls">
                   <label>
                     <input
@@ -901,7 +1091,7 @@ export function FieldWorkbench({
                   the driver data; basket/magnet profiles are illustrative and
                   do not add acoustic obstructions.
                 </p>
-              </article>
+              </details>
               <div className="field-playback-options surface">
                 <Field
                   label="Colour range · 0 is automatic"
@@ -932,7 +1122,11 @@ export function FieldWorkbench({
                   Export study ZIP
                 </button>
               </div>
-              <article className="surface field-probe">
+              <details
+                className="surface field-probe field-detail"
+                open={state.view.mode === "advanced" ? true : undefined}
+              >
+                <summary>Pressure history</summary>
                 <div className="section-header">
                   <h3>Recorded pressure probe</h3>
                   <select
@@ -961,7 +1155,7 @@ export function FieldWorkbench({
                   />
                   <path
                     d={`M${20 + (physicalTime / (meta!.steps * meta!.dt)) * 680} 10V170`}
-                    stroke="#ddb58e"
+                    stroke="#bec5c9"
                   />
                 </svg>
                 <p className="field-help">
@@ -969,8 +1163,13 @@ export function FieldWorkbench({
                   0–{(meta!.steps * meta!.dt * 1000).toFixed(2)} ms. Physical
                   positions are stored in the study archive.
                 </p>
-              </article>
-              <article className="surface field-quality">
+              </details>
+              <details
+                className="surface field-quality field-detail"
+                ref={qualityPanel}
+                open={state.view.mode === "advanced" ? true : undefined}
+              >
+                <summary>Calculation checks & limitations</summary>
                 <h3>Model and numerical quality</h3>
                 <p>
                   {meta!.dimensions.join(" × ")} cells · {meta!.settings.cellMm}{" "}
@@ -1012,7 +1211,7 @@ export function FieldWorkbench({
                     {w}
                   </p>
                 ))}
-              </article>
+              </details>
             </>
           )}
         </div>

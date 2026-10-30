@@ -1,4 +1,4 @@
-# Spatial wave propagation in ÆGIR 0.5.0
+# Spatial wave propagation in ÆGIR 0.6.0
 
 **Wave propagation** is a separate, experimental **3D** time-domain solver. It
 uses the actual cabinet solids and surrounding air. The route line does not
@@ -54,12 +54,12 @@ midpoint sample associated with the displayed end-step displacement.
 
 ![Two different driver sizes and mounting faces in the desktop](media/rendered-drivers.png)
 
-### Pressure fronts, volumes and air motion (0.5.0)
+### Pressure fronts, volumes and air motion (0.6.0)
 
 **3D display** selects the recorded slice, a translucent signed pressure volume,
 or equal-pressure fronts at ±35% of the fixed colour range. Fronts are level
 surfaces of the calculated pressure, not particles or rays. The flat map and
-slice shader can overlay pressure contours. Blue is negative pressure; amber
+slice shader can overlay pressure contours. Blue is negative pressure; silver
 is positive pressure. Zero-pressure nodes remain visible through contour/velocity
 information; interference is never replaced by shoreline-style fading.
 
@@ -259,3 +259,11 @@ verification. Reproduce the public calculated animation from that archive:
 ```powershell
 python research/render-field-study.py test-results/field/demo.aegir-field.zip docs/media/spatial-field.gif --geometry test-results/field/demo-geometry.json
 ```
+
+## Guided playback and pressure appearance (0.6.0)
+
+The default guided view keeps signal selection simple and collapses calculation settings after a recording loads. Advanced tools keeps all controls available. Driver values, histories and numerical checks are progressively disclosed. The model always labels experimental preview status and any motion magnification.
+
+`field.opacity` (0–3, default 1) controls drawing opacity. `field.pressureCurve` selects `soft` (reveal weaker pressure) or `linear`. `field.frontShading` enables gradient shading of pressure fronts. The gradient comes from adjacent recorded pressure samples, with solid neighbours excluded. It changes lighting only: pressure sign, fixed colour range, ±35% front levels, zero crossings and timestamps are unchanged. No turbulence, buoyancy or invented small-scale detail is added.
+
+Blue is rarefaction and silver is compression, following the current brand palette. The legend states both sign and physical Pa. Recording resolution and drawing quality remain separate. Legacy archives do not need conversion. Agents can set `mode:"guided"|"advanced"` through `view.set` and use the appearance fields in its `field` patch.

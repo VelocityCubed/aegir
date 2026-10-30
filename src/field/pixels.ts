@@ -1,4 +1,5 @@
 import type { FieldResult } from "./types";
+import { negativePressure, positivePressure } from "./transfer";
 export type FieldMetric = "pressure" | "velocity" | "intensity";
 export function fieldScale(
   result: FieldResult,
@@ -37,7 +38,7 @@ export function fieldPixels(
             : Math.abs(p) * speed,
       t = Math.min(1, Math.abs(value) / Math.max(1e-12, scale)),
       colour =
-        metric === "pressure" && value < 0 ? [96, 193, 234] : [244, 172, 127];
+        metric === "pressure" && value < 0 ? negativePressure : positivePressure;
     for (let c = 0; c < 3; c++)
       pixels[at + c] = Math.round(12 * (1 - t) + colour[c] * t);
     pixels[at + 3] = Math.round(18 + 225 * Math.sqrt(t));

@@ -22,11 +22,13 @@ export function ModelView({
   view,
   onViewChange,
   fieldOverlay,
+  simple = false,
 }: {
   geometry: Geometry;
   driver: Driver;
   view?: ViewState;
   onViewChange?: (patch: Partial<ViewState>) => void;
+  simple?: boolean;
   fieldOverlay?: FieldDisplay & {
     key: string;
     drivers: DriverMotion[];
@@ -49,7 +51,7 @@ export function ModelView({
     [failure, setFailure] = useState("");
   const section = view?.section ?? localSection,
     exploded = view?.exploded ?? localExploded,
-    path = (view?.path ?? localPath) && !fieldOverlay,
+    path = (view?.path ?? localPath) && !fieldOverlay && !simple,
     selected = view?.selectedPanel
       ? (g.panels.find((p) => p.id === view.selectedPanel)?.label ?? "")
       : localSelected;
@@ -138,8 +140,8 @@ export function ModelView({
             panel.id === view?.selectedPanel
               ? "#8fc6cd"
               : panel.id.startsWith("divider") || panel.footprint
-                ? "#ba8d55"
-                : "#ccaa77",
+                ? "#697780"
+                : "#939da3",
           roughness: 0.85,
           metalness: 0,
         });
@@ -161,7 +163,7 @@ export function ModelView({
       const edges = new THREE.LineSegments(
         new THREE.EdgesGeometry(geo, 25),
         new THREE.LineBasicMaterial({
-          color: "#654c31",
+          color: "#30383e",
           transparent: true,
           opacity: 0.55,
         }),
@@ -251,14 +253,18 @@ export function ModelView({
     resize.observe(el);
     let frame = 0;
     const start = performance.now();
+    const motionPreference = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
     const animate = () => {
       frame = requestAnimationFrame(animate);
       controls.update();
-      beads.forEach((b, i) =>
-        b.position.copy(
-          curve.getPoint(((performance.now() - start) / 15000 + i / 8) % 1),
-        ),
-      );
+      if (!motionPreference.matches)
+        beads.forEach((b, i) =>
+          b.position.copy(
+            curve.getPoint(((performance.now() - start) / 15000 + i / 8) % 1),
+          ),
+        );
       const now = performance.now();
       budget?.begin(now);
       fieldRenderer.current?.preRender(
@@ -353,22 +359,26 @@ export function ModelView({
           >
             <Layers size={15} />
           </button>
-          <button
-            title="Toggle exploded view"
-            aria-label="Toggle exploded view"
-            className={exploded ? "active" : ""}
-            onClick={() => setExploded(!exploded)}
-          >
-            <Move3D size={15} />
-          </button>
-          <button
-            title="Toggle acoustic path"
-            aria-label="Toggle acoustic path"
-            className={path ? "active" : ""}
-            onClick={() => setPath(!path)}
-          >
-            <Route size={15} />
-          </button>
+          {!simple && (
+            <button
+              title="Toggle exploded view"
+              aria-label="Toggle exploded view"
+              className={exploded ? "active" : ""}
+              onClick={() => setExploded(!exploded)}
+            >
+              <Move3D size={15} />
+            </button>
+          )}
+          {!simple && (
+            <button
+              title="Toggle acoustic path"
+              aria-label="Toggle acoustic path"
+              className={path ? "active" : ""}
+              onClick={() => setPath(!path)}
+            >
+              <Route size={15} />
+            </button>
+          )}
           <button
             title="Fullscreen model"
             aria-label="Fullscreen model"

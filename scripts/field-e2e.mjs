@@ -92,6 +92,7 @@ try {
     qes: 0.55,
   };
   await call("project_replace", { project, requireValidGeometry: true });
+  await call("view_set", {mode:"advanced"});
   const cpuJob = await complete(
     (await call("field_run", { settings: { ...settings, backend: "cpu" } })).id,
   );

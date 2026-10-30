@@ -24,6 +24,7 @@ try{
   const resource=await client.readResource({uri:'aegir://schema'});assert.ok(JSON.parse(resource.contents[0].text).properties.layout);
   const prompt=await client.getPrompt({name:'design-speaker',arguments:{brief:'Two-pass floorstanding TL, angled internal board, 6.5-inch driver, top mouth, 18 mm stock, tune for 40–200 Hz.'}});assert.ok(prompt.messages.length);
   let state=await call('workspace_get');
+  state=await call('view_set',{mode:'advanced'});
   state=await call('workspace_batch',{expectedRevision:state.revision,commands:[{name:'project.patch',args:{name:'Agent-designed tapered fold',design:{length:2.2,laneWidth:180,areaRatio:2.6}}},{name:'layout.convert'}],requireValidGeometry:true});
   const baffle=state.project.layout.baffles[0];baffle.start[0]+=20;
   await call('baffle_upsert',{baffle,expectedRevision:state.revision});

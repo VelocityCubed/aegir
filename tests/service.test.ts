@@ -7,6 +7,9 @@ import {DesignService} from '../src/agent/service';
 const setup=async()=>new DesignService({directory:await mkdtemp(path.join(tmpdir(),'aegir-service-')),workerPath:path.resolve('engine/worker.cjs')}).initialize();
 async function done(service:DesignService,id:string){for(let i=0;i<500;i++){const job=await service.dispatch({name:'job.get',args:{id,includeResult:true}});if(job.status!=='running')return job;await new Promise(r=>setTimeout(r,20));}throw Error('Job timeout');}
 describe('canonical agent workspace',()=>{
+  it('preserves mode and display mapping across partial view edits and restart',async()=>{
+    const service=await setup();await service.dispatch({name:'view.set',args:{mode:'advanced',field:{opacity:.4,pressureCurve:'linear',frontShading:false}}});await service.dispatch({name:'view.set',args:{metric:'impedance',field:{particles:true}}});expect(service.state.view.mode).toBe('advanced');expect(service.state.view.field).toMatchObject({opacity:.4,pressureCurve:'linear',frontShading:false,particles:true});const reopened=await new DesignService(service.options).initialize();expect(reopened.state.view).toEqual(service.state.view);await reopened.close();await service.close();
+  });
   it('migrates pre-field view state without changing the project',async()=>{
     const service=await setup(),legacy=structuredClone(service.state);delete (legacy.view as any).field;await writeFile(path.join(service.options.directory,'workspace.json'),JSON.stringify(legacy));
     const restored=await new DesignService(service.options).initialize();expect(restored.state.project).toEqual(service.state.project);expect(restored.state.view.field).toMatchObject({jobId:null,frame:0,playing:false,showDrivers:true,driverMotionScale:50});await restored.close();

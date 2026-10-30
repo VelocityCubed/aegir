@@ -1,0 +1,97 @@
+{
+  "sourcePack": "AEONFORGE creative direction v3.0.0",
+  "sourceDate": "2026-10-30",
+  "purpose": "AEGIR functional software identity, requested by owner",
+  "fontLicense": "SIL Open Font License 1.1; notices retained with each font",
+  "assets": [
+    {
+      "file": "public/brand/aegir-endorsed.svg",
+      "source": "logos/aegir/aegir-endorsed.svg",
+      "unmodified": true,
+      "sha256": "b9ca3ff73f0ea88b0476d407b6b5b65104c424099d42d7e636708b98279ce018"
+    },
+    {
+      "file": "public/brand/aegir-symbol.svg",
+      "source": "logos/aegir/aegir-symbol-silver.svg",
+      "unmodified": true,
+      "sha256": "1debc2fca4ac9bb7179b4895b0d26420740f32108e8f240d9caee077397cf3a1"
+    },
+    {
+      "file": "public/brand/aegir-micro.svg",
+      "source": "logos/aegir/aegir-symbol-micro.svg",
+      "unmodified": true,
+      "sha256": "97582e896bf468ff3c07ebbf11d30df776c55e14583e8635d974d536f9031448"
+    },
+    {
+      "file": "public/brand/brand-tokens.json",
+      "source": "tokens/brand-tokens.json",
+      "unmodified": true,
+      "sha256": "4b1e6aaffb10437994642822433b0745c3ed2c7c789f761fdac38664b7a5dfe6"
+    },
+    {
+      "file": "electron/icon.svg",
+      "source": "exports/aegir-app-icon.svg",
+      "unmodified": true,
+      "sha256": "f871339e3c0f8dae30bbf40f677514bc5edf798c0465642b5d95aa7c54eb01f7"
+    },
+    {
+      "file": "electron/icon.png",
+      "source": "exports/aegir-app-icon-512.png",
+      "unmodified": true,
+      "sha256": "594a74b8662ea195f57a09100e0b765b20cc4462e2bac0563d182b3285dbedb9"
+    },
+    {
+      "file": "public/fonts/inter.ttf",
+      "source": "fonts/inter.ttf",
+      "unmodified": true,
+      "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031"
+    },
+    {
+      "file": "public/fonts/space-grotesk.ttf",
+      "source": "fonts/space-grotesk.ttf",
+      "unmodified": true,
+      "sha256": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72"
+    },
+    {
+      "file": "public/fonts/jetbrains-mono.ttf",
+      "source": "fonts/jetbrains-mono.ttf",
+      "unmodified": true,
+      "sha256": "48715a42ec242c21e9f02692891e147d022299a52e48d5e413e1a942193ffeda"
+    },
+    {
+      "file": "public/fonts/inter-OFL.txt",
+      "source": "fonts/inter-OFL.txt",
+      "unmodified": true,
+      "sha256": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57"
+    },
+    {
+      "file": "public/fonts/space-grotesk-OFL.txt",
+      "source": "fonts/space-grotesk-OFL.txt",
+      "unmodified": true,
+      "sha256": "564ce565c371c5e5bbf286006565a7c9aa55a9f56e7ca58d56e05d649dd61a72"
+    },
+    {
+      "file": "public/fonts/jetbrains-mono-OFL.txt",
+      "source": "fonts/jetbrains-mono-OFL.txt",
+      "unmodified": true,
+      "sha256": "b2fe5e8987594e9ffd1d2ca52a2f5d73eb8335243893c5d6254b5ad69269591d"
+    },
+    {
+      "file": "electron/icon.ico",
+      "source": "exports/aegir-app-icon-512.png",
+      "unmodified": false,
+      "derivation": "Container encoding and size variants only, scripts/create-icon.py; no identity geometry changes.",
+      "sha256": "68d4ec40de7ba620f30f83fa818de847619c4c0fe1f505a75d6903fab9edabc5"
+    },
+    {
+      "file": "public/brand/aegir-wordmark.svg",
+      "source": "logos/aegir/aegir-wordmark-silver.svg",
+      "unmodified": true,
+      "sha256": "e2af1509d2d036419c8b491c439248e752c16fd9bad1fb31efedba2870b15f55"
+    }
+  ],
+  "placements": {
+    "header": "Supplied symbol and outlined product wordmark, with plain house endorsement copy; 20 px gap, unmodified aspect ratios.",
+    "footer": "Supplied micro symbol."
+  }
+}

@@ -1,17 +1,16 @@
-# ÆONFORGE / ÆGIR
+# ÆONFORGE / ÆGIR identity
 
-The October 2026 identity follows the owner's [shared brand session](https://chatgpt.com/share/6ae3d5d7-0878-83e9-8e49-1604bf9c85e9?ogimg=plain): Nordic industrial audio, blackened metal, silver lettering, engraving-friendly angular forms, and water/air/flow as the acoustic metaphor. The selected product name is **Aegir**, beneath the **ÆONFORGE** parent brand.
+ÆGIR 0.6.0 uses the supplied **ÆONFORGE brand pack v3.0.0** for functional software. The product is **ÆGIR by ÆONFORGE**, with ASCII `AEGIR` / `AEONFORGE` in filenames and code. The pack's proposed creative direction is applied under the owner's request; this does not assert historical rune meanings or engineering performance.
 
-- UI wordmark: `ÆONFORGE` / `ÆGIR`.
-- Desktop product: `AEONFORGE Aegir` (ASCII for file and executable compatibility).
-- Product line: **Harness the forces of sound.**
-- Parent signature: **Engineered for Eternity.**
-- Foundation: charcoal `#0B0F13`, dark steel panels `#131C24`, silver `#DDE6EC`.
-- Functional accent: restrained cold-water blue `#9BC5CE`. Warnings use warm muted tones so they remain distinct from normal data.
-- Emblem: an original angular A with descending horizontal current marks. It is a contemporary lettermark, not a claim of historical runic meaning. The SVG is the editable master; PNG/ICO derivatives serve the desktop app.
+- The header composes the unmodified symbol and outlined wordmark masters, with a readable house endorsement. Small placements use the supplied micro symbol. Native app PNG/SVG assets are unmodified brand exports; the Windows ICO encodes size variants of that PNG.
+- Local **Space Grotesk** headings, **Inter** UI/prose and **JetBrains Mono** values retain their bundled SIL Open Font License notices. No font downloads or account are needed at runtime.
+- Palette: obsidian `#0B0E11`, graphite `#171D23`, silver `#E7E9E8`, tide `#8CBCCB`, iron `#BEC5C9` and supporting tokens from the pack. Pressure uses tide for rarefaction and iron for compression, with explicit signs and units. Functional warning/error colours are separate.
+- The cabinet is shown in a neutral CAD material. Colours do not claim a physical panel finish. Brand artwork is never presented as simulation data.
+- Controls use 4 px radii, panels 8 px, an 8 px spacing rhythm and readable text. Keyboard focus remains visible. Reduced-motion preferences stop nonessential scene/ornament animation; acoustic playback is user initiated.
+- The practical interface uses direct labels and optional contextual help. Campaign type and imagery are not used behind controls or scientific plots.
 
-Layout CSS is in `src/styles.css`, brand treatments in `src/aegir-theme.css`, the UI emblem in `src/components/AegirMark.tsx`, and native artwork in `electron/icon.svg` with `scripts/create-icon.py` for raster derivatives. The 3D cabinet retains its physical wood material; chart, scene and path colours follow the new palette.
+`public/brand/asset-provenance.json` records original source paths, checksums and the native ICO derivation. `public/brand/brand-tokens.json` retains the token source. Original brand masters are not modified. Font licences are retained in `public/fonts/` and included in generated third-party notices. `src/workflow.css` implements the functional UI layer over the existing component layouts.
 
 ## Compatibility
 
-Project schema version remains 1. New exports use `.aegir.json`; previous `.wavelab.json` projects still open through the same JSON loader. Existing localStorage keys and the application ID are intentionally stable. The default Electron user-data location remains the original `WaveLab TL Studio` directory so autosaved work, custom drivers and comparison studies remain available. Explicit `--user-data-dir` overrides are respected. `AEGIR_PYTHON` is supported for the CAD runtime; `WAVELAB_PYTHON` remains a compatibility fallback.
+Project schema remains version 1. Existing project JSON, drivers, comparisons and field archives are retained. Internal application ID, localStorage keys and the default `WaveLab TL Studio` profile are unchanged. Guided/Advanced mode and pressure appearance are additive view preferences, migrated with defaults. They do not alter cabinet geometry or acoustic results. Explicit isolated test profiles remain supported.

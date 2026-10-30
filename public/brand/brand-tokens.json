@@ -1,0 +1,163 @@
+{
+  "brand": {
+    "name": "AEONFORGE",
+    "display": "ÆONFORGE",
+    "version": "3.0.0",
+    "status": "creative-direction-proposal",
+    "updated": "2026-10-30"
+  },
+  "color": {
+    "void": {
+      "$type": "color",
+      "$value": "#0B0E11"
+    },
+    "graphite": {
+      "$type": "color",
+      "$value": "#171D23"
+    },
+    "slate": {
+      "$type": "color",
+      "$value": "#252E37"
+    },
+    "steel": {
+      "$type": "color",
+      "$value": "#A7B0B7"
+    },
+    "silver": {
+      "$type": "color",
+      "$value": "#E7E9E8"
+    },
+    "frost": {
+      "$type": "color",
+      "$value": "#F4F3EE"
+    },
+    "tide": {
+      "$type": "color",
+      "$value": "#8CBCCB"
+    },
+    "deep": {
+      "$type": "color",
+      "$value": "#14323F"
+    },
+    "iron": {
+      "$type": "color",
+      "$value": "#BEC5C9"
+    },
+    "ironDeep": {
+      "$type": "color",
+      "$value": "#30383E"
+    },
+    "muted": {
+      "$type": "color",
+      "$value": "#8C979F"
+    },
+    "positive": {
+      "$type": "color",
+      "$value": "#94A99A"
+    },
+    "warning": {
+      "$type": "color",
+      "$value": "#BCA66B"
+    },
+    "error": {
+      "$type": "color",
+      "$value": "#E04B3F"
+    }
+  },
+  "semantic": {
+    "background": "#0B0E11",
+    "surface": "#171D23",
+    "surfaceRaised": "#252E37",
+    "text": "#E7E9E8",
+    "textMuted": "#A7B0B7",
+    "border": "#252E37",
+    "focus": "#8CBCCB",
+    "action": "#8CBCCB",
+    "onAction": "#0B0E11",
+    "danger": "#E04B3F"
+  },
+  "product": {
+    "aegir": {
+      "display": "ÆGIR",
+      "accent": "#8CBCCB",
+      "category": "Speaker simulation software",
+      "status": "selected-name"
+    },
+    "eldr": {
+      "display": "ELDR",
+      "accent": "#BEC5C9",
+      "category": "Power amplifier",
+      "status": "future-concept"
+    },
+    "streamer": {
+      "display": null,
+      "status": "name-unresolved",
+      "legacyProjectName": "StreamZero"
+    },
+    "preamp": {
+      "display": null,
+      "status": "name-unresolved"
+    }
+  },
+  "type": {
+    "display": "Space Grotesk",
+    "campaign": "Cinzel",
+    "body": "Inter",
+    "mono": "JetBrains Mono",
+    "scale": [
+      12,
+      14,
+      16,
+      20,
+      28,
+      40,
+      56,
+      80,
+      112
+    ]
+  },
+  "space": {
+    "unit": 4,
+    "scale": [
+      4,
+      8,
+      12,
+      16,
+      24,
+      32,
+      48,
+      64,
+      96
+    ]
+  },
+  "radius": {
+    "control": 4,
+    "panel": 8,
+    "icon": 20
+  },
+  "motion": {
+    "fastMs": 120,
+    "normalMs": 200,
+    "slowMs": 350,
+    "easing": "cubic-bezier(.2,.8,.2,1)",
+    "reducedMotion": "disable non-essential movement"
+  },
+  "data": {
+    "series": [
+      "#8CBCCB",
+      "#BEC5C9",
+      "#7795AC",
+      "#92A99D",
+      "#A8A193"
+    ],
+    "styles": [
+      "solid",
+      "dash",
+      "dot",
+      "dash-dot",
+      "long-dash"
+    ],
+    "requireTextLegend": true,
+    "warning": "Use labels, units and line styles. Colour never carries meaning alone."
+  }
+}

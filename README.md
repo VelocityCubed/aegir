@@ -14,7 +14,7 @@ This is **source-available, not OSI open source**. See [licensing details](docs/
 
 ## Run from source
 
-Open `release/AEONFORGE-Aegir-0.5.0-x64.exe` after packaging, or use the unpacked executable in `release/win-unpacked/`. Install the optional CadQuery runtime with the setup command below if STEP export is needed. Generated binaries and private runtime profiles are excluded from this repository.
+Open `release/AEONFORGE-Aegir-0.6.0-x64.exe` after packaging, or use the unpacked executable in `release/win-unpacked/`. Install the optional CadQuery runtime with the setup command below if STEP export is needed. Generated binaries and private runtime profiles are excluded from this repository.
 
 From source (Node 22.12+):
 
@@ -34,13 +34,18 @@ For development with hot reload: `npm run dev:desktop`. For a browser-only previ
 
 ## Design workflow
 
-1. Open **Driver parameters**. Enter Fs (Hz), Qes, Qms, Vas (litres), Re (ohms), Le (mH), Sd (cm²), Xmax (one-way peak mm), and physical cutout/frame/depth (mm). Add a source note, then save the driver to your local library. Driver JSON import/export is supported.
-2. On **Design studio**, choose line length, area/Sd ratio, pass count, lane width, board thickness, driver position and loss assumption. Depth follows the section area. The round driver opening stays in the first lane. Geometry problems are explained in the inspector. Use **Edit baffles & wave route** to freeze the generated cabinet into editable physical boards, then adjust endpoints, outer dimensions, mouth and route or trace the clear cavity. Add front/back driver sources with independent T/S data, position, phase and voltage.
-3. Inspect total SPL, cone/mouth components, impedance, peak excursion, peak mouth velocity and group delay. Hover over a plot for values. The Design studio pressure probe shows normalized pressure along the line; its moving dots indicate route direction. Open **Wave propagation** for a calculated 3D time-domain field, reflections/interference, pressure/velocity/intensity playback and driver loading. See [the field guide](docs/SPATIAL-FIELD.md).
-4. Save **comparisons** (four quick slots in the GUI, up to 32 stored studies through MCP), then change the driver or geometry and overlay the response. Saved studies can be restored. Comparison snapshots and custom drivers are stored locally on this device.
-5. In **Optimisation**, define your band and maximum cabinet size. The local worker searches 1,000 reproducible candidates, refines the better ones, rejects fit/size violations and ranks up to six alternatives. Apply one and inspect its results. The score is explicit, approximate and not proof of a global optimum.
-6. In **Build & export**, review the panel schedule. Export a ZIP or STEP assembly. Save the project JSON for a portable design record; autosave alone stays on this device.
-7. Make a prototype, measure impedance and frequency response, and tune damping. Prototype validation is part of the engineering workflow.
+The default workspace is guided. **Advanced tools** keeps the full engineering controls available and remembers your preference.
+
+1. Open **Guided setup**. Keep the current driver, choose a clearly marked synthetic example, use a saved driver, or enter all measured/manufacturer data. Setup is a draft: cancel leaves the project unchanged.
+2. Shape the cabinet with the live preview. Existing custom baffles, mouths, routes and other drivers are retained unless you explicitly choose a generated replacement. Review the fit before applying. A concurrent project edit cannot be silently overwritten.
+3. On **Design**, inspect the cabinet and frequency response. **Choose or edit driver** and **Adjust cabinet** reopen the relevant setup step. Save comparisons to inspect alternatives. Use Advanced tools for individual baffles, routes, mounts, phase and full T/S controls.
+4. On **Explore waves**, choose pulse or tone and frequency, then run a study and press Play. A completed study prioritizes the model; expand **Study settings** to change the calculation. The signed-pressure legend, optional air motion and **What am I seeing?** explain playback. **Appearance & playback** adjusts opacity, pressure-front shading and drawing quality without changing raw acoustic results. See [the field guide](docs/SPATIAL-FIELD.md).
+5. On **Refine**, set the target band and size limits, find bounded candidates, then compare the trade-offs before applying one. Older wave studies keep their original geometry. Search scores are explicit and do not prove a global optimum.
+6. On **Build & export**, review the panels and export the manufacturing ZIP, or optional STEP solids. Save the project JSON as a portable record. Add CAM settings, joinery and hardware in your fabrication workflow, then prototype and measure.
+
+**Help** opens a searchable side panel you can read while working. **Learn** provides short walkthroughs and model limitations; it never starts a tour or blocks the workspace automatically.
+
+![Guided design workspace with the supplied ÆONFORGE identity](docs/media/guided-design.png)
 
 ## Export contents
 
@@ -117,7 +122,7 @@ visible motion multiplier is adjustable; physical readouts and sound pressure
 remain unchanged. Basket/magnet shapes are illustrative, with no new acoustic
 obstructions or fabrication parts implied.
 
-Version 0.5.0 adds full-volume pressure rendering, equal-pressure fronts, slice
+Version 0.6.0 adds full-volume pressure rendering, equal-pressure fronts, slice
 contours, smooth physical-time playback and optional air-parcel motion from the
 calculated velocity. Adaptive drawing quality and asynchronous GPU timing help
 keep the view responsive while the numerical grid/time step stay fixed. Record
@@ -149,4 +154,4 @@ Or pass a custom-layout `.aegir.json` path. The script checks analytic resonance
 
 ## Aegir identity and existing designs
 
-Version 0.2.0 brings the ÆONFORGE / ÆGIR name, dark steel/silver interface, cold-water data accents and original angular A/flow emblem. See [brand notes](docs/BRAND.md). Existing WaveLab project JSON, autosaved work, driver libraries and saved comparisons remain compatible. Internal storage identifiers are intentionally retained so a visual rename does not lose your work.
+Version 0.6.0 uses the supplied ÆONFORGE brand pack v3 identity, local fonts and restrained tide/iron palette. See [brand notes](docs/BRAND.md) and [guided workflow verification](docs/UX-REDESIGN.md). Existing WaveLab/Aegir projects, autosaves, driver libraries, comparisons and field recordings remain compatible; internal storage identifiers are retained.

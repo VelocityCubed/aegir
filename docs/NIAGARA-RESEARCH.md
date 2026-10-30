@@ -86,3 +86,7 @@ rendering changes should pass the existing acoustic observer-invariance and
 CPU/GPU parity checks, as well as visual checks. Improving physical accuracy
 still requires mesh/padding convergence and comparison with an independent
 solver or measurements.
+
+## Implemented in 0.6.0
+
+The pressure transfer controls and optional gradient shading described above are implemented in the Electron renderer, using calculated pressure only. Opacity, mapping and shading do not change the raw field, sign, timestamps or fixed pressure range. The guided UI explains the signed colours and distinguishes local air motion from wave travel. No Unreal runtime, Epic source or smoke dynamics are included. See [the guided workflow](UX-REDESIGN.md) and [field guide](SPATIAL-FIELD.md).

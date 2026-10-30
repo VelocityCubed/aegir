@@ -1,13 +1,6 @@
 /** Stable source colours shared by the 3D models, slice markers and readouts. */
 export const driverColours = [
-  "#93d9e9",
-  "#f5b67d",
-  "#c5a2ec",
-  "#a6dc9e",
-  "#ef9bb6",
-  "#ede18b",
-  "#8cb7f0",
-  "#a9d8c7",
+  "#8cbccb", "#bec5c9", "#7795ac", "#92a99d", "#a8a193", "#e7e9e8", "#648694", "#a7b0b7",
 ];
 export const driverColour = (index: number) =>
   driverColours[index % driverColours.length];

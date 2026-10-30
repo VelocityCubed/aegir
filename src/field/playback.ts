@@ -1,8 +1,7 @@
 import type { FieldResult } from "./types";
 import type { FieldMetric } from "./pixels";
 import { fieldScale } from "./pixels";
-const cool = [96, 193, 234],
-  warm = [244, 172, 127];
+import { pressureAlpha, negativePressure as cool, positivePressure as warm } from "./transfer";
 export function frameBlend(
   result: FieldResult,
   frame: number,
@@ -28,7 +27,7 @@ export class PlanePlayback {
     this.samples = new Float32Array(n * 4);
     this.pixels = new Uint8ClampedArray(n * 4);
   }
-  update(frame: number, metric: FieldMetric, range = 0, interpolate = true) {
+  update(frame: number, metric: FieldMetric, range = 0, interpolate = true, opacity = 1, curve: "linear" | "soft" = "soft") {
     const { a, b, mix } = frameBlend(this.result, frame, interpolate),
       n = this.result.mask.length,
       stride = n * 4,
@@ -59,7 +58,7 @@ export class PlanePlayback {
       const colour = metric === "pressure" && value < 0 ? cool : warm;
       for (let c = 0; c < 3; c++)
         this.pixels[at + c] = Math.round(12 * (1 - t) + colour[c] * t);
-      this.pixels[at + 3] = Math.round(18 + 225 * Math.sqrt(t));
+      this.pixels[at + 3] = Math.round(255 * pressureAlpha(t, opacity, curve));
     }
     return this;
   }

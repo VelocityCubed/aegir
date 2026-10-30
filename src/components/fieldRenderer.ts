@@ -14,30 +14,36 @@ export interface FieldDisplay {
   particles: boolean;
   particleScale: number;
   interpolation: boolean;
+  opacity: number;
+  pressureCurve: "linear" | "soft";
+  frontShading: boolean;
 }
 const vertex = `out vec2 vUv; out vec3 vWorld;
 void main(){vUv=uv;vWorld=(modelMatrix*vec4(position,1.0)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
-const colours = `vec3 pressureColour(float p){return p<0.0?vec3(.30,.73,.95):vec3(.98,.57,.29);}`;
+const colours = `vec3 pressureColour(float p){return p<0.0?vec3(.549,.737,.796):vec3(.745,.773,.788);}`;
 const planeFragment = `precision highp float;
 uniform sampler2D uA;uniform sampler2D uB;uniform sampler2D uMask;
-uniform float uMix;uniform float uScale;uniform float uRhoC;uniform int uMetric;uniform bool uContours;
+uniform float uMix;uniform float uScale;uniform float uRhoC;uniform int uMetric;uniform bool uContours;uniform float uOpacity;uniform bool uSoft;
 in vec2 vUv;out vec4 outColour;
 ${colours}
 void main(){if(texture(uMask,vUv).r<.5)discard;vec4 s=mix(texture(uA,vUv),texture(uB,vUv),uMix);
 float speed=length(s.yzw);float value=uMetric==0?s.x:uMetric==1?speed:abs(s.x)*speed;
 float q=clamp(abs(value)/uScale,0.0,1.0);vec3 col=mix(vec3(.045,.065,.08),pressureColour(value),q);
-float alpha=.025+.8*sqrt(q);
+float alpha=clamp((.025+.8*(uSoft?sqrt(q):q))*uOpacity,0.0,1.0);
 if(uContours&&uMetric==0){float level=s.x/uScale*4.0;float distance=abs(level-round(level));
 float line=1.0-smoothstep(max(fwidth(level)*.7,.006),max(fwidth(level)*1.5,.012),distance);
-line*=smoothstep(.0001,.002,fwidth(level));float activity=smoothstep(.015,.10,(abs(s.x)+uRhoC*speed)/uScale);col=mix(col,vec3(.86,.94,.98),line*activity*.65);alpha=max(alpha,line*activity*.6);}
+line*=smoothstep(.0001,.002,fwidth(level));float activity=smoothstep(.015,.10,(abs(s.x)+uRhoC*speed)/uScale);col=mix(col,vec3(.86,.94,.98),line*activity*.65);alpha=max(alpha,clamp(line*activity*.6*uOpacity,0.0,1.0));}
 outColour=vec4(col,alpha);}`;
 const volumeFragment = `precision highp float;precision highp sampler3D;
 uniform sampler3D uA;uniform sampler3D uB;uniform sampler3D uMask;uniform sampler2D uDepth;
 uniform vec3 uMin;uniform vec3 uMax;uniform vec3 uCamera;uniform vec2 uViewport;
 uniform mat4 uProjectionInverse;uniform mat4 uCameraWorld;
-uniform float uMix;uniform float uScale;uniform float uPitch;uniform int uSteps;uniform bool uFronts;
+uniform float uMix;uniform float uScale;uniform float uPitch;uniform int uSteps;uniform bool uFronts;uniform float uOpacity;uniform bool uSoft;uniform bool uShade;uniform vec3 uTexel;
 in vec3 vWorld;out vec4 outColour;
 ${colours}
+float samplePressure(vec3 uv){return mix(texture(uA,uv).r,texture(uB,uv).r,uMix);}
+float neighbour(vec3 uv,float center){return texture(uMask,uv).r<.5?center:samplePressure(uv);}
+vec3 pressureGradient(vec3 uv,float p){return vec3(neighbour(uv+vec3(uTexel.x,0,0),p)-neighbour(uv-vec3(uTexel.x,0,0),p),neighbour(uv+vec3(0,uTexel.y,0),p)-neighbour(uv-vec3(0,uTexel.y,0),p),neighbour(uv+vec3(0,0,uTexel.z),p)-neighbour(uv-vec3(0,0,uTexel.z),p));}
 void main(){vec3 rd=normalize(vWorld-uCamera);vec3 safe=sign(rd)*max(abs(rd),vec3(1e-7));safe+=vec3(equal(safe,vec3(0.0)))*1e-7;
 vec3 a=(uMin-uCamera)/safe,b=(uMax-uCamera)/safe;vec3 lo=min(a,b),hi=max(a,b);
 float begin=max(max(lo.x,lo.y),max(lo.z,0.0));float end=min(min(hi.x,hi.y),hi.z);
@@ -48,11 +54,11 @@ float jitter=fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453);
 float previous=0.0;bool previousAir=false;
 for(int i=0;i<160;i++){if(i>=uSteps||accum.a>.97)break;float t=begin+(float(i)+.25+.5*jitter)*ds;
 vec3 uv=(uCamera+t*rd-uMin)/(uMax-uMin);if(texture(uMask,uv).r<.5){previousAir=false;continue;}
-float p=mix(texture(uA,uv).r,texture(uB,uv).r,uMix);float q=abs(p)/uScale;
-float density=smoothstep(.025,.8,q)*.12;
+float p=samplePressure(uv);float q=abs(p)/uScale;
+float density=smoothstep(.025,.8,uSoft?sqrt(q):q)*.12;
 if(uFronts){float level=.35;bool crossing=previousAir&&((p/uScale-level)*(previous-level)<0.0||(p/uScale+level)*(previous+level)<0.0);density=crossing?.75:exp(-pow((q-level)/.055,2.0))*.10;}
-float alpha=1.0-exp(-density*ds/uPitch);if(uFronts&&density>.5)alpha=.65;
-vec3 colour=pressureColour(p);accum.rgb+=(1.0-accum.a)*alpha*colour;accum.a+=(1.0-accum.a)*alpha;
+float alpha=1.0-exp(-density*uOpacity*ds/uPitch);if(uFronts&&density>.5)alpha=1.0-pow(.35,uOpacity);
+vec3 colour=pressureColour(p);if(uShade&&uFronts&&alpha>.01){vec3 grad=pressureGradient(uv,p);float len=length(grad);if(len>uScale*1e-8)colour*=.58+.42*abs(dot(grad/len,normalize(vec3(.4,.8,-.4))));}accum.rgb+=(1.0-accum.a)*alpha*colour;accum.a+=(1.0-accum.a)*alpha;
 previous=p/uScale;previousAir=true;}
 if(accum.a<.002)discard;outColour=vec4(accum.rgb/max(accum.a,1e-6),accum.a);}`;
 
@@ -154,6 +160,8 @@ export class FieldRenderer {
         uRhoC: { value: result.meta.rho * result.meta.c },
         uMetric: { value: 0 },
         uContours: { value: true },
+        uOpacity: { value: 1 },
+        uSoft: { value: true },
       },
       transparent: true,
       depthWrite: false,
@@ -221,6 +229,18 @@ export class FieldRenderer {
           uPitch: { value: volume.pitchMm },
           uSteps: { value: 96 },
           uFronts: { value: false },
+          uOpacity: { value: 1 },
+          uSoft: { value: true },
+          uShade: { value: true },
+          uTexel: {
+            value: new THREE.Vector3(
+              ...(volume.dimensions.map((n) => 1 / n) as [
+                number,
+                number,
+                number,
+              ]),
+            ),
+          },
         },
         transparent: true,
         depthTest: false,
@@ -334,6 +354,8 @@ export class FieldRenderer {
       "intensity",
     ].indexOf(display.metric);
     planeMat.uniforms.uContours.value = display.contours;
+    planeMat.uniforms.uOpacity.value = display.opacity;
+    planeMat.uniforms.uSoft.value = display.pressureCurve === "soft";
     const volumeVisible = Boolean(
       this.cube &&
       display.displayMode !== "slice" &&
@@ -350,6 +372,9 @@ export class FieldRenderer {
         display.range,
       );
       mat.uniforms.uFronts.value = display.displayMode === "fronts";
+      mat.uniforms.uOpacity.value = display.opacity;
+      mat.uniforms.uSoft.value = display.pressureCurve === "soft";
+      mat.uniforms.uShade.value = display.frontShading;
     }
     this.points.visible = this.lines.visible =
       display.particles && Boolean(meta.particles);

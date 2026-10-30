@@ -13,6 +13,33 @@ import { PressureContours } from "../src/field/contours";
 import type { FieldResult } from "../src/field/types";
 
 describe("physical field visualization", () => {
+  it("changes visibility without changing signed samples, zero crossings or timestamp", () => {
+    const result = {
+      meta: { times: [0.001, 0.003], pressureScale: 2, rho: 1, c: 1 },
+      mask: new Uint8Array([1, 1, 1]),
+      data: new Float32Array([
+        1, 2, 0, 0, -1, -2, 0, 0, 0, 4, 0, 0, 1, 2, 0, 0, -1, -2, 0, 0, 0, 4, 0,
+        0,
+      ]),
+    } as unknown as FieldResult;
+    const before = result.data.slice(),
+      play = new PlanePlayback(result);
+    play.update(0.5, "pressure", 2, true, 1, "linear");
+    const raw = play.samples.slice(),
+      linear = play.pixels.slice();
+    expect(linear[3]).toBe(linear[7]);
+    expect(play.samples[8]).toBe(0);
+    play.update(0.5, "pressure", 2, true, 1, "soft");
+    expect(play.pixels[3]).toBeGreaterThan(linear[3]);
+    expect(play.pixels[3]).toBe(play.pixels[7]);
+    play.update(0.5, "pressure", 2, true, 0, "soft");
+    expect([play.pixels[3], play.pixels[7], play.pixels[11]]).toEqual([
+      0, 0, 0,
+    ]);
+    expect(play.samples).toEqual(raw);
+    expect(result.data).toEqual(before);
+    expect(frameBlend(result, 0.5).time).toBe(0.002);
+  });
   it("records a 3D pressure volume and parcel displacements without changing the acoustic solution", async () => {
     const settings = {
       cellMm: 30,

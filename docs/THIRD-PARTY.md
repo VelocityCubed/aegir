@@ -12,3 +12,11 @@ Original application code is governed by the custom AEGIR Personal Use and Contr
 - @modelcontextprotocol/core 2.4.0 — Apache-2.0: [licence](licenses/@modelcontextprotocol-core-LICENSE.txt)
 - scheduler 0.28.0 — MIT: [licence](licenses/scheduler-LICENSE.txt)
 - zod 4.6.7 — MIT: [licence](licenses/zod-LICENSE.txt)
+
+## Bundled fonts
+
+Unmodified fonts supplied with the ÆONFORGE brand pack retain the SIL Open Font License 1.1.
+
+- inter — SIL OFL 1.1: [licence](licenses/inter-OFL.txt)
+- space-grotesk — SIL OFL 1.1: [licence](licenses/space-grotesk-OFL.txt)
+- jetbrains-mono — SIL OFL 1.1: [licence](licenses/jetbrains-mono-OFL.txt)

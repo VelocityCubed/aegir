@@ -14,8 +14,9 @@ try {
   await app.evaluate(({dialog},out)=>{dialog.showSaveDialog=async(_win,options)=>({canceled:false,filePath:out+'/'+options.defaultPath.split(/[\\/]/).at(-1)});dialog.showOpenDialog=async()=>({canceled:false,filePaths:[out+'/design.aegir.json']});},out);
   const page=await app.firstWindow();page.on('pageerror',e=>errors.push(e.message));
   assert.match(await page.title(),/ÆGIR/);
-  await page.locator('.brand-wordmark').getByText('ÆGIR',{exact:true}).waitFor();
-  await page.getByRole('heading',{name:'A quarter wave. A world of possibilities.'}).waitFor();
+  await page.getByRole('img',{name:'Aegir by Aeonforge',exact:true}).waitFor();
+  await page.getByRole('button',{name:'Advanced tools',exact:true}).click();
+  await page.getByRole('heading',{name:'Design explorer'}).waitFor();
   await page.locator('.three-mount canvas').waitFor();
   await page.waitForTimeout(1500);await page.screenshot({path:join(out,'studio.png'),fullPage:true});
   assert.equal(await page.getByText('Driver and panels fit',{exact:true}).count(),1);
@@ -31,7 +32,7 @@ try {
   await page.getByRole('button',{name:'Save project',exact:true}).click();
   const saved=JSON.parse(await readFile(join(out,'design.aegir.json'),'utf8'));assert.equal(saved.driver.qes,.47);
   await page.reload();await page.getByRole('button',{name:'Driver parameters',exact:true}).click();assert.equal(await page.getByLabel('Electrical Q · Qes',{exact:true}).inputValue(),'0.47');
-  await page.getByRole('button',{name:'Optimisation',exact:true}).click();
+  await page.getByRole('button',{name:'Refine',exact:true}).click();
   await page.getByRole('button',{name:'Run optimisation',exact:true}).click();
   await page.getByRole('button',{name:'Use this design',exact:true}).first().waitFor({timeout:45000});
   assert.ok(await page.locator('.candidate-card').count()>0);await page.screenshot({path:join(out,'optimisation.png'),fullPage:true});
@@ -46,9 +47,9 @@ try {
   await page.getByRole('status').filter({hasText:'STEP assembly exported.'}).waitFor({timeout:120000});
   assert.ok((await stat(join(out,'enclosure.step'))).size>5000);
   await page.screenshot({path:join(out,'build.png'),fullPage:true});
-  await page.getByRole('button',{name:'Research & method',exact:true}).click();await page.getByRole('heading',{name:'Physics first. Open tools throughout.',exact:true}).waitFor();
+  await page.getByRole('button',{name:'Learn',exact:true}).click();await page.getByRole('heading',{name:'Physics first. Open tools throughout.',exact:true}).waitFor();
   await page.getByRole('button',{name:'Open',exact:true}).click();
-  await page.getByRole('button',{name:'Design studio',exact:false}).click();
+  await page.getByRole('button',{name:'Design',exact:false}).click();
   await page.getByRole('button',{name:'Driver parameters',exact:true}).click();assert.equal(await page.getByLabel('Electrical Q · Qes',{exact:true}).inputValue(),'0.47');
   await page.getByRole('button',{name:'Enclosure',exact:true}).click();
   await page.getByLabel('Lane width',{exact:true}).fill('100');await page.getByLabel('Lane width',{exact:true}).press('Tab');

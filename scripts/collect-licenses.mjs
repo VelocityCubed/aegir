@@ -10,5 +10,7 @@ for(const name of deps){
   await writeFile('docs/licenses/'+target,await readFile(dir+'/'+file));
   notices+=`- ${name} ${pkg.version} — ${pkg.license}: [licence](licenses/${target})\n`;
 }
+notices+='\n## Bundled fonts\n\nUnmodified fonts supplied with the ÆONFORGE brand pack retain the SIL Open Font License 1.1.\n\n';
+for(const name of ['inter','space-grotesk','jetbrains-mono']){const target=name+'-OFL.txt';await writeFile('docs/licenses/'+target,await readFile('public/fonts/'+target));notices+=`- ${name} — SIL OFL 1.1: [licence](licenses/${target})\n`;}
 await writeFile('docs/THIRD-PARTY.md',notices);
 console.log('Collected upstream notices.');
