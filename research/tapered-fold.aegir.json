@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "name": "Agent-designed tapered fold",
+  "driver": {
+    "id": "demo-165",
+    "name": "Studio 165 \u00b7 example",
+    "note": "Synthetic 6\u00bd-inch woofer. Replace with measured or manufacturer T/S data before building.",
+    "fs": 38,
+    "qes": 0.42,
+    "qms": 4.8,
+    "vas": 24,
+    "re": 5.8,
+    "le": 0.45,
+    "sd": 132,
+    "xmax": 5,
+    "cutout": 145,
+    "frame": 176,
+    "depth": 85
+  },
+  "design": {
+    "length": 2.2,
+    "areaRatio": 2.6,
+    "laneWidth": 180,
+    "folds": 2,
+    "thickness": 18,
+    "driverPosition": 0.16,
+    "damping": 0.65,
+    "voltage": 2.83,
+    "temperature": 20
+  },
+  "targets": {
+    "low": 40,
+    "high": 200,
+    "maxHeight": 1250,
+    "maxWidth": 650,
+    "maxDepth": 500,
+    "minLength": 1.2,
+    "maxLength": 3,
+    "maxVelocity": 17
+  },
+  "layout": {
+    "width": 414,
+    "height": 1127,
+    "depth": 226.66666666666666,
+    "baffles": [
+      {
+        "id": "baffle-1",
+        "label": "Baffle 1",
+        "start": [
+          209,
+          180
+        ],
+        "end": [
+          189,
+          1091
+        ],
+        "thickness": 18
+      }
+    ],
+    "route": [
+      [
+        90,
+        1091
+      ],
+      [
+        90.5625,
+        680.8795620437957
+      ],
+      [
+        98.4375,
+        664.9525547445255
+      ],
+      [
+        98.4375,
+        250.85036496350364
+      ],
+      [
+        192.9375,
+        155.28832116788323
+      ],
+      [
+        224.4375,
+        155.28832116788323
+      ],
+      [
+        287.4375,
+        218.9963503649635
+      ],
+      [
+        288,
+        1091
+      ]
+    ],
+    "mouth": {
+      "side": "top",
+      "offset": 288,
+      "width": 180
+    }
+  },
+  "mounts": [
+    {
+      "id": "primary",
+      "driver": {
+        "id": "demo-165",
+        "name": "Studio 165 \u00b7 example",
+        "note": "Synthetic 6\u00bd-inch woofer. Replace with measured or manufacturer T/S data before building.",
+        "fs": 38,
+        "qes": 0.42,
+        "qms": 4.8,
+        "vas": 24,
+        "re": 5.8,
+        "le": 0.45,
+        "sd": 132,
+        "xmax": 5,
+        "cutout": 145,
+        "frame": 176,
+        "depth": 85
+      },
+      "position": 0.16,
+      "face": "front",
+      "voltageScale": 1,
+      "phase": 0
+    },
+    {
+      "id": "secondary",
+      "driver": {
+        "id": "acceptance-secondary",
+        "name": "Synthetic acceptance secondary",
+        "note": "Synthetic 6\u00bd-inch woofer. Replace with measured or manufacturer T/S data before building.",
+        "fs": 38,
+        "qes": 0.42,
+        "qms": 4.8,
+        "vas": 24,
+        "re": 5.8,
+        "le": 0.45,
+        "sd": 132,
+        "xmax": 2.5,
+        "cutout": 145,
+        "frame": 176,
+        "depth": 85
+      },
+      "position": 0.75,
+      "face": "front",
+      "voltageScale": 0.8,
+      "phase": 0
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+AEGIR Personal Use and Contribution-Back License
+Version 1.0, 30 October 2026
+Local identifier: LicenseRef-AEGIR-Personal-Use-Contribution-Back-1.0
+
+Copyright (c) 2026 Aeonforge contributors.
+Upstream Project: https://github.com/VelocityCubed/aegir
+
+This is a custom source-available licence, not an OSI-approved open-source
+licence. Personal noncommercial use only; contribution back is mandatory for
+modifications and purpose-built integrations.
+
+1. SCOPE AND DEFINITIONS
+
+"Software" means project-owned source, documentation, original artwork and
+other material supplied under these terms, including modified versions.
+Separately identified third-party material is excluded. "Licensor" means the
+copyright holders offering this material. "You" means the individual exercising
+these permissions. "Upstream" means the Upstream Project above or its publicly
+designated successor maintained by the project maintainers.
+
+"Personal Noncommercial Use" means use by a natural person in their individual
+capacity for private study, experimentation, education, entertainment or hobby
+activities, without an anticipated commercial purpose or direct or indirect
+commercial advantage. It excludes use on behalf of an employer, client,
+business or other organisation, even if the Software itself is not sold.
+
+"Modification" means any change, adaptation, patch, translation, port or
+derivative work of the Software. "Integration" means code You create or adapt
+specifically to embed, link, wrap, extend or expose its functionality, including
+purpose-built plugins, connectors and API, MCP or IPC adapters. Merely running
+unmodified general-purpose operating systems, browsers, editors, build tools,
+CAD tools or MCP clients alongside it is not an Integration. Ordinary project
+files, driver data, measurements, prompts and generated designs are not
+Modifications or Integrations merely because the Software processes them.
+
+"Corresponding Source" means the preferred form for modifying all of Your
+Modifications and Integration code, including relevant changes to a containing
+application You author or control, necessary build scripts, dependency/version
+information and reproduction instructions. It excludes unrelated independent
+components, separately licensed third-party components, credentials, personal
+information and user data. Supply configuration templates instead of secrets.
+
+2. LIMITED PERMISSION
+
+Subject to every condition below, Licensor grants You nonexclusive, worldwide,
+royalty-free permission to obtain, run, study, copy and modify the Software,
+create Integrations and redistribute it solely for Personal Noncommercial Use.
+Redistribution must be without charge, preserve these terms and attribution,
+identify changes and supply Corresponding Source under this same licence.
+Recipients receive permission from Licensor under these terms. You may not
+offer project-owned code on more permissive terms.
+
+3. NO COMMERCIAL OR ORGANISATIONAL USE
+
+These permissions exclude commercial use or redistribution, internal business
+use, paid or business-related services, consulting, SaaS, commercial research
+or development, and using the Software to design or produce goods or designs
+intended for sale. An organisation's use is not permitted merely because it is
+nonprofit, educational or publicly funded. Such use requires separate written
+permission from the relevant rights holders. Public source availability does
+not imply commercial permission.
+
+4. MANDATORY PUBLICATION AND UPSTREAM SUBMISSION
+
+For every Modification or Integration, You must commit and publish complete
+Corresponding Source in a publicly readable repository, without a paywall,
+under this same licence, and submit it to Upstream as a pull request with an
+intelligible description, reproduction instructions and the public source URL.
+Preserve copyright/licence notices and identify Your changes.
+
+These duties apply even if You keep the work for personal use and do not
+distribute it. Complete them before use beyond local development/testing,
+before redistribution or making the work available to another person, and
+in every case within 30 calendar days of making the Modification/Integration.
+Local development/testing within that period is permitted only for Personal
+Noncommercial Use and does not waive the duty to contribute.
+
+A public fork and PR satisfy submission; direct write access is not required.
+Maintainers need not review, accept or merge Your proposal. Submission is not
+endorsement. Keep Corresponding Source publicly available for as long as You
+use or distribute the affected work. If Upstream is unavailable or technically
+cannot accept PRs, publish source and a patch/integration proposal in Your
+public repository, record the unavailable submission, and submit when Upstream
+becomes available. Public publication remains required. A declined, closed or
+unavailable PR never grants a permanent right to keep changes private.
+
+5. CONTRIBUTIONS AND MAINTENANCE
+
+Contribute only material You have the right to license. Submission licenses
+Your contribution to recipients under these terms and grants Upstream
+maintainers an irrevocable, worldwide, royalty-free copyright permission to
+incorporate, run, test, modify, maintain, publish and redistribute it as part of
+this project under this same licence. Maintainers may act for the project
+organisation. This grants neither general commercial-use permission nor
+permission to relicense Your contribution commercially. You retain ownership;
+no copyright assignment is required. Separately identified third-party material
+retains its own licence and must be compatible with its proposed use.
+
+6. THIRD-PARTY MATERIAL, OUTPUTS AND BRANDING
+
+Restrictions apply only to rights Licensor can grant in project-owned material.
+Third-party code/assets retain their own licences and notices; nothing here
+removes rights their authors independently grant. See docs/THIRD-PARTY.md.
+
+You retain rights in independent user data and generated designs. Ordinary
+generated CAD, mesh, numerical and report files do not trigger contribution
+back. Licensor permits use and sharing of project-owned boilerplate emitted
+automatically into such outputs as part of those outputs without that duty.
+This exception does not authorise commercial use of the Software or copying
+its implementation into another application.
+
+No general trademark permission is granted. Reasonable attribution and display
+of the original identity in permitted copies are allowed. Clearly identify
+modified versions; do not suggest endorsement of a fork or integration.
+
+7. TERMINATION AND OTHER RIGHTS
+
+Permissions end automatically on violation. Reinstatement requires written
+permission from relevant rights holders. Do not remove notices or purport to
+grant prohibited rights. Nothing restricts rights applicable law gives You
+without permission. No patent permission is granted beyond any permission
+Licensor expressly grants separately. No rights in others' works are implied.
+This licence applies to copies carrying it and does not revoke rights already
+validly granted in copies previously supplied under another licence.
+
+8. NO WARRANTY OR LIABILITY
+
+TO THE EXTENT PERMITTED BY LAW, THE SOFTWARE IS PROVIDED "AS IS", WITHOUT EXPRESS
+OR IMPLIED WARRANTIES, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE OR NONINFRINGEMENT. LICENSOR AND CONTRIBUTORS ARE NOT LIABLE FOR
+CLAIMS, DAMAGES OR OTHER LIABILITY ARISING FROM THE SOFTWARE OR ITS USE,
+WHETHER IN CONTRACT, TORT OR OTHERWISE. Predictions and fabrication exports
+are not a warranty of physical performance or safety.

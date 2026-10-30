@@ -1,0 +1,30 @@
+{
+  "checks": {
+    "rigid_tube_frequency_hz": 214.3662018445718,
+    "analytic_frequency_hz": 214.375,
+    "relative_frequency_error": 4.1040958265625704e-05,
+    "rigid_closed_grid_max_energy_drift": 4.440892098500626e-16,
+    "pml_test_remaining_energy_fraction": 3.0362643405045744e-07,
+    "two_source_superposition_max_error": 1.2212453270876722e-15,
+    "opposite_phase_symmetry_plane_peak": 0.0,
+    "same_phase_symmetry_plane_peak": 0.49685072534605307,
+    "limits": "PML energy decay is a screening check, not an oblique/low-frequency reflection coefficient bound."
+  },
+  "grid": [
+    248,
+    129
+  ],
+  "cell_mm": 6.0,
+  "time_step_seconds": 1.0513832606563826e-05,
+  "physical_duration_seconds": 0.026,
+  "cpu_solver_seconds": 1.2035126999981003,
+  "frames": 99,
+  "source_centre_hz": 700.0,
+  "limitations": [
+    "Research prototype only; not integrated with app or MCP.",
+    "Depth-averaged 2D; exterior spreading differs from 3D.",
+    "Prescribed primary volume source; no T/S feedback or secondary-source drive.",
+    "Rigid walls and no stuffing; voxel staircasing has not undergone cabinet mesh-convergence validation.",
+    "Fixed normalized pressure colour scale; near-source values clipped."
+  ]
+}
