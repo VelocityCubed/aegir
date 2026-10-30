@@ -4,7 +4,11 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RotateCcw, Layers, Move3D, Route, Maximize2 } from "lucide-react";
 import { panelGeometry } from "../core/meshes";
 import type { Geometry, Driver } from "../core/types";
-import type { FieldMeta } from "../field/types";
+import {
+  FieldRenderer,
+  RenderBudget,
+  type FieldDisplay,
+} from "./fieldRenderer";
 import type { ViewState } from "../agent/contracts";
 import {
   createDriverModel,
@@ -23,16 +27,16 @@ export function ModelView({
   driver: Driver;
   view?: ViewState;
   onViewChange?: (patch: Partial<ViewState>) => void;
-  fieldOverlay?: {
+  fieldOverlay?: FieldDisplay & {
     key: string;
-    plane: FieldMeta["plane"];
-    pixels: Uint8Array;
     drivers: DriverMotion[];
     motionScale: number;
     showDrivers: boolean;
+    renderQuality: "auto" | "high" | "low";
   };
 }) {
-  const fieldTexture = useRef<THREE.DataTexture | null>(null);
+  const fieldRenderer = useRef<FieldRenderer | null>(null),
+    stats = useRef<HTMLDivElement>(null);
   const driverModels = useRef<DriverModel[]>([]),
     latestField = useRef(fieldOverlay);
   latestField.current = fieldOverlay;
@@ -87,17 +91,8 @@ export function ModelView({
     controls.enableDamping = true;
     controls.target.set(g.width / 2, g.height / 2, g.depth / 2);
     const fit = () => {
-      const size = Math.max(
-        g.height,
-        g.width,
-        g.depth,
-        fieldOverlay
-          ? fieldOverlay.plane.width * fieldOverlay.plane.pitchMm
-          : 0,
-        fieldOverlay
-          ? fieldOverlay.plane.height * fieldOverlay.plane.pitchMm
-          : 0,
-      );
+      const size =
+        Math.max(g.height, g.width, g.depth) * (fieldOverlay ? 1.1 : 1);
       camera.position.set(
         g.width / 2 - size * 0.8,
         g.height / 2 + size * 0.42,
@@ -186,41 +181,20 @@ export function ModelView({
       latestField.current?.showDrivers,
     );
     if (fieldOverlay) {
-      const { plane, pixels } = fieldOverlay,
-        texture = new THREE.DataTexture(
-          pixels.slice(),
-          plane.width,
-          plane.height,
-          THREE.RGBAFormat,
-        );
-      texture.needsUpdate = true;
-      texture.minFilter = THREE.LinearFilter;
-      texture.magFilter = THREE.LinearFilter;
-      fieldTexture.current = texture;
-      const geo = new THREE.PlaneGeometry(
-          plane.width * plane.pitchMm,
-          plane.height * plane.pitchMm,
-        ),
-        mat = new THREE.MeshBasicMaterial({
-          map: texture,
-          transparent: true,
-          depthWrite: false,
-          side: THREE.DoubleSide,
-          toneMapped: false,
-        });
-      const mesh = new THREE.Mesh(geo, mat),
-        u = new THREE.Vector3(...plane.u),
-        v = new THREE.Vector3(...plane.v),
-        normal = u.clone().cross(v);
-      mesh.quaternion.setFromRotationMatrix(
-        new THREE.Matrix4().makeBasis(u, v, normal),
+      fieldRenderer.current = new FieldRenderer(
+        fieldOverlay.result,
+        renderer.extensions.has("OES_texture_float_linear"),
       );
-      mesh.position
-        .set(...plane.originMm)
-        .addScaledVector(u, ((plane.width - 1) * plane.pitchMm) / 2)
-        .addScaledVector(v, ((plane.height - 1) * plane.pitchMm) / 2);
-      scene.add(mesh);
+      fieldRenderer.current.update(fieldOverlay);
+      scene.add(fieldRenderer.current.group);
     }
+    const budget = fieldOverlay ? new RenderBudget(renderer) : null;
+    renderer.debug.onShaderError = (gl, _program, vs, fs) => {
+      const message =
+        (gl.getShaderInfoLog(vs) ?? "") + " " + (gl.getShaderInfoLog(fs) ?? "");
+      setFailure("Field drawing shader failed: " + message);
+      console.error("Field drawing shader failed", message);
+    };
     const pathPoints = g.path.map((p) => new THREE.Vector3(...p));
     const curve = new THREE.CurvePath<THREE.Vector3>();
     pathPoints.forEach((v, i) => {
@@ -285,7 +259,24 @@ export function ModelView({
           curve.getPoint(((performance.now() - start) / 15000 + i / 8) % 1),
         ),
       );
+      const now = performance.now();
+      budget?.begin(now);
+      fieldRenderer.current?.preRender(
+        renderer,
+        scene,
+        camera,
+        budget?.steps ?? 96,
+      );
       renderer.render(scene, camera);
+      const sample = budget?.end(
+        latestField.current?.renderQuality ?? "high",
+        now,
+      );
+      if (sample) {
+        renderer.domElement.dataset.renderStats = JSON.stringify(sample);
+        if (stats.current)
+          stats.current.textContent = `${sample.fps.toFixed(0)} fps · ${sample.gpuMs === null ? "GPU timer unavailable" : sample.gpuMs.toFixed(1) + " ms GPU"} · ${(sample.ratio * 100).toFixed(0)}% pixel ratio · ${sample.steps} volume samples`;
+      }
     };
     animate();
     return () => {
@@ -306,8 +297,9 @@ export function ModelView({
           });
       });
       driverModels.current = [];
-      fieldTexture.current?.dispose();
-      fieldTexture.current = null;
+      fieldRenderer.current?.dispose();
+      fieldRenderer.current = null;
+      budget?.dispose();
       renderer.dispose();
       el.removeChild(renderer.domElement);
     };
@@ -322,12 +314,8 @@ export function ModelView({
     fieldOverlay?.key,
   ]);
   useEffect(() => {
-    const texture = fieldTexture.current;
-    if (texture && fieldOverlay) {
-      (texture.image.data as Uint8Array).set(fieldOverlay.pixels);
-      texture.needsUpdate = true;
-    }
-  }, [fieldOverlay?.pixels]);
+    if (fieldOverlay) fieldRenderer.current?.update(fieldOverlay);
+  }, [fieldOverlay]);
   useEffect(
     () =>
       updateDriverModels(
@@ -404,6 +392,13 @@ export function ModelView({
         </h3>
         <p>{selected || "Drag to orbit · scroll to zoom · click to inspect"}</p>
       </div>
+      {fieldOverlay && (
+        <div
+          className="model-render-stats"
+          aria-label="Field rendering performance"
+          ref={stats}
+        />
+      )}
       <div className="model-scale">
         <span>{g.width.toFixed(0)} W</span>
         <b>×</b>

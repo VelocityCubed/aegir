@@ -1,6 +1,15 @@
 # Control ÆGIR with an agent
 
-Version 0.4.0 exposes the live desktop through a local stdio MCP server. The agent and GUI use the same revisioned workspace; edits appear in the app and survive restart. No API key, cloud account or paid licence is required. Your MCP client supplies the language model; ÆGIR supplies deterministic geometry, physics, search and manufacturing exports.
+Version 0.5.0 exposes the live desktop through a local stdio MCP server. The agent and GUI use the same revisioned workspace; edits appear in the app and survive restart. No API key, cloud account or paid licence is required. Your MCP client supplies the language model; ÆGIR supplies deterministic geometry, physics, search and manufacturing exports.
+
+Spatial studies can record 3D pressure and air displacement with `field_run` settings
+`volume:true` and up to 640 frames. `view_set` accepts fractional `field.frame`
+indices and the display fields `displayMode` (`slice`, `volume`, `fronts`),
+`contours`, `interpolation`, `particles`, `particleScale` and `renderQuality`
+(`auto`, `high`, `low`). These controls affect playback only. Velocity and intensity
+use the recorded plane; volume/fronts require a recording with volume data. See
+the [spatial field guide](SPATIAL-FIELD.md) for units, limitations and examples.
+Reconnect existing MCP clients after upgrading to load the updated tool schemas.
 
 ## Connect
 

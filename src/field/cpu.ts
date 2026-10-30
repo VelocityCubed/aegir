@@ -39,7 +39,9 @@ export class FieldKernel {
   stepIndex = 0;
   constructor(readonly grid: PreparedField) {
     const n = grid.meta.cells;
-    this.state = new Float64Array(8 * n);
+    this.state = new Float64Array(
+      8 * n + 3 * (grid.particleCells?.length ?? 0),
+    );
     [this.p, this.px, this.py, this.pz, this.vx, this.vy, this.vz, this.old] =
       Array.from({ length: 8 }, (_, i) =>
         this.state.subarray(i * n, (i + 1) * n),
@@ -188,7 +190,25 @@ export class FieldKernel {
         m.layout.probeOffset + this.stepIndex * g.probeCells.length + k
       ] = p[g.probeCells[k]];
     const frame = g.recordSteps[this.stepIndex];
+    // Linear acoustics: integrate each small fluid displacement at its fixed
+    // equilibrium position using the existing midpoint velocity. Observation only.
+    for (let k = 0; k < (g.particleCells?.length ?? 0); k++) {
+      const i = g.particleCells![k],
+        a = 8 * m.cells + 3 * k;
+      this.state[a] += dt * 0.5 * (vx[i] + (i % nx ? vx[i - 1] : 0));
+      this.state[a + 1] +=
+        dt * 0.5 * (vy[i] + (Math.floor(i / nx) % ny ? vy[i - nx] : 0));
+      this.state[a + 2] += dt * 0.5 * (vz[i] + (i >= xy ? vz[i - xy] : 0));
+      if (frame !== 0xffffffff)
+        this.data.set(
+          this.state.subarray(a, a + 3),
+          m.particles!.offset + (frame * m.particles!.count + k) * 3,
+        );
+    }
     if (frame !== 0xffffffff) {
+      for (let k = 0; k < (g.volumeCells?.length ?? 0); k++)
+        this.data[m.volume!.offset + frame * m.volume!.cells + k] =
+          p[g.volumeCells![k]];
       // Pressure is at the end step; centre each staggered face velocity in
       // time before spatial interpolation (important for instantaneous p*u).
       const face = (i: number, axis: number) => {
@@ -245,6 +265,19 @@ export function finishField(
       peak = Math.max(peak, p);
       if (i % 3 === 0 && grid.recordMask[i]) levels.push(p);
     }
+  if (meta.volume) {
+    const v = meta.volume;
+    for (let f = 0; f < meta.times.length; f++)
+      for (let k = 0; k < v.cells; k++) {
+        const p = Math.abs(data[v.offset + f * v.cells + k]);
+        if (!Number.isFinite(p))
+          throw Error("Non-finite volume pressure recording.");
+        if (grid.volumeMask?.[k]) {
+          peak = Math.max(peak, p);
+          if (k % 3 === 0) levels.push(p);
+        }
+      }
+  }
   levels.sort((a, b) => a - b);
   meta.pressurePeak = peak;
   meta.pressureScale = Math.max(
@@ -270,7 +303,20 @@ export function finishField(
         `Driver ${meta.sources[d].id} exceeds Xmax during this stimulus (${ex.toFixed(2)} mm). Small-signal predictions need lower voltage.`,
       );
   }
-  return { meta, data, mask: grid.recordMask };
+  if (meta.particles)
+    for (
+      let i = meta.particles.offset;
+      i < meta.particles.offset + meta.particles.count * 3 * meta.times.length;
+      i++
+    )
+      if (!Number.isFinite(data[i]))
+        throw Error("Non-finite parcel displacement recording.");
+  return {
+    meta,
+    data,
+    mask: grid.recordMask,
+    ...(meta.volume ? { volumeMask: grid.volumeMask } : {}),
+  };
 }
 export async function runFieldCpu(
   project: Project,

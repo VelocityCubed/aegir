@@ -17,7 +17,9 @@ import {
   type FieldResult,
   type FieldSettings,
 } from "../field/types";
-import { fieldPixels, fieldScale } from "../field/pixels";
+import { fieldScale } from "../field/pixels";
+import { PlanePlayback, frameBlend } from "../field/playback";
+import { PressureContours } from "../field/contours";
 import { driverMotionAt } from "../field/driverMotion";
 import { driverColour } from "../core/driverVisuals";
 import type { Command, ViewState, WorkspaceState } from "../agent/contracts";
@@ -37,17 +39,19 @@ export function FieldWorkbench({
     selectedJob = jobs.find((j) => j.id === id),
     v = state.view.field;
   const [settings, setSettings] = useState<FieldSettings>({ ...fieldDefaults }),
-    [result, setResult] = useState<FieldResult | null>(null),
+    [loadedResult, setResult] = useState<FieldResult | null>(null),
+    [loadedId, setLoadedId] = useState<string | null>(null),
     [error, setError] = useState(""),
     [loading, setLoading] = useState(false),
     [frame, setFrame] = useState(v.frame),
     [sample, setSample] = useState<number | null>(null),
     [probe, setProbe] = useState(0);
+  const result = loadedId === id ? loadedResult : null;
   const canvas = useRef<HTMLCanvasElement>(null),
     latest = useRef(v),
     currentFrame = useRef(frame);
   latest.current = v;
-  currentFrame.current = frame;
+
   const change = (patch: Partial<ViewState["field"]>) =>
     setView({ field: { ...latest.current, ...patch } });
   useEffect(() => setFrame(v.frame), [v.frame, id]);
@@ -79,7 +83,8 @@ export function FieldWorkbench({
         ),
         field = decodeField(bytes);
       setResult(field);
-      setSettings(field.meta.settings);
+      setLoadedId(id);
+      setSettings({ ...fieldDefaults, ...field.meta.settings });
       setFrame(Math.min(latest.current.frame, field.meta.times.length - 1));
       setSample(null);
     })()
@@ -95,18 +100,48 @@ export function FieldWorkbench({
   }, [id, selectedJob?.status, command]);
   const maxFrame = (result?.meta.times.length ?? 1) - 1,
     safeFrame = Math.min(frame, maxFrame);
+  currentFrame.current = safeFrame;
   useEffect(() => {
     if (!v.playing || !result) return;
-    const timer = setInterval(
-      () => setFrame((f) => (f + 1) % (maxFrame + 1)),
-      1000 / v.fps,
-    );
-    return () => clearInterval(timer);
+    const initial = currentFrame.current,
+      start = performance.now();
+    let request = 0;
+    const tick = (now: number) => {
+      setFrame((initial + ((now - start) / 1000) * v.fps) % (maxFrame + 1));
+      request = requestAnimationFrame(tick);
+    };
+    request = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(request);
   }, [v.playing, v.fps, result, maxFrame]);
-  const pixels = useMemo(
-    () => (result ? fieldPixels(result, safeFrame, v.metric, v.range) : null),
-    [result, safeFrame, v.metric, v.range],
+  const playback = useMemo(
+    () => (result ? new PlanePlayback(result) : null),
+    [result],
   );
+  const contoursBuffer = useMemo(
+    () => (result ? new PressureContours(result.mask.length) : null),
+    [result],
+  );
+  const displayed = useMemo(
+    () => playback?.update(safeFrame, v.metric, v.range, v.interpolation),
+    [playback, safeFrame, v.metric, v.range, v.interpolation],
+  );
+  const physicalTime = result
+    ? frameBlend(result, safeFrame, v.interpolation).time
+    : 0;
+  const raster = useMemo(() => {
+    if (!result || !playback) return null;
+    const canvas = document.createElement("canvas");
+    canvas.width = result.meta.plane.width;
+    canvas.height = result.meta.plane.height;
+    return {
+      canvas,
+      image: new ImageData(
+        playback.pixels as Uint8ClampedArray<ArrayBuffer>,
+        canvas.width,
+        canvas.height,
+      ),
+    };
+  }, [result, playback]);
   const geometry = useMemo(
     () => (result ? buildGeometry(result.meta.project) : null),
     [result],
@@ -117,11 +152,17 @@ export function FieldWorkbench({
     [result],
   );
   const driverMotion = useMemo(
-    () => (result ? driverMotionAt(result, safeFrame) : []),
-    [result, safeFrame],
+    () =>
+      result
+        ? driverMotionAt(
+            result,
+            v.interpolation ? safeFrame : Math.floor(safeFrame),
+          )
+        : [],
+    [result, safeFrame, v.interpolation],
   );
   useEffect(() => {
-    if (!result || !pixels || !canvas.current) return;
+    if (!result || !displayed || !raster || !canvas.current) return;
     const el = canvas.current,
       {
         width,
@@ -134,26 +175,46 @@ export function FieldWorkbench({
         16,
         Math.max(1, Math.ceil(900 / Math.max(width, height))),
       );
-    el.width = width * scale;
-    el.height = height * scale;
+    if (el.width !== width * scale || el.height !== height * scale) {
+      el.width = width * scale;
+      el.height = height * scale;
+    }
     const ctx = el.getContext("2d")!;
     ctx.fillStyle = "#0b141d";
     ctx.fillRect(0, 0, el.width, el.height);
-    const buffer = document.createElement("canvas");
-    buffer.width = width;
-    buffer.height = height;
-    buffer
-      .getContext("2d")!
-      .putImageData(
-        new ImageData(new Uint8ClampedArray(pixels), width, height),
-        0,
-        0,
-      );
+    const buffer = raster.canvas;
+    buffer.getContext("2d")!.putImageData(raster.image, 0, 0);
     ctx.save();
     ctx.translate(0, el.height);
     ctx.scale(1, -1);
     ctx.drawImage(buffer, 0, 0, el.width, el.height);
     ctx.restore();
+    if (v.contours && v.metric === "pressure" && contoursBuffer) {
+      const lines = contoursBuffer.update(
+        displayed.samples,
+        result.mask,
+        width,
+        height,
+        fieldScale(result, "pressure", v.range),
+        result.meta.rho * result.meta.c,
+      );
+      ctx.strokeStyle = "#d5edf4";
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.65;
+      ctx.beginPath();
+      for (let i = 0; i < lines.count; i += 4) {
+        ctx.moveTo(
+          lines.segments[i] * scale,
+          (height - lines.segments[i + 1]) * scale,
+        );
+        ctx.lineTo(
+          lines.segments[i + 2] * scale,
+          (height - lines.segments[i + 3]) * scale,
+        );
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
     ctx.fillStyle = "#bba27e";
     for (const polygon of contours) {
       ctx.beginPath();
@@ -165,8 +226,8 @@ export function FieldWorkbench({
       ctx.closePath();
       ctx.fill();
     }
-    const data = result.data,
-      start = safeFrame * width * height * 4;
+    const data = displayed.samples,
+      start = 0;
     ctx.strokeStyle = "#dce9ee";
     ctx.lineWidth = 1;
     const spacing = Math.max(3, Math.ceil(Math.max(width, height) / 20));
@@ -253,7 +314,11 @@ export function FieldWorkbench({
     }
   }, [
     result,
-    pixels,
+    displayed,
+    raster,
+    contoursBuffer,
+    v.contours,
+    v.range,
     safeFrame,
     sample,
     v.metric,
@@ -281,6 +346,18 @@ export function FieldWorkbench({
         next.paddingMm = Math.max(
           next.paddingMm,
           (Math.max(6, Math.ceil(120 / next.cellMm)) + 3) * next.cellMm,
+        );
+      if (["frequency", "durationMs", "signal"].includes(key))
+        next.frames = Math.min(
+          640,
+          Math.max(
+            next.frames,
+            Math.ceil(
+              (next.durationMs / 1000) *
+                next.frequency *
+                (next.signal === "burst" ? 8 : 4),
+            ),
+          ),
         );
       return next;
     });
@@ -314,14 +391,12 @@ export function FieldWorkbench({
   const sampleIndex =
       sample ??
       Math.floor(((meta?.plane.width ?? 1) * (meta?.plane.height ?? 1)) / 2),
-    sampleAt =
-      (safeFrame * (meta?.plane.width ?? 1) * (meta?.plane.height ?? 1) +
-        sampleIndex) *
-      4;
+    sampleAt = sampleIndex * 4;
   return (
     <section
       className="field-workbench"
       data-field-state={result ? "ready" : (selectedJob?.status ?? "empty")}
+      data-study-id={result ? id : undefined}
     >
       <div className="page-heading">
         <span className="eyebrow">
@@ -375,7 +450,7 @@ export function FieldWorkbench({
               value={settings.frames}
               onChange={(n) => update("frames", Math.round(n))}
               min={12}
-              max={160}
+              max={640}
             />
             <Field
               label="Uniform attenuation"
@@ -433,6 +508,20 @@ export function FieldWorkbench({
           <p className="field-help">
             Fraction across the cabinet. A plane change requires a new
             recording; the solver remains 3D.
+          </p>
+          <label className="field-check">
+            <input
+              type="checkbox"
+              checked={settings.volume ?? true}
+              onChange={(e) =>
+                setSettings((s) => ({ ...s, volume: e.target.checked }))
+              }
+            />{" "}
+            Record 3D pressure and air motion
+          </label>
+          <p className="field-help">
+            Recording resolution is bounded independently of the solver grid.
+            More frames or a shorter duration improve playback sampling.
           </p>
           <button
             className="primary"
@@ -549,19 +638,23 @@ export function FieldWorkbench({
                   type="range"
                   min={0}
                   max={maxFrame}
+                  step={0.01}
                   value={safeFrame}
                   onChange={(e) => {
                     setFrame(Number(e.target.value));
                     change({ frame: Number(e.target.value), playing: false });
                   }}
                 />
-                <b>{(meta!.times[safeFrame] * 1000).toFixed(2)} ms</b>
+                <b>{(physicalTime * 1000).toFixed(2)} ms</b>
                 <select
                   aria-label="Field quantity"
                   value={v.metric}
                   onChange={(e) =>
                     change({
                       metric: e.target.value as typeof v.metric,
+                      ...(e.target.value !== "pressure"
+                        ? { displayMode: "slice" as const }
+                        : {}),
                       range: 0,
                     })
                   }
@@ -573,6 +666,97 @@ export function FieldWorkbench({
                   </option>
                 </select>
               </div>
+              <div className="surface field-render-controls">
+                <label className="select-field">
+                  3D display
+                  <select
+                    aria-label="Field display"
+                    value={
+                      meta!.volume && v.metric === "pressure"
+                        ? v.displayMode
+                        : "slice"
+                    }
+                    onChange={(e) =>
+                      change({
+                        displayMode: e.target.value as typeof v.displayMode,
+                        metric: "pressure",
+                        range: 0,
+                      })
+                    }
+                  >
+                    <option value="slice">Recorded slice</option>
+                    <option value="volume" disabled={!meta!.volume}>
+                      Pressure volume
+                    </option>
+                    <option value="fronts" disabled={!meta!.volume}>
+                      Pressure fronts · ±35% range
+                    </option>
+                  </select>
+                </label>
+                <label className="select-field">
+                  Drawing quality
+                  <select
+                    aria-label="Field drawing quality"
+                    value={v.renderQuality}
+                    onChange={(e) =>
+                      change({
+                        renderQuality: e.target.value as typeof v.renderQuality,
+                      })
+                    }
+                  >
+                    <option value="auto">Adaptive</option>
+                    <option value="high">High</option>
+                    <option value="low">Low</option>
+                  </select>
+                </label>
+                <label className="field-check">
+                  <input
+                    type="checkbox"
+                    checked={v.interpolation}
+                    onChange={(e) =>
+                      change({ interpolation: e.target.checked })
+                    }
+                  />{" "}
+                  Smooth physical-time playback
+                </label>
+                <label className="field-check">
+                  <input
+                    type="checkbox"
+                    checked={v.contours}
+                    onChange={(e) => change({ contours: e.target.checked })}
+                  />{" "}
+                  Pressure contours
+                </label>
+                <label className="field-check">
+                  <input
+                    type="checkbox"
+                    checked={v.particles && Boolean(meta!.particles)}
+                    disabled={!meta!.particles}
+                    onChange={(e) => change({ particles: e.target.checked })}
+                  />{" "}
+                  Air particles
+                </label>
+                {v.particles && meta!.particles && (
+                  <Field
+                    label="Air motion magnification"
+                    value={v.particleScale}
+                    onChange={(n) => change({ particleScale: n })}
+                    min={1}
+                    max={10000}
+                    unit="×"
+                  />
+                )}
+                <p className="field-help">
+                  Drawing quality never changes the acoustic grid or time step.
+                  Contours and colours use the fixed display range.{" "}
+                  {meta!.volume
+                    ? `3D recording: ${meta!.volume.dimensions.join(" × ")} samples at ${meta!.volume.pitchMm} mm; pressure interpolation adds no new spatial detail.`
+                    : "This older study contains a slice. Run again with 3D recording enabled for pressure volumes and air motion."}{" "}
+                  {v.particles &&
+                    meta!.particles &&
+                    `Air motion is ${v.particleScale}× linear small-signal displacement about fixed equilibrium positions; amplified drawing is clipped at cabinet solids.`}
+                </p>
+              </div>
               <div className="field-views">
                 <ModelView
                   geometry={geometry!}
@@ -581,8 +765,19 @@ export function FieldWorkbench({
                   onViewChange={setView}
                   fieldOverlay={{
                     key: id!,
-                    plane: meta!.plane,
-                    pixels: pixels!,
+                    result: result!,
+                    frame: safeFrame,
+                    metric: v.metric,
+                    range: v.range,
+                    displayMode:
+                      meta!.volume && v.metric === "pressure"
+                        ? v.displayMode
+                        : "slice",
+                    contours: v.contours,
+                    particles: v.particles,
+                    particleScale: v.particleScale,
+                    interpolation: v.interpolation,
+                    renderQuality: v.renderQuality,
                     drivers: driverMotion,
                     motionScale: v.driverMotionScale,
                     showDrivers: v.showDrivers,
@@ -598,7 +793,7 @@ export function FieldWorkbench({
                   </div>
                   <canvas
                     aria-label="Solved acoustic field"
-                    data-physical-time={meta!.times[safeFrame]}
+                    data-physical-time={physicalTime}
                     data-field-frame={safeFrame}
                     ref={canvas}
                     onPointerMove={(e) => {
@@ -640,7 +835,7 @@ export function FieldWorkbench({
                   </p>
                   <p className="field-sample">
                     {result.mask[sampleIndex]
-                      ? `${result.data[sampleAt].toPrecision(4)} Pa · ${Math.hypot(result.data[sampleAt + 1], result.data[sampleAt + 2], result.data[sampleAt + 3]).toPrecision(3)} m/s`
+                      ? `${displayed!.samples[sampleAt].toPrecision(4)} Pa · ${Math.hypot(displayed!.samples[sampleAt + 1], displayed!.samples[sampleAt + 2], displayed!.samples[sampleAt + 3]).toPrecision(3)} m/s`
                       : "Rigid solid / outside recorded air"}
                   </p>
                 </article>
@@ -765,7 +960,7 @@ export function FieldWorkbench({
                     strokeWidth="1.7"
                   />
                   <path
-                    d={`M${20 + (meta!.times[safeFrame] / (meta!.steps * meta!.dt)) * 680} 10V170`}
+                    d={`M${20 + (physicalTime / (meta!.steps * meta!.dt)) * 680} 10V170`}
                     stroke="#ddb58e"
                   />
                 </svg>
@@ -779,8 +974,9 @@ export function FieldWorkbench({
                 <h3>Model and numerical quality</h3>
                 <p>
                   {meta!.dimensions.join(" × ")} cells · {meta!.settings.cellMm}{" "}
-                  mm grid · {(meta!.dt * 1e6).toFixed(2)} µs time step ·{" "}
-                  {meta!.backend} · {meta!.seconds.toFixed(2)} s calculation
+                  mm grid · {meta!.times.length} recorded frames ·{" "}
+                  {(meta!.dt * 1e6).toFixed(2)} µs time step · {meta!.backend} ·{" "}
+                  {meta!.seconds.toFixed(2)} s calculation
                 </p>
                 {meta!.quality && (
                   <p className="field-help">

@@ -2,6 +2,7 @@ import { buildGeometry, editableLayout } from "../core/geometry";
 import { driverModel } from "../core/acoustics";
 import { validateProject } from "../core/validation";
 import type { Panel, Project } from "../core/types";
+import { planRecording } from "./recording";
 import {
   validateFieldSettings,
   type FieldSettings,
@@ -99,6 +100,35 @@ function intersects(s: Solid, p: V, q: V) {
     if (a > b) return false;
   }
   return a <= b;
+}
+/** Clip magnified drawing at exact cabinet solids; this never alters recorded motion. */
+export function visualMotionClipper(project: Project) {
+  const solids = buildGeometry(project).panels.map(solid);
+  return (start: V, end: V) => {
+    let fraction = 1;
+    for (const s of solids) {
+      if (!intersects(s, start, end)) continue;
+      let enter = 0,
+        leave = 1;
+      for (const n of s.planes) {
+        const d = dot(n, start) - n[3],
+          v =
+            n[0] * (end[0] - start[0]) +
+            n[1] * (end[1] - start[1]) +
+            n[2] * (end[2] - start[2]);
+        if (Math.abs(v) < 1e-10) {
+          if (d > 1e-6) {
+            enter = 2;
+            break;
+          }
+        } else if (v < 0) enter = Math.max(enter, -d / v);
+        else leave = Math.min(leave, -d / v);
+      }
+      if (enter <= leave && enter <= 1 && leave >= 0)
+        fraction = Math.min(fraction, Math.max(0, enter - 1e-4));
+    }
+    return fraction;
+  };
 }
 /** Exact convex solid sections for the field-map overlay; pressure remains grid-sampled. */
 export function fieldSolidContours(
@@ -414,12 +444,22 @@ export function prepareField(
         ),
       ),
     );
+  const recording = planRecording(
+    dims,
+    flags,
+    origin,
+    settings,
+    steps,
+    nd,
+    [g.width, g.height, g.depth],
+    pml,
+  );
   const stride = Math.max(
       1,
       Math.ceil(
         Math.sqrt(
-          (settings.frames * dims[uv[0]] * dims[uv[1]] * 4 * 4) /
-            (10 * 1024 * 1024),
+          (recording.frames * dims[uv[0]] * dims[uv[1]] * 4 * 4) /
+            recording.planeBudget,
         ),
       ),
     ),
@@ -531,7 +571,10 @@ export function prepareField(
       name: k ? "Mouth" : "Primary rear air",
       positionMm: point(i).map((v) => v * 1000) as V,
     }));
-  const driverOffset = times.length * recordCells.length * 4,
+  const volumeOffset = times.length * recordCells.length * 4,
+    particleOffset = volumeOffset + times.length * recording.volumeCells.length,
+    driverOffset =
+      particleOffset + times.length * recording.particleCells.length * 3,
     probeOffset = driverOffset + steps * nd * 4,
     total = probeOffset + steps * probeCells.length;
   if (total * 4 > 15 * 1024 * 1024)
@@ -541,6 +584,21 @@ export function prepareField(
     "Driver basket/magnet and bracing displacement are not included unless represented by cabinet solids. No calibrated porous stuffing model; the 1D damping value is not used. Uniform attenuation is an optional phenomenological loss.",
     "Exterior PML and staircase geometry require padding/grid convergence and physical validation.",
   ];
+  if (settings.volume && recording.stride > 1)
+    warnings.push(
+      `3D pressure recording sampled every ${recording.stride} grid cells (${recording.stride * settings.cellMm} mm); the full-resolution solver is unchanged. Interpolated rendering cannot recover unresolved recorded detail.`,
+    );
+  if (settings.volume && pointsPerWavelength / recording.stride < 6)
+    warnings.push(
+      `3D playback has only ${(pointsPerWavelength / recording.stride).toFixed(1)} recorded samples per shortest estimated wavelength. Pressure fronts may alias spatially; shorten the study/reduce frame count to retain a finer recording, or use the slice. Drawing interpolation cannot repair this.`,
+    );
+  if (
+    times.length / (steps * dt) <
+    (settings.signal === "burst" ? 8 : 4) * settings.frequency
+  )
+    warnings.push(
+      "Playback has fewer than four samples per shortest estimated source-band cycle; interpolation smooths drawing but cannot reconstruct missing temporal detail. Increase recorded frames or shorten duration.",
+    );
   const minStock = Math.min(...g.panels.map((p) => p.thickness));
   if (settings.cellMm > minStock / 2)
     warnings.push(
@@ -606,6 +664,23 @@ export function prepareField(
     sources,
     probes,
     layout: { driverOffset, probeOffset, total },
+    ...(settings.volume
+      ? {
+          volume: {
+            dimensions: recording.dimensions,
+            originMm: recording.volumeOrigin,
+            pitchMm: settings.cellMm * recording.stride,
+            stride: recording.stride,
+            offset: volumeOffset,
+            cells: recording.volumeCells.length,
+          },
+          particles: {
+            positionsMm: recording.particlePositions,
+            offset: particleOffset,
+            count: recording.particleCells.length,
+          },
+        }
+      : {}),
     quality: {
       cadCavityLitres: g.airVolume,
       voxelCavityLitres,
@@ -631,5 +706,8 @@ export function prepareField(
     recordSteps,
     probeCells,
     coeffOffsets,
+    volumeCells: recording.volumeCells,
+    volumeMask: recording.volumeMask,
+    particleCells: recording.particleCells,
   };
 }

@@ -52,7 +52,7 @@ const workflow=`You control the live ÆONFORGE ÆGIR desktop, not a separate cal
 8. Export the engineering report, project and fabrication bundle, plus STEP if CAD is available. Angled board end mitres are encoded in the 3D solids; flat stock DXF is not a bevel toolpath. Report source-data assumptions, geometry/model limitations, artifact paths and prototype checks honestly.`;
 
 export function createServer(){
-  const server=new McpServer({name:'aeonforge-aegir',version:'0.4.1'},{instructions:workflow});
+  const server=new McpServer({name:'aeonforge-aegir',version:'0.5.0'},{instructions:workflow});
   for(const [name,definition] of Object.entries(commands)){
     if(name==='workspace.bootstrap')continue;
     const schema=definition.schema.extend({expectedRevision:z.number().int().nonnegative().optional().describe('Optimistic workspace revision; stale edits fail instead of overwriting changes.'),expectedProjectRevision:z.number().int().nonnegative().optional().describe('Guard the project revision only, allowing unrelated viewport changes.')});

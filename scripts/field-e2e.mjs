@@ -6,8 +6,9 @@ import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import assert from "node:assert/strict";
+import { unzipSync } from "fflate";
 const profile = await mkdtemp(join(tmpdir(), "aegir-field-")),
-  out = resolve("test-results/field");
+  out = resolve(process.env.AEGIR_TEST_OUT ?? "test-results/field");
 await mkdir(out, { recursive: true });
 const env = { ...process.env };
 delete env.ELECTRON_RUN_AS_NODE;
@@ -27,7 +28,15 @@ const launch = () =>
 let app = await launch(),
   page = await app.firstWindow();
 const errors = [];
-page.on("pageerror", (e) => errors.push(e.message));
+const renderEvidence = [];
+function observePage() {
+  page.on("pageerror", (e) => errors.push(e.message));
+  page.on("console", (e) => {
+    if (e.type() === "error" && /shader|WebGL|THREE/i.test(e.text()))
+      errors.push(e.text());
+  });
+}
+observePage();
 const client = new Client({
   name: "aegir-spatial-acceptance",
   version: "1.0.0",
@@ -216,6 +225,34 @@ try {
     relativeVelocityError < 0.01,
     "GPU/CPU velocity error " + relativeVelocityError,
   );
+  const raw = async (artifact) => {
+    const zip = unzipSync(await readFile(artifact.path));
+    return new Float32Array(zip["samples.f32"].slice().buffer);
+  };
+  const cpuRaw = await raw(cpu.artifact),
+    gpuRaw = await raw(gpu.artifact);
+  for (const [name, offset, count] of [
+    [
+      "volume",
+      cpu.meta.volume.offset,
+      cpu.meta.volume.cells * cpu.meta.times.length,
+    ],
+    [
+      "particles",
+      cpu.meta.particles.offset,
+      cpu.meta.particles.count * cpu.meta.times.length * 3,
+    ],
+  ]) {
+    let error = 0,
+      ref = 0;
+    for (let i = offset; i < offset + count; i++) {
+      error += (gpuRaw[i] - cpuRaw[i]) ** 2;
+      ref += cpuRaw[i] ** 2;
+    }
+    const relative = Math.sqrt(error / Math.max(ref, 1e-30));
+    assert.ok(relative < 0.01, name + " CPU/GPU mismatch " + relative);
+    renderEvidence.push({ name, relative });
+  }
   await call("view_set", {
     field: { frame: 14, metric: "pressure", playing: false },
   });
@@ -228,6 +265,75 @@ try {
       document.querySelector('input[aria-label="Wave time frame"]')?.value ===
       "14",
   );
+  await call("view_set", {
+    field: {
+      displayMode: "volume",
+      metric: "pressure",
+      frame: 14.5,
+      particles: true,
+      particleScale: 1000,
+    },
+  });
+  await page.waitForFunction(
+    () =>
+      document.querySelector('input[aria-label="Wave time frame"]')?.value ===
+      "14.5",
+  );
+  await page.waitForTimeout(1000);
+  const stats = JSON.parse(
+    await page.locator(".three-mount canvas").getAttribute("data-render-stats"),
+  );
+  renderEvidence.push({ name: "volumeRendering", ...stats });
+  assert.ok(stats.fps > 5 && stats.steps >= 32);
+  const expectedTime = (gpu.meta.times[14] + gpu.meta.times[15]) / 2;
+  assert.ok(
+    Math.abs(
+      Number(
+        await page
+          .locator('canvas[aria-label="Solved acoustic field"]')
+          .getAttribute("data-physical-time"),
+      ) - expectedTime,
+    ) < 1e-10,
+  );
+  await call("view_set", { field: { renderQuality: "low" } });
+  await page.waitForTimeout(900);
+  const low = JSON.parse(
+    await page.locator(".three-mount canvas").getAttribute("data-render-stats"),
+  );
+  assert.equal(low.steps, 48);
+  renderEvidence.push({ name: "lowRendering", ...low });
+  assert.deepEqual(
+    (await call("field_result", { id: gpuJob.id })).meta.dimensions,
+    gpu.meta.dimensions,
+  );
+  await call("view_set", { field: { renderQuality: "high" } });
+  await page.waitForTimeout(900);
+  assert.equal(
+    JSON.parse(
+      await page
+        .locator(".three-mount canvas")
+        .getAttribute("data-render-stats"),
+    ).steps,
+    128,
+  );
+  assert.equal(await page.locator(".webgl-error").count(), 0);
+  await page.screenshot({
+    path: join(out, "volume-desktop.png"),
+    fullPage: true,
+  });
+  await page
+    .locator(".field-views")
+    .screenshot({ path: join(out, "volume-view.png") });
+  await call("view_set", { field: { displayMode: "fronts" } });
+  await page.waitForTimeout(500);
+  await page.screenshot({
+    path: join(out, "fronts-desktop.png"),
+    fullPage: true,
+  });
+  await page
+    .locator(".field-views")
+    .screenshot({ path: join(out, "fronts-view.png") });
+  await call("view_set", { field: { displayMode: "slice", frame: 14 } });
   const capture = await client.callTool({
     name: "aegir_view_capture",
     arguments: { region: "field" },
@@ -252,6 +358,7 @@ try {
   await app.close();
   app = await launch();
   page = await app.firstWindow();
+  observePage();
   await page
     .locator('.field-workbench[data-field-state="ready"]')
     .waitFor({ timeout: 20000 });
@@ -308,9 +415,34 @@ try {
       pressurePeak: field.meta.pressurePeak,
     });
   }
+  const legacyJob = await complete(
+    (
+      await call("field_run", {
+        settings: { ...settings, volume: false, backend: "cpu", durationMs: 8 },
+      })
+    ).id,
+  );
+  assert.ok(!(await call("field_result", { id: legacyJob.id })).meta.volume);
+  await page
+    .locator(
+      `.field-workbench[data-field-state="ready"][data-study-id="${legacyJob.id}"]`,
+    )
+    .waitFor({ timeout: 15000 });
+  assert.equal(
+    await page
+      .getByRole("option", { name: "Pressure volume", exact: true })
+      .evaluate((option) => option.disabled),
+    true,
+  );
+  assert.equal(
+    await page.getByLabel("Air particles", { exact: true }).isDisabled(),
+    true,
+  );
   await call("field_open", { id: gpuJob.id });
   await page
-    .locator('.field-workbench[data-field-state="ready"]')
+    .locator(
+      `.field-workbench[data-field-state="ready"][data-study-id="${gpuJob.id}"]`,
+    )
     .waitFor({ timeout: 15000 });
   await page.screenshot({
     path: join(out, "final-desktop.png"),
@@ -385,6 +517,27 @@ try {
       fullPage: true,
     });
   }
+  if (demo) {
+    await call("view_set", {
+      field: {
+        frame: 36.5,
+        displayMode: "volume",
+        metric: "pressure",
+        particles: true,
+        driverMotionScale: 50,
+        renderQuality: "high",
+      },
+    });
+    await page.waitForTimeout(400);
+    await page
+      .locator(".field-views")
+      .screenshot({ path: join(out, "demo-volume-view.png") });
+    await call("view_set", { field: { displayMode: "fronts" } });
+    await page.waitForTimeout(250);
+    await page
+      .locator(".field-views")
+      .screenshot({ path: join(out, "demo-fronts-view.png") });
+  }
   assert.deepEqual(errors, []);
   await writeFile(
     join(out, "evidence.json"),
@@ -397,6 +550,7 @@ try {
         relativePressureError,
         relativeVelocityError,
         alternatePlanes,
+        renderEvidence,
         demo,
         artifact: gpu.artifact,
       },

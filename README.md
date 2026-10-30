@@ -14,7 +14,7 @@ This is **source-available, not OSI open source**. See [licensing details](docs/
 
 ## Run from source
 
-Open `release/AEONFORGE-Aegir-0.4.1-x64.exe` after packaging, or use the unpacked executable in `release/win-unpacked/`. Install the optional CadQuery runtime with the setup command below if STEP export is needed. Generated binaries and private runtime profiles are excluded from this repository.
+Open `release/AEONFORGE-Aegir-0.5.0-x64.exe` after packaging, or use the unpacked executable in `release/win-unpacked/`. Install the optional CadQuery runtime with the setup command below if STEP export is needed. Generated binaries and private runtime profiles are excluded from this repository.
 
 From source (Node 22.12+):
 
@@ -117,6 +117,13 @@ visible motion multiplier is adjustable; physical readouts and sound pressure
 remain unchanged. Basket/magnet shapes are illustrative, with no new acoustic
 obstructions or fabrication parts implied.
 
+Version 0.5.0 adds full-volume pressure rendering, equal-pressure fronts, slice
+contours, smooth physical-time playback and optional air-parcel motion from the
+calculated velocity. Adaptive drawing quality and asynchronous GPU timing help
+keep the view responsive while the numerical grid/time step stay fixed. Record
+a new study with **3D pressure and air motion** enabled to use these views;
+older slice-only studies remain compatible. See [operation and data format](docs/SPATIAL-FIELD.md).
+
 ![Integrated 3D field workbench, two-driver synthetic example](docs/media/spatial-workbench.png)
 
 ![Pressure slice recorded from the integrated 3D solve](docs/media/spatial-field.gif)
@@ -125,7 +132,7 @@ This animation contains solved 3D pressure samples at their recorded physical
 times, with exact CAD outlines. Its 20 mm preview grid has about 6% cavity-volume
 error; it illustrates propagation and interference, not mesh-converged output.
 
-The original research and validation plan are in [the research notes](docs/RESEARCH.md#spatial-wave-field-extension-research-and-prototype-30-october-2026). A separate numerical 2D prototype demonstrates wave travel, reflections and interference through an angled folded cabinet:
+The original research and validation plan are in [the research notes](docs/RESEARCH.md#spatial-wave-field-extension-research-and-prototype-30-october-2026). The [Niagara Fluids assessment](docs/NIAGARA-RESEARCH.md) explains which smoke-rendering techniques transfer to acoustic visualization and why the sound calculation needs a different solver. A separate numerical 2D prototype demonstrates wave travel, reflections and interference through an angled folded cabinet:
 
 ![Calculated 2D pressure-wave research prototype](docs/media/pressure-wave.gif)
 

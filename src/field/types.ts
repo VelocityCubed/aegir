@@ -11,6 +11,7 @@ export interface FieldSettings {
   slice: number;
   backend: "auto" | "cpu" | "webgpu";
   attenuation: number;
+  volume: boolean;
 }
 export const fieldDefaults: FieldSettings = {
   cellMm: 20,
@@ -18,11 +19,12 @@ export const fieldDefaults: FieldSettings = {
   durationMs: 40,
   frequency: 400,
   signal: "burst",
-  frames: 80,
+  frames: 160,
   axis: "xy",
   slice: 0.5,
   backend: "auto",
   attenuation: 0,
+  volume: true,
 };
 export interface FieldMeta {
   version: 1;
@@ -60,6 +62,19 @@ export interface FieldMeta {
   }[];
   probes: { name: string; positionMm: [number, number, number] }[];
   layout: { driverOffset: number; probeOffset: number; total: number };
+  volume?: {
+    dimensions: [number, number, number];
+    originMm: [number, number, number];
+    pitchMm: number;
+    stride: number;
+    offset: number;
+    cells: number;
+  };
+  particles?: {
+    positionsMm: [number, number, number][];
+    offset: number;
+    count: number;
+  };
   quality?: {
     cadCavityLitres: number;
     voxelCavityLitres: number;
@@ -75,6 +90,7 @@ export interface FieldResult {
   meta: FieldMeta;
   data: Float32Array;
   mask: Uint8Array;
+  volumeMask?: Uint8Array;
 }
 export interface PreparedField {
   meta: FieldMeta;
@@ -89,6 +105,9 @@ export interface PreparedField {
   recordSteps: Uint32Array;
   probeCells: Uint32Array;
   coeffOffsets: [number, number, number];
+  volumeCells?: Uint32Array;
+  volumeMask?: Uint8Array;
+  particleCells?: Uint32Array;
 }
 export type FieldProgress = (value: number) => void;
 export function validateFieldSettings(
@@ -100,7 +119,7 @@ export function validateFieldSettings(
     ["paddingMm", 80, 600],
     ["durationMs", 5, 500],
     ["frequency", 20, 2000],
-    ["frames", 12, 160],
+    ["frames", 12, 640],
     ["slice", 0, 1],
     ["attenuation", 0, 2],
   ] as const)
@@ -108,6 +127,7 @@ export function validateFieldSettings(
       throw Error(`Field ${k} must be between ${lo} and ${hi}.`);
   if (
     !Number.isInteger(s.frames) ||
+    typeof s.volume !== "boolean" ||
     !["xy", "xz", "yz"].includes(s.axis) ||
     !["auto", "cpu", "webgpu"].includes(s.backend) ||
     !["burst", "tone"].includes(s.signal)

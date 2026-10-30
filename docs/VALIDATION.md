@@ -1,5 +1,25 @@
 # Verification record
 
+## ÆGIR 0.5.0: data-driven volume and particle visualization
+
+49 regression tests pass, including passive-observer invariance of the acoustic
+solution, exact recorded volume samples, integration of the existing midpoint
+velocity, bounded 640-frame recording, legacy archive recovery, raw-field temporal
+interpolation before intensity calculation, cancellation-node contours and solid
+clipping of amplified parcel drawings. Existing acoustic/energy/driver/CAD tests
+remain in the suite.
+
+The Electron/MCP field harness compares CPU/GPU volume pressure and particle
+histories, displays volume/front/slice modes, checks fractional physical time,
+captures actual shaders, rejects shader console errors, changes render quality
+without changing the grid, and verifies restart/cancellation/stale recordings.
+In the source acceptance run the volume relative L2 pressure difference was
+1.39e-6 and parcel displacement difference 5.55e-6. The actual desktop volume
+view reported roughly 59 fps / 1.4 ms GPU drawing at its recorded viewport,
+96 ray samples and pixel ratio 1; Low reported 0.83 ms / 48 samples / ratio 0.65.
+These are local drawing measurements, not portable performance guarantees or
+independent physical validation. Evidence is in `test-results/field/evidence.json`.
+
 ## ÆGIR 0.4.1: rendered driver models
 
 43 regression tests pass. New checks cover independent driver dimensions,

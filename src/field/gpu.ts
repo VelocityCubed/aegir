@@ -5,7 +5,7 @@ import type { Project } from "../core/types";
 import type { FieldSettings, FieldProgress, FieldResult } from "./types";
 
 const shader = /* wgsl */ `
-struct Params { grid:vec4<u32>, coeff:vec4<u32>, src:vec4<u32>, record:vec4<u32>, phys:vec4<f32>, signal:vec4<f32>, timing:vec4<u32> }
+struct Params { grid:vec4<u32>, coeff:vec4<u32>, src:vec4<u32>, record:vec4<u32>, phys:vec4<f32>, signal:vec4<f32>, timing:vec4<u32>, volume:vec4<u32>, particles:vec4<u32> }
 @group(0) @binding(0) var<uniform> cfg:Params;
 @group(0) @binding(1) var<storage,read_write> state:array<f32>;
 @group(0) @binding(2) var<storage,read> geo:array<u32>;
@@ -65,7 +65,11 @@ fn centredFace(i:u32,axis:u32)->f32 {
 }
 @compute @workgroup_size(128) fn record(@builtin(global_invocation_id) gid:vec3<u32>){
   let k=gid.x;let step=u32(drv[0])-1u;let n=cfg.grid.w;if(k<cfg.record.w){output[cfg.timing.z+step*cfg.record.w+k]=state[geo[cfg.timing.w+k]];}
-  let frame=geo[n+step];if(frame==0xffffffffu||k>=cfg.record.y){return;}let i=geo[cfg.record.x+k];let o=(frame*cfg.record.y+k)*4u;
+  let frame=geo[n+step];
+  if(k<cfg.volume.w){let i=geo[cfg.particles.x+k];let nx=cfg.grid.x;let ny=cfg.grid.y;let xy=nx*ny;var a=0.0;var b=0.0;var c=0.0;if(i%nx>0u){a=state[4u*n+i-1u];}if((i/nx)%ny>0u){b=state[5u*n+i-nx];}if(i>=xy){c=state[6u*n+i-xy];}let s=8u*n+k*3u;state[s]+=cfg.phys.x*0.5*(state[4u*n+i]+a);state[s+1u]+=cfg.phys.x*0.5*(state[5u*n+i]+b);state[s+2u]+=cfg.phys.x*0.5*(state[6u*n+i]+c);if(frame!=0xffffffffu){let o=cfg.particles.y+(frame*cfg.volume.w+k)*3u;output[o]=state[s];output[o+1u]=state[s+1u];output[o+2u]=state[s+2u];}}
+  if(frame==0xffffffffu){return;}
+  if(k<cfg.volume.y){output[cfg.volume.z+frame*cfg.volume.y+k]=state[geo[cfg.volume.x+k]];}
+  if(k>=cfg.record.y){return;}let i=geo[cfg.record.x+k];let o=(frame*cfg.record.y+k)*4u;
   let nx=cfg.grid.x;let ny=cfg.grid.y;let x=i%nx;let y=(i/nx)%ny;let z=i/(nx*ny);
   var a=0.0;var b=0.0;var c=0.0;if(x>0u){a=centredFace(i-1u,0u);}if(y>0u){b=centredFace(i-nx,1u);}if(z>0u){c=centredFace(i-nx*ny,2u);}
   output[o]=state[i];output[o+1u]=0.5*(centredFace(i,0u)+a);output[o+2u]=0.5*(centredFace(i,1u)+b);output[o+3u]=0.5*(centredFace(i,2u)+c);
@@ -119,12 +123,16 @@ export async function runFieldGpu(
     const srcOffset = n + m.steps,
       recOffset = srcOffset + g.sourceCells.length,
       probeOffset = recOffset + g.recordCells.length,
-      geo = new Uint32Array(probeOffset + g.probeCells.length);
+      volumeOffset = probeOffset + g.probeCells.length,
+      particleOffset = volumeOffset + (g.volumeCells?.length ?? 0),
+      geo = new Uint32Array(particleOffset + (g.particleCells?.length ?? 0));
     geo.set(g.flags);
     geo.set(g.recordSteps, n);
     geo.set(g.sourceCells, srcOffset);
     geo.set(g.recordCells, recOffset);
     geo.set(g.probeCells, probeOffset);
+    if (g.volumeCells) geo.set(g.volumeCells, volumeOffset);
+    if (g.particleCells) geo.set(g.particleCells, particleOffset);
     const weightsOffset = g.aux.length,
       modelsOffset = weightsOffset + g.weights.length,
       cholOffset = modelsOffset + g.models.length,
@@ -133,7 +141,7 @@ export async function runFieldGpu(
     aux.set(g.weights, weightsOffset);
     aux.set(g.models, modelsOffset);
     aux.set(g.chol, cholOffset);
-    const params = new ArrayBuffer(112),
+    const params = new ArrayBuffer(144),
       uints = new Uint32Array(params),
       floats = new Float32Array(params);
     uints.set([...m.dimensions, n], 0);
@@ -157,12 +165,22 @@ export async function runFieldGpu(
       [m.steps, m.layout.driverOffset, m.layout.probeOffset, probeOffset],
       24,
     );
+    uints.set(
+      [
+        volumeOffset,
+        g.volumeCells?.length ?? 0,
+        m.volume?.offset ?? 0,
+        g.particleCells?.length ?? 0,
+      ],
+      28,
+    );
+    uints.set([particleOffset, m.particles?.offset ?? 0, 0, 0], 32);
     const uniform = storage(
-        112,
+        144,
         new Uint8Array(params),
         GPUBufferUsage.UNIFORM,
       ),
-      state = storage(n * 8 * 4),
+      state = storage((n * 8 + 3 * (g.particleCells?.length ?? 0)) * 4),
       geometry = storage(geo.byteLength, geo),
       constants = storage(aux.byteLength, aux),
       driver = storage((1 + nd * 5) * 4),
@@ -231,9 +249,16 @@ export async function runFieldGpu(
                 ? 1
                 : kernel === 3
                   ? g.sourceCells.length
-                  : g.recordSteps[i] === 0xffffffff
-                    ? g.probeCells.length
-                    : g.recordCells.length;
+                  : Math.max(
+                      g.probeCells.length,
+                      g.particleCells?.length ?? 0,
+                      g.recordSteps[i] === 0xffffffff
+                        ? 0
+                        : Math.max(
+                            g.recordCells.length,
+                            g.volumeCells?.length ?? 0,
+                          ),
+                    );
           pass.dispatchWorkgroups(kernel === 2 ? 1 : Math.ceil(count / 128));
         }
       }

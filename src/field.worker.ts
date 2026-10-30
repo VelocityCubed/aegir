@@ -23,6 +23,7 @@ self.onmessage = async (event) => {
     postMessage({ type: "done", result }, [
       result.data.buffer,
       result.mask.buffer,
+      ...(result.volumeMask ? [result.volumeMask.buffer] : []),
     ] as any);
   } catch (error) {
     postMessage({ type: "error", message: (error as Error).message });

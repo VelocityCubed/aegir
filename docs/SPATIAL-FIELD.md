@@ -1,4 +1,4 @@
-# Spatial wave propagation in ÆGIR 0.4.1
+# Spatial wave propagation in ÆGIR 0.5.0
 
 **Wave propagation** is a separate, experimental **3D** time-domain solver. It
 uses the actual cabinet solids and surrounding air. The route line does not
@@ -18,8 +18,9 @@ and interference emerge from the pressure/velocity calculation.
    preview, not a mesh-converged design prediction. WebGPU is preferred; the
    float64 CPU reference can run bounded smaller studies without GPU support.
 4. Choose an XY, XZ or YZ recording plane and its fraction across the cabinet.
-   Run the study. The **entire 3D grid** is solved; the selected plane is recorded
-   to keep memory bounded. Changing the recording plane requires another run.
+   Enable **Record 3D pressure and air motion** (default) for a volume and parcel
+   displacements alongside that plane. The **entire 3D grid** is solved at the
+   requested acoustic resolution; recording strides only bound stored data.
 5. Play/pause or scrub physical time. The cutaway has a solved-field overlay,
    alongside a flat field map with exact solid outlines and grid-sampled air.
    Signed pressure is in Pa, particle speed in m/s, and instantaneous acoustic
@@ -53,7 +54,54 @@ midpoint sample associated with the displayed end-step displacement.
 
 ![Two different driver sizes and mounting faces in the desktop](media/rendered-drivers.png)
 
-The colour range is fixed across a recording, adjustable by the user, and may
+### Pressure fronts, volumes and air motion (0.5.0)
+
+**3D display** selects the recorded slice, a translucent signed pressure volume,
+or equal-pressure fronts at ±35% of the fixed colour range. Fronts are level
+surfaces of the calculated pressure, not particles or rays. The flat map and
+slice shader can overlay pressure contours. Blue is negative pressure; amber
+is positive pressure. Zero-pressure nodes remain visible through contour/velocity
+information; interference is never replaced by shoreline-style fading.
+
+**Smooth physical-time playback** uses a requestAnimationFrame clock with
+fractional frame indices. Raw signed pressure/velocity samples interpolate
+before colour, speed and intensity are calculated. Driver motion uses the same
+physical timestamp with interpolation of its full-rate history. At an integer
+frame the original stored samples are used. Interpolation does not repair
+undersampling; warnings remain visible. Up to 640 frames are supported, bounded
+by actual solver steps; changing frequency/duration in the GUI raises the
+requested frame count where possible. Drawing fps is separate from acoustic time.
+
+**Air particles** show integrated displacement about fixed equilibrium air-cell
+centres. At every acoustic step, the existing spatially centred midpoint velocity
+is integrated as `xi += dt * u_mid`. This is the first-order fluid-parcel motion
+of the linear model, not a nonlinear advected-flow or turbulence solver. The
+positions can be paused/scrubbed reproducibly. Magnification is labelled, and
+only the amplified drawing is clipped at exact cabinet solids; stored displacement
+remains in metres. Particles oscillate locally rather than following the wave at
+sound speed. This passive observation adds no forces or feedback to the solver.
+
+![Signed 3D pressure and magnified air displacement in a synthetic two-driver cabinet](media/pressure-volume.png)
+
+![Positive and negative equal-pressure fronts from the same recording](media/pressure-fronts.png)
+
+**Drawing quality** controls pixel ratio and volume ray samples. Adaptive quality
+uses frame/submission cost and asynchronous GPU timer queries when available;
+High/Low provide explicit alternatives. Acoustic grid, time step, pressure samples
+and driver loading never change with drawing quality. The in-view HUD reports fps,
+GPU drawing time when supported, pixel ratio and ray samples. GPU timing includes
+the opaque depth pass used to prevent pressure volume painting over cabinet wood.
+Display textures and flat-map/canvas/contour buffers are reused. There is no
+auto exposure, random ocean detail, foam, motion blur or temporal accumulation
+that could manufacture frequencies or smear pressure phase.
+
+Legacy slice-only ZIPs still open and play. Their 3D/particle controls are disabled
+until a new recording is run. Volume data is a sampled visualization of the solve,
+not an independent higher-resolution prediction; coarse recordings can miss
+detail. Spatial interpolation and raymarch quality require visual convergence too.
+
+The automatic pressure range uses the 99.5th percentile of recorded air samples
+from the plane and volume. The colour range is fixed across a recording, adjustable by the user, and may
 clip near-source peaks. Raw samples remain unclipped. Pressure fields in Pa are
 predictions of this model, not calibrated measurements. Playback can alias when
 too few frames cover the source bandwidth; the quality panel reports this.
@@ -123,8 +171,10 @@ bracing displacement are absent unless represented by modelled solids.
   cells across the mouth are required. Warnings flag fewer than twelve cells,
   coarse stock resolution, >5% cavity-volume discrepancy, disconnected rear air,
   short carrier duration, playback undersampling and Xmax exceedance.
-- Recording stride can increase to keep the selected plane under its memory
-  budget. It does not coarsen the actual 3D solve. One spatial job runs at a time;
+- Plane and volume recording strides can increase to fit a 14 MiB target for
+  numeric samples (15 MiB hard limit), including full-rate driver/probe history
+  and up to 256 particle histories. The volume also excludes PML samples from
+  display. This does not coarsen the actual 3D solve. One spatial job runs at a time;
   it supports progress, cancellation and interrupted-job recovery.
 
 None of these thresholds proves accuracy. Compare finer grids and larger
@@ -140,14 +190,19 @@ Each completed job creates a stable `.aegir-field.zip` artifact containing:
 | --- | --- |
 | `README.txt` | Binary layout, units, timing and interpretation |
 | `field.json` | Complete source project, settings, dimensions, plane basis, quality, warnings and metrics |
-| `samples.f32` | Little-endian float32 plane frames, driver histories and probe histories |
+| `samples.f32` | Little-endian float32 plane frames, optional volume pressure and parcel displacement, driver and probe histories |
 | `air-mask.u8` | Recorded plane's solid/air mask |
+| `volume-mask.u8` | Optional sampled 3D air mask, excluding solid/PML samples |
 
 Plane frames contain pressure plus XYZ velocity interpolated to the cell centre
 and pressure timestamp (the mean of adjacent staggered time levels). Driver traces
 contain end-step displacement, midpoint velocity/current/voltage. Probe pressure
 is recorded at every end step. The archive documents the half-step distinction.
 Frames and probes use physical timestamps, not wall-clock playback time.
+The archive remains version 1 with optional extensions. `meta.volume` provides
+dimensions, pitch/origin in mm, stride, cell count and float offset for frame-major
+scalar pressure (X fastest). `meta.particles` provides equilibrium positions in mm,
+count and float offset for frame-major XYZ displacement in m. Both use `meta.times`.
 
 ## MCP control
 
@@ -156,7 +211,7 @@ Four tools supplement the existing tools, for **52 total**:
 - `aegir_field_capabilities`: CPU/desktop/GPU availability, limits and model scope.
 - `aegir_field_run`: `{settings, show}` starts a revision-labelled job. Settings
   include `cellMm`, `paddingMm`, `durationMs`, `frequency`, `signal`, `frames`,
-  `axis`, `slice`, `backend`, `attenuation`. Poll `aegir_job_get` and handle errors.
+  `axis`, `slice`, `backend`, `attenuation`, `volume`. Poll `aegir_job_get` and handle errors.
 - `aegir_field_result`: `{id, frame?, traces?}` returns metadata/artifact, a
   bounded downsampled frame, and/or bounded time samples of the full-rate traces.
   `times` are end-step times for displacement/probes; `electricalTimes` are
@@ -175,6 +230,13 @@ above 2 MiB return a first 1 MiB base64 byte chunk; use `offset:nextOffset` and
 decoded bytes. Explicit chunk reads always use base64, including text artifacts.
 Large artifacts are not returned inline as MCP resources. The desktop's study
 ZIP export writes the complete archive directly.
+
+New display fields are `displayMode:"slice"|"volume"|"fronts"`, `contours`,
+`interpolation`, `particles`, `particleScale` and `renderQuality:"auto"|"high"|"low"`.
+`view.set` accepts fractional frame indices; `field.result` frame reads remain
+integer raw recordings. Volume/front modes apply to pressure; velocity/intensity
+use the recorded slice. These controls never create missing volume data in an old
+study. The complete numeric volume and particle histories are in the archive.
 
 ## Verification
 
