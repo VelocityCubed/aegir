@@ -45,7 +45,12 @@ const topics = [
   {
     id: "drivers",
     title: "Can I use several drivers?",
-    text: "Yes. Advanced tools exposes the baffle, route and driver editor. Each mount has its own driver data, front/back face, position, phase and voltage scale. Sources share the acoustic loading. The driver models are schematic; their baskets and magnets are not included as obstacles in the acoustic grid.",
+    text: "Yes. Open Customise cabinet on Design to add, drag and configure up to eight independent drivers. Select front, back, left, right, top or bottom for each mount, with its own driver data, position, phase and voltage scale. The 3D study uses actual air connectivity; free 3D boards and isolated chambers need that study. The driver models are schematic; their baskets and magnets are not included as obstacles in the acoustic grid.",
+  },
+  {
+    id: "cabinet",
+    title: "How do I shape boards and chambers?",
+    text: "Open Customise cabinet. Add a partition or shelf, then drag its body or end dots to change its position and slope. A free 3D board has move arrows, rotation rings and edge dots that pivot about the opposite edge. Front/side/top views, snapping, undo and precise fields help placement. Edits stay in a draft until Apply cabinet; Cancel keeps the saved design. The multiway folded template is illustrative, with synthetic data.",
   },
   {
     id: "refine",

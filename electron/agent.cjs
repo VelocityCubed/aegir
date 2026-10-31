@@ -48,5 +48,5 @@ exports.startAgent=async function(win,{pythonPath,cadRoot}){
   ipcMain.handle('agent:command',async(e,command)=>{trusted(e);try{return {result:await service.dispatch({...command,actor:'desktop'})};}catch(error){return {error:{code:error.code??'INVALID_COMMAND',message:error.message,details:error.details??error.issues}};}});
   ipcMain.handle('agent:connection',async e=>{trusted(e);return {connectionFile:path.join(directory,'connection.json'),filesDirectory:service.files,serverPath:app.isPackaged?path.join(process.resourcesPath,'mcp','server.mjs'):path.resolve(__dirname,'..','mcp','server.mjs')};});
   const bridge=await startBridge(service,path.join(directory,'connection.json'),{executable:app.getPath('exe'),args:app.isPackaged?[]:[path.resolve(__dirname,'..')]});
-  return {service,exportStep,manifest:project=>{const g=buildGeometry(project);if(g.errors.length)throw Error(g.errors.join(' '));return {project,panels:g.panels};},close:async()=>{await bridge.close();await service.close();}};
+  return {service,exportStep,manifest:project=>{const g=buildGeometry(project);if((g.physicalErrors??g.errors).length)throw Error((g.physicalErrors??g.errors).join(' '));return {project,panels:g.panels};},close:async()=>{await bridge.close();await service.close();}};
 };

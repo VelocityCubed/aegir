@@ -5,6 +5,7 @@ export function panelShape(p:Panel) {
   if(p.outline?.length){p.outline.forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));s.closePath();}
   else{s.moveTo(-w,-h);s.lineTo(w,-h);s.lineTo(w,h);s.lineTo(-w,h);s.closePath();}
   for(const hole of p.holes) {const path=new THREE.Path();path.absarc(hole.x,hole.y,hole.radius,0,Math.PI*2,true);s.holes.push(path);}
+  for(const o of p.openings??[]){const path=new THREE.Path(),x=o.x-o.width/2,y=o.y-o.height/2;path.moveTo(x,y);path.lineTo(x,y+o.height);path.lineTo(x+o.width,y+o.height);path.lineTo(x+o.width,y);path.closePath();s.holes.push(path);}
   return s;
 }
 export function panelGeometry(p:Panel,world=true) {

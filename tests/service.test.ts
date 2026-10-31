@@ -2,11 +2,25 @@ import {describe,it,expect} from 'vitest';
 import {mkdtemp,readFile,writeFile,mkdir,symlink} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
+import {buildGeometry} from '../src/core/geometry';
+import {foldedMultiway} from '../src/core/cabinetEditing';
 import {DesignService} from '../src/agent/service';
 
 const setup=async()=>new DesignService({directory:await mkdtemp(path.join(tmpdir(),'aegir-service-')),workerPath:path.resolve('engine/worker.cjs')}).initialize();
 async function done(service:DesignService,id:string){for(let i=0;i<500;i++){const job=await service.dispatch({name:'job.get',args:{id,includeResult:true}});if(job.status!=='running')return job;await new Promise(r=>setTimeout(r,20));}throw Error('Job timeout');}
 describe('canonical agent workspace',()=>{
+  it('persists free 3D boards, side drivers and front slots and exports CAD without inventing a 1D response',async()=>{
+    const service=await setup(),p=foldedMultiway(service.state.project);
+    p.layout!.baffles.push({id:'spatial',label:'3D brace',start:[1,1],end:[2,1],pose:{center:[365,300,180],size:[100,80],rotation:[0,Math.PI/2,0]}});
+    p.mounts![2].face='left';p.mounts![2].at=[180,1080];
+    expect(buildGeometry(p).physicalErrors).toEqual([]);
+    await service.dispatch({name:'project.replace',args:{project:p,requireValidGeometry:true}});
+    const diagnostic=await service.dispatch({name:'project.validate'});expect(diagnostic.physicalValid).toBe(true);expect(diagnostic.analysisAvailable).toBe(false);
+    const bundle=await service.dispatch({name:'export.create',args:{format:'bundle'}});expect(bundle.size).toBeGreaterThan(1000);
+    const report=await service.dispatch({name:'export.create',args:{format:'report'}});expect(await readFile(report.path,'utf8')).toContain('1D response is unavailable');
+    await expect(service.dispatch({name:'analysis.run'})).rejects.toMatchObject({code:'INVALID_GEOMETRY'});await expect(service.dispatch({name:'analysis.pressure',args:{frequency:100}})).rejects.toMatchObject({code:'INVALID_GEOMETRY'});
+    await service.close();const restored=await new DesignService(service.options).initialize();expect(restored.state.project).toEqual(p);await restored.close();
+  },20000);
   it('preserves mode and display mapping across partial view edits and restart',async()=>{
     const service=await setup();await service.dispatch({name:'view.set',args:{mode:'advanced',field:{opacity:.4,pressureCurve:'linear',frontShading:false}}});await service.dispatch({name:'view.set',args:{metric:'impedance',field:{particles:true}}});expect(service.state.view.mode).toBe('advanced');expect(service.state.view.field).toMatchObject({opacity:.4,pressureCurve:'linear',frontShading:false,particles:true});const reopened=await new DesignService(service.options).initialize();expect(reopened.state.view).toEqual(service.state.view);await reopened.close();await service.close();
   });

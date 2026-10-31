@@ -2,6 +2,7 @@ import { buildGeometry, editableLayout } from "../core/geometry";
 import { driverModel } from "../core/acoustics";
 import { validateProject } from "../core/validation";
 import type { Panel, Project } from "../core/types";
+import { faceFrame, facePoint, wallPieces } from "../core/spatial";
 import { planRecording } from "./recording";
 import {
   validateFieldSettings,
@@ -103,7 +104,7 @@ function intersects(s: Solid, p: V, q: V) {
 }
 /** Clip magnified drawing at exact cabinet solids; this never alters recorded motion. */
 export function visualMotionClipper(project: Project) {
-  const solids = buildGeometry(project).panels.map(solid);
+  const solids = buildGeometry(project).panels.flatMap(wallPieces).map(solid);
   return (start: V, end: V) => {
     let fraction = 1;
     for (const s of solids) {
@@ -142,7 +143,7 @@ export function fieldSolidContours(
   const point = (a: number, b: number): V =>
     o.map((x, k) => x + u[k] * a * pitch + v[k] * b * pitch) as V;
   return buildGeometry(project)
-    .panels.map((panel) => {
+    .panels.flatMap(wallPieces).map((panel) => {
       let polygon: V[] = [
         point(-0.5, -0.5),
         point(plane.width - 0.5, -0.5),
@@ -199,12 +200,7 @@ export function prepareField(
     p = editableLayout(project),
     g = buildGeometry(p);
   // Route intent is not a spatial boundary: shortcuts must emerge in the solved field.
-  const fatal = g.errors.filter(
-    (e) =>
-      !/^(Wave route|Closed end|The intended route|Cavity routing|The route has)/.test(
-        e,
-      ),
-  );
+  const fatal = g.physicalErrors ?? g.errors.filter(e => !/^(Wave route|Closed end|The intended route|Cavity routing|The route has)/.test(e));
   if (fatal.length) throw Error("Field geometry: " + fatal.join(" "));
   const h = settings.cellMm / 1000,
     pml = Math.max(6, Math.ceil(120 / settings.cellMm));
@@ -239,7 +235,7 @@ export function prepareField(
     throw Error(
       "Wave bandwidth has fewer than 8 grid cells per wavelength. Reduce frequency or refine the grid.",
     );
-  if (p.layout!.mouth.width < 2 * settings.cellMm)
+  if (p.layout!.mouth.width < 2 * settings.cellMm || ((p.layout!.mouth.side === "front" || p.layout!.mouth.side === "back") && (p.layout!.mouth.height ?? Math.min(60,g.innerHeight/4)) < 2*settings.cellMm))
     throw Error(
       "The mouth needs at least two grid cells across its width. Refine the spatial grid.",
     );
@@ -253,7 +249,7 @@ export function prepareField(
     origin[1] + ((Math.floor(i / nx) % ny) + 0.5) * h,
     origin[2] + (Math.floor(i / (nx * ny)) + 0.5) * h,
   ];
-  const solids = g.panels.map(solid),
+  const solids = g.panels.flatMap(wallPieces).map(solid),
     flags = new Uint32Array(n);
   for (let k = 0; k < nz; k++) {
     for (let j = 0; j < ny; j++)
@@ -345,50 +341,29 @@ export function prepareField(
         mount.driver.cutout / 2000,
       ),
       pairs: { index: number; weight: number }[][] = [[], []];
-    for (let j = 0; j < ny; j++)
-      for (let i = 0; i < nx; i++) {
-        const x = (origin[0] + (i + 0.5) * h) * 1000,
-          y = (origin[1] + (j + 0.5) * h) * 1000,
-          w = Math.max(
-            0,
-            Math.min(
-              1,
-              (radius * 1000 -
-                Math.hypot(x - mount.center[0], y - mount.center[1])) /
-                settings.cellMm +
-                0.5,
-            ),
-          );
-        if (!w) continue;
-        const outside: number[] = [],
-          inside: number[] = [];
-        for (let k = 0; k < nz; k++) {
-          const index = i + nx * (j + ny * k);
-          if (!(flags[index] & 1)) continue;
-          const z = (origin[2] + (k + 0.5) * h) * 1000;
-          if (mount.face === "front") {
-            if (z < 0) outside.push(index);
-            if (
-              z > project.design.thickness &&
-              z < g.depth - project.design.thickness
-            )
-              inside.push(index);
-          } else {
-            if (z > g.depth) outside.push(index);
-            if (
-              z > project.design.thickness &&
-              z < g.depth - project.design.thickness
-            )
-              inside.push(index);
-          }
-        }
-        const ext = mount.face === "front" ? outside.at(-1) : outside[0],
-          int = mount.face === "front" ? inside[0] : inside.at(-1);
-        if (ext !== undefined && int !== undefined) {
-          pairs[0].push({ index: ext, weight: w });
-          pairs[1].push({ index: int, weight: w });
+    const frame = faceFrame(mount.face), normal = frame.axis, [u,v] = frame.uv,
+      extent = [g.width,g.height,g.depth], t=project.design.thickness;
+    for(let j=0;j<dims[v];j++) for(let i=0;i<dims[u];i++) {
+      const pu=(origin[u]+(i+.5)*h)*1000,pv=(origin[v]+(j+.5)*h)*1000;
+      const w=Math.max(0,Math.min(1,(radius*1000-Math.hypot(pu-mount.center[u],pv-mount.center[v]))/settings.cellMm+.5));
+      if(!w) continue;
+      const xyz=[0,0,0];xyz[u]=i;xyz[v]=j;
+      const outside:number[]=[],inside:number[]=[];
+      for(let k=0;k<dims[normal];k++) {
+        xyz[normal]=k;const index=xyz[0]+nx*(xyz[1]+ny*xyz[2]);
+        const q=(origin[normal]+(k+.5)*h)*1000;
+        // Only the immediately adjacent layer is a piston port. Never tunnel through
+        // a nearby board into another room when the chosen grid cannot resolve air.
+        const outsideDistance=frame.sign<0?-q:q-extent[normal];
+        const insideDistance=frame.sign<0?q-t:extent[normal]-t-q;
+        if(flags[index]&1) {
+          if(outsideDistance>0&&outsideDistance<=settings.cellMm*1.51) outside.push(index);
+          if(insideDistance>0&&insideDistance<=settings.cellMm*1.51) inside.push(index);
         }
       }
+      const ext=frame.sign<0?outside.at(-1):outside[0],int=frame.sign<0?inside[0]:inside.at(-1);
+      if(ext!==undefined&&int!==undefined){pairs[0].push({index:ext,weight:w});pairs[1].push({index:int,weight:w});}
+    }
     for (let side = 0; side < 2; side++) {
       const sum = pairs[side].reduce((a, b) => a + b.weight, 0);
       if (sum < 2)
@@ -491,20 +466,11 @@ export function prepareField(
     recordSteps[s] = times.length;
     times.push((s + 1) * dt);
   }
-  const mouth = p.layout!.mouth,
-    mouthPos: V = [
-      project.design.thickness + mouth.offset,
-      g.height - project.design.thickness / 2,
-      g.depth / 2,
-    ];
-  if (mouth.side === "bottom") mouthPos[1] = project.design.thickness / 2;
-  else if (mouth.side === "left") {
-    mouthPos[0] = project.design.thickness / 2;
-    mouthPos[1] = project.design.thickness + mouth.offset;
-  } else if (mouth.side === "right") {
-    mouthPos[0] = g.width - project.design.thickness / 2;
-    mouthPos[1] = project.design.thickness + mouth.offset;
-  }
+  const mouth = p.layout!.mouth, t=project.design.thickness,
+    at: [number,number] = mouth.side==='front'||mouth.side==='back'
+      ? (mouth.center??[(g.width-2*t)/2,mouth.offset]).map(x=>x+t) as [number,number]
+      : mouth.side==='left'||mouth.side==='right' ? [g.depth/2,t+mouth.offset] : [t+mouth.offset,g.depth/2],
+    mouthPos:V=facePoint(mouth.side,at,[g.width,g.height,g.depth]);
   const near = (pt: V) => {
     let best = -1,
       cost = Infinity;

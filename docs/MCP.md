@@ -123,3 +123,26 @@ The MCP acceptance harness uses the official MCP SDK client over actual stdio, i
 ## Spatial wave fields (0.4.0)
 
 The server now exposes 52 tools, including `field.capabilities`, `field.run`, `field.result` and `field.open`. These use actual 3D FDTD air/solid geometry, GPU or CPU, two-way T/S sources, bounded jobs/recordings and revision-labelled artifacts. `view.set` accepts a partial `field` patch and tab `field`; `view.capture` accepts region `field`. See [SPATIAL-FIELD.md](SPATIAL-FIELD.md) for settings, samples, timing, numerical limits and honest model scope. The original 1D workflow remains available for fast searches.
+
+
+## Spatial cabinet geometry (0.7)
+
+`mount.upsert` accepts all six cabinet faces. Optional `at: [u,v]` fixes a physical
+centre in outer-cabinet mm: front/back X,Y; left/right Z,Y; top/bottom X,Z. Omit
+`at` for legacy route-fraction placement. The line model derives a nearest-route
+fraction from physical placement where a single route is valid.
+
+`baffle.upsert` retains inner-XY `start`/`end` through-depth partitions. Optional
+`pose: {center:[x,y,z],size:[width,height],rotation:[rx,ry,rz]}` uses outer-cabinet
+XYZ mm, local board dimensions and Rz Ry Rx Euler radians (Three ZYX); stock
+thickness stays separate. Legacy endpoints remain required for version-1 data.
+
+`mouth.set` accepts front/back rectangular openings with inner-XY `center`, `width`
+and `height`. Edge mouths retain `offset`/`width` and span the inner depth.
+
+`project.validate` separates `physicalValid`/`physicalErrors` from
+`analysisAvailable`/`analysisErrors`. Legacy `valid` still means that the 1D
+analysis is available and valid. Physically valid spatial projects export
+manifest, STEP, bundle and geometry report without a single-route response.
+`field.run` uses actual solids regardless of route intent. See
+[the cabinet editor guide](CABINET-EDITOR.md) for coordinates and model limits.

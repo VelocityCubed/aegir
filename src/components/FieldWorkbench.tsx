@@ -39,7 +39,26 @@ export function FieldWorkbench({
   const id = state.view.field.jobId,
     selectedJob = jobs.find((j) => j.id === id),
     v = state.view.field;
-  const [settings, setSettings] = useState<FieldSettings>({ ...fieldDefaults }),
+  const sourceDrivers = state.project.mounts?.map((m) => m.driver) ?? [
+    state.project.driver,
+  ];
+  const suggestedCell = Math.max(
+    6,
+    Math.min(
+      fieldDefaults.cellMm,
+      Math.floor(
+        Math.min(
+          ...sourceDrivers.map((d) =>
+            Math.min(Math.sqrt((d.sd * 100) / Math.PI), d.cutout / 2),
+          ),
+        ) * 0.8,
+      ),
+    ),
+  );
+  const [settings, setSettings] = useState<FieldSettings>(() => ({
+      ...fieldDefaults,
+      cellMm: suggestedCell,
+    })),
     [loadedResult, setResult] = useState<FieldResult | null>(null),
     [loadedId, setLoadedId] = useState<string | null>(null),
     [error, setError] = useState(""),

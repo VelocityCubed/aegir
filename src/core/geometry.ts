@@ -1,8 +1,8 @@
 import type { Project, Geometry, Panel } from './types';
 import { buildCustomGeometry } from './layout';
-export function buildGeometry(p: Project): Geometry {
-  if(p.layout)return buildCustomGeometry(p);
-  if(p.mounts?.length)return buildCustomGeometry({...editableLayout({...p,mounts:undefined}),mounts:p.mounts});
+export function buildGeometry(p: Project, editing=false): Geometry {
+  if(p.layout)return buildCustomGeometry(p,editing);
+  if(p.mounts?.length)return buildCustomGeometry({...editableLayout({...p,mounts:undefined}),mounts:p.mounts},editing);
   const {design:d,driver:v}=p, n=d.folds,t=d.thickness,w=d.laneWidth;
   const area=v.sd*100*d.areaRatio, dep=area/w;
   // Rectilinear centreline including equal-width turn clearances: L = N H + (N-1)t.

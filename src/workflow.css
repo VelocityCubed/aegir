@@ -1932,3 +1932,330 @@ p {
   letter-spacing: 0.16em;
   color: var(--steel);
 }
+
+/* Cabinet authoring is a contained draft; applying it is one workspace revision. */
+.cabinet-editor {
+  width: min(1720px, calc(100vw - 32px));
+  max-width: none;
+  height: calc(100vh - 32px);
+  max-height: none;
+  margin: auto;
+  padding: 0;
+  background: #0b0e11;
+  color: #e7e9e8;
+  border: 1px solid #43505a;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 100px #0009;
+}
+.cabinet-editor[open] {
+  display: flex;
+  flex-direction: column;
+}
+.cabinet-editor::backdrop {
+  background: #000b;
+  backdrop-filter: blur(4px);
+}
+.cabinet-editor > header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #29333c;
+  flex-shrink: 0;
+}
+.cabinet-editor h2 {
+  font:
+    500 24px "Space Grotesk",
+    sans-serif;
+  margin: 4px 0 0;
+}
+.cabinet-editor > header p {
+  color: #bec5c9;
+  font-size: 13px;
+  flex: 1;
+}
+.cabinet-editor button {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 12px;
+}
+.cabinet-editor button[aria-pressed="true"] {
+  background: #24414d;
+  border-color: #8cbccb;
+  color: #e7e9e8;
+}
+.cabinet-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px;
+  background: #171d23;
+  border-bottom: 1px solid #29333c;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.cabinet-toolbar label,
+.cabinet-viewbar label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.cabinet-toolbar select {
+  width: auto;
+  padding: 7px;
+}
+.cabinet-edit-body {
+  display: grid;
+  grid-template-columns: 215px minmax(250px, 1fr) 280px;
+  flex: 1;
+  min-height: 200px;
+}
+.cabinet-objects,
+.cabinet-inspector {
+  overflow: auto;
+  padding: 16px;
+  background: #171d23;
+}
+.cabinet-objects {
+  border-right: 1px solid #29333c;
+}
+.cabinet-inspector {
+  border-left: 1px solid #29333c;
+}
+.cabinet-editor h3 {
+  font:
+    500 14px "Space Grotesk",
+    sans-serif;
+  margin: 18px 0 10px;
+}
+.cabinet-editor h3:first-child {
+  margin-top: 0;
+}
+.cabinet-editor h3 small {
+  color: #8c9ba8;
+  font:
+    11px Inter,
+    sans-serif;
+}
+.cabinet-objects > button {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  margin-bottom: 6px;
+  padding: 10px 8px;
+}
+.cabinet-objects > button span:not(.object-index) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.cabinet-objects small {
+  display: block;
+  font-size: 10px;
+  color: #bec5c9;
+  margin-top: 4px;
+}
+.object-index {
+  border: 1px solid #8cbccb;
+  color: #8cbccb;
+  border-radius: 4px;
+  padding: 4px;
+  font:
+    11px "JetBrains Mono",
+    monospace;
+}
+.cabinet-editor p {
+  font-size: 12px;
+  line-height: 1.55;
+  color: #bec5c9;
+}
+.cabinet-editor details {
+  border-top: 1px solid #35414b;
+  padding: 12px 0;
+  margin-top: 12px;
+}
+.cabinet-editor summary {
+  font-size: 12px;
+  cursor: pointer;
+  color: #e7e9e8;
+}
+.cabinet-editor .field-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.cabinet-editor .number-field {
+  margin: 7px 0;
+}
+.cabinet-editor .number-field > span {
+  font-size: 11px;
+}
+.cabinet-editor h4 {
+  font-size: 12px;
+  font-weight: 500;
+  color: #bec5c9;
+  margin: 16px 0 6px;
+}
+.cabinet-stage {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+}
+.cabinet-viewbar {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.cabinet-viewbar button {
+  padding: 6px 10px;
+}
+.cabinet-canvas {
+  position: relative;
+  flex: 1;
+  min-height: 150px;
+  overflow: hidden;
+  touch-action: none;
+}
+.cabinet-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.cabinet-projection {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.cabinet-projection span {
+  position: absolute;
+}
+.cabinet-hint {
+  margin: 0;
+  padding: 10px 16px;
+  border-top: 1px solid #29333c;
+}
+.cabinet-hint span {
+  display: block;
+  color: #8c9ba8;
+  margin-top: 4px;
+  font-size: 11px;
+}
+.cabinet-fit {
+  display: flex;
+  gap: 12px;
+  padding: 10px 22px;
+  background: #16262a;
+  border-top: 1px solid #35414b;
+  max-height: 120px;
+  overflow: auto;
+  flex-shrink: 0;
+  font-size: 12px;
+}
+.cabinet-fit.has-issues {
+  background: #29261a;
+}
+.cabinet-fit svg {
+  flex-shrink: 0;
+}
+.cabinet-fit b {
+  font-weight: 500;
+}
+.cabinet-fit small {
+  display: block;
+  color: #bec5c9;
+  font-size: 10px;
+  margin-top: 4px;
+}
+.cabinet-fit ul {
+  margin: 6px 0 6px 16px;
+  padding: 0;
+  line-height: 1.5;
+}
+.cabinet-editor > footer {
+  display: flex;
+  gap: 10px;
+  padding: 14px 22px;
+  align-items: center;
+  border-top: 1px solid #35414b;
+  flex-shrink: 0;
+}
+.cabinet-editor > footer span {
+  font-size: 11px;
+  color: #bec5c9;
+  flex: 1;
+}
+.cabinet-message {
+  margin: 0;
+  padding: 10px 22px;
+}
+.cabinet-editor-launch {
+  padding: 10px 20px;
+}
+@media (max-width: 1100px) {
+  .cabinet-edit-body {
+    grid-template-columns: 170px minmax(200px, 1fr) 235px;
+  }
+  .cabinet-objects,
+  .cabinet-inspector {
+    padding: 12px;
+  }
+  .cabinet-editor > header p {
+    display: none;
+  }
+  .cabinet-editor > header > div {
+    flex: 1;
+  }
+}
+@media (max-width: 760px) {
+  .cabinet-editor {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+  }
+  .cabinet-edit-body {
+    grid-template-columns: minmax(200px, 1fr) 220px;
+  }
+  .cabinet-objects {
+    grid-column: 1/-1;
+    max-height: 100px;
+    display: flex;
+    gap: 8px;
+    overflow: auto;
+    padding: 8px;
+  }
+  .cabinet-objects h3,
+  .cabinet-objects p {
+    display: none;
+  }
+  .cabinet-objects > button {
+    min-width: 145px;
+    margin: 0;
+  }
+  .cabinet-toolbar {
+    padding: 8px;
+  }
+  .cabinet-editor > footer span {
+    display: none;
+  }
+  .cabinet-editor > footer {
+    justify-content: flex-end;
+  }
+  .cabinet-fit {
+    max-height: 90px;
+  }
+  .cabinet-editor > header {
+    padding: 12px;
+  }
+  .cabinet-editor h2 {
+    font-size: 20px;
+  }
+}

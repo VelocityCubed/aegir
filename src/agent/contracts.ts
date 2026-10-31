@@ -1,87 +1,747 @@
-import {z} from 'zod';
-import type {Driver,Project} from '../core/types';
-import {validateProject} from '../core/validation';
+import { z } from "zod";
+import type { Driver, Project } from "../core/types";
+import { validateProject } from "../core/validation";
 
-const number=(min:number,max:number,description:string)=>z.number().finite().min(min).max(max).describe(description);
-const id=z.string().regex(/^[-a-zA-Z0-9_]{1,64}$/).describe('Stable identifier; letters, numbers, underscore and hyphen.');
-const xy=z.tuple([number(-5000,5000,'x in mm'),number(-5000,5000,'y in mm')]);
-const xyz=z.tuple([z.number().finite(),z.number().finite(),z.number().finite()]);
-export const driverSchema=z.object({id:z.string().min(1).max(2000),name:z.string().min(1).max(150),note:z.string().max(2000),fs:number(10,250,'Free-air resonance, Hz'),qes:number(.08,3,'Electrical Q'),qms:number(.3,30,'Mechanical Q'),vas:number(.2,1000,'Equivalent compliance volume, L'),re:number(.5,32,'DC resistance, ohm'),le:number(0,10,'Voice-coil inductance, mH'),sd:number(10,2000,'Effective cone area, cm²'),xmax:number(.5,40,'One-way peak linear excursion, mm'),cutout:number(25,600,'Through-cut diameter, mm'),frame:number(30,700,'Frame diameter, mm'),depth:number(10,500,'Mounting depth behind baffle, mm')}).strict();
-export const designSchema=z.object({length:number(.5,6,'Generated centreline length, m; custom route length comes from geometry'),areaRatio:number(.5,8,'Generated line area divided by primary cone area'),laneWidth:number(50,700,'Generated lane width, mm'),folds:z.number().int().min(1).max(4),thickness:number(6,40,'Default stock thickness, mm'),driverPosition:number(.01,.8,'Primary source fraction from closed end'),damping:number(0,5,'Distributed attenuation at 100 Hz, Np/m'),voltage:number(.1,80,'Base drive voltage, V RMS'),temperature:number(0,40,'Air temperature, °C')}).strict();
-export const targetsSchema=z.object({low:number(15,150,'Target low frequency, Hz'),high:number(60,500,'Target high frequency, Hz'),maxHeight:number(200,2500,'Maximum outer height, mm'),maxWidth:number(100,1800,'Maximum outer width, mm'),maxDepth:number(100,1200,'Maximum outer depth, mm'),minLength:number(.5,6,'Minimum route length, m'),maxLength:number(.5,6,'Maximum route length, m'),maxVelocity:number(1,50,'Peak mouth velocity limit, m/s')}).strict();
-export const baffleSchema=z.object({id,label:z.string().max(150),start:xy,end:xy,thickness:number(6,80,'Stock thickness, mm; omitted uses project default').optional()}).strict();
-export const mouthSchema=z.object({side:z.enum(['top','bottom','left','right']),offset:number(0,4000,'Mouth centre offset along the inner side, mm'),width:number(5,4000,'Clear mouth width, mm')}).strict();
-export const layoutSchema=z.object({width:number(40,4000,'Outer width, mm'),height:number(40,4000,'Outer height, mm'),depth:number(40,4000,'Outer depth, mm'),baffles:z.array(baffleSchema).max(64),route:z.array(xy).min(2).max(512).describe('Closed-end-to-mouth polyline in the internal XY cavity, mm; y increases upward. Geometry samples clear section widths.'),mouth:mouthSchema}).strict();
-export const mountSchema=z.object({id,driver:driverSchema,position:number(.0001,.9999,'Fraction of route length measured from the closed end'),face:z.enum(['front','back']),voltageScale:number(0,10,'Multiplier of base RMS voltage'),phase:number(-360,360,'Excitation phase in degrees')}).strict();
-export const projectSchema=z.object({version:z.literal(1),name:z.string().max(150),driver:driverSchema,design:designSchema,targets:targetsSchema,layout:layoutSchema.optional(),mounts:z.array(mountSchema).min(1).max(8).optional()}).strict();
-export const fieldSettingsSchema=z.object({cellMm:number(6,40,'3D grid spacing, mm'),paddingMm:number(80,600,'Exterior air padding, mm; must contain the PML plus free air'),durationMs:number(5,500,'Physical simulation duration, ms'),frequency:number(20,2000,'Carrier frequency, Hz'),signal:z.enum(['burst','tone']),frames:z.number().int().min(12).max(640),volume:z.boolean(),axis:z.enum(['xy','xz','yz']),slice:number(0,1,'Slice fraction across the cabinet dimension normal to the plane'),backend:z.enum(['auto','cpu','webgpu']),attenuation:number(0,2,'Optional uniform attenuation, Np/m; not a calibrated stuffing model')}).strict();
-const driverViewFields={showDrivers:z.boolean(),driverMotionScale:number(1,500,'Visual cone-displacement multiplier only; 1 is physical scale, pressure and recorded values are unchanged')};
-const visualViewFields={opacity:number(0,3,'Display opacity multiplier only; raw pressure and scale are unchanged'),pressureCurve:z.enum(['linear','soft']),frontShading:z.boolean(),displayMode:z.enum(['slice','volume','fronts']),contours:z.boolean(),particles:z.boolean(),particleScale:number(1,10000,'Visual air displacement multiplier; recorded values remain physical, amplified drawing is clipped at cabinet solids'),renderQuality:z.enum(['auto','high','low']),interpolation:z.boolean()};
-const fieldViewBase=z.object({jobId:z.string().nullable(),frame:z.number().min(0).max(639),playing:z.boolean(),fps:z.number().min(1).max(60),metric:z.enum(['pressure','velocity','intensity']),range:z.number().min(0).max(1e8),...driverViewFields,...visualViewFields}).strict();
-export const fieldViewSchema=fieldViewBase.extend({showDrivers:driverViewFields.showDrivers.default(true),driverMotionScale:driverViewFields.driverMotionScale.default(50),displayMode:visualViewFields.displayMode.default('volume'),contours:visualViewFields.contours.default(true),particles:visualViewFields.particles.default(false),particleScale:visualViewFields.particleScale.default(1000),renderQuality:visualViewFields.renderQuality.default('auto'),interpolation:visualViewFields.interpolation.default(true),opacity:visualViewFields.opacity.default(1),pressureCurve:visualViewFields.pressureCurve.default('soft'),frontShading:visualViewFields.frontShading.default(true)});
-export const defaultFieldView=fieldViewSchema.parse({jobId:null,frame:0,playing:false,fps:24,metric:'pressure',range:0});
-export const viewSchema=z.object({mode:z.enum(['guided','advanced']).default('guided'),tab:z.enum(['design','field','optimise','build','method']),leftTab:z.enum(['enclosure','driver']),section:z.boolean(),exploded:z.boolean(),path:z.boolean(),camera:z.object({eye:xyz,target:xyz}).strict().nullable(),selectedPanel:z.string().max(64).nullable(),metric:z.enum(['spl','impedance','excursion','velocity','groupDelay']),components:z.boolean(),probeFrequency:number(15,500,'Pressure probe, Hz'),comparisons:z.array(z.string()).max(8),field:fieldViewSchema.default(defaultFieldView)}).strict();
-export type ViewState=z.infer<typeof viewSchema>;
-export const defaultView:ViewState={mode:'guided',tab:'design',leftTab:'enclosure',section:true,exploded:false,path:true,camera:null,selectedPanel:null,metric:'spl',components:false,probeFrequency:50,comparisons:[],field:defaultFieldView};
-export interface WorkspaceState {version:1;revision:number;projectRevision:number;project:Project;library:Driver[];snapshots:{id:string;name:string;project:Project;color:string}[];view:ViewState;updatedAt:string;initialized:boolean}
-export const parameterSchema=z.object({path:z.string().min(1).max(200).describe('Existing numeric project path, e.g. design.driverPosition, driver.qes, layout.baffles.0.end.0'),min:z.number().finite(),max:z.number().finite()}).strict();
-const empty=z.object({}).strict();
-export const commands={
-  'workspace.batch':{description:'Apply up to 64 project/layout/driver/library/snapshot/view edits as one atomic revision and undo step. Any error rolls back the entire batch. Commands use the same arguments as their individual tools.',schema:z.object({commands:z.array(z.object({name:z.string().max(80),args:z.record(z.string(),z.unknown()).optional()}).strict()).min(1).max(64),requireValidGeometry:z.boolean().optional()}).strict()},
-  'status.get':{description:'Get live connection, revision, workspace path, model scope, CAD capability and diagnostics.',schema:empty,read:true},
-  'workspace.get':{description:'Read the complete authoritative desktop workspace, including project, drivers, snapshots and view.',schema:empty,read:true},
-  'workspace.bootstrap':{description:'Import the pre-MCP renderer state once, only if this workspace has never been initialized.',schema:z.object({project:projectSchema,library:z.array(driverSchema).max(200),snapshots:z.array(z.object({id:z.string(),name:z.string(),project:projectSchema,color:z.string().regex(/^#[0-9a-f]{6}$/i)})).max(32)}).strict()},
-  'project.new':{description:'Create a clean generated project, optionally using a named example driver. Previous work remains in undo history.',schema:z.object({name:z.string().max(150).optional(),driverId:z.string().optional()}).strict()},
-  'project.replace':{description:'Atomically replace the full project. Schema validation always runs; geometric issues are returned for iterative correction.',schema:z.object({project:projectSchema,requireValidGeometry:z.boolean().optional()}).strict()},
-  'project.patch':{description:'Patch explicit project fields without replacing unrelated data. Null layout/mounts restores generated/single-source mode.',schema:z.object({name:z.string().max(150).optional(),driver:driverSchema.partial().optional(),design:designSchema.partial().optional(),targets:targetsSchema.partial().optional(),layout:layoutSchema.nullable().optional(),mounts:z.array(mountSchema).min(1).max(8).nullable().optional()}).strict()},
-  'project.inspect':{description:'Inspect actual panels, baffle geometry, driver mounting centres, route length and sampled physical cross-sections. Coordinates are mm; section distances are m.',schema:empty,read:true},
-  'project.validate':{description:'Return geometry issues, target/driver headroom checks and model limits. Does not silently manufacture or simulate invalid geometry.',schema:empty,read:true},
-  'project.save':{description:'Save a version-1 .aegir.json project under the workspace files directory, without dialogs.',schema:z.object({filename:z.string().max(200)}).strict()},
-  'project.open':{description:'Load an existing JSON project from the workspace files directory. Legacy WaveLab JSON is supported.',schema:z.object({filename:z.string().max(200)}).strict()},
-  'layout.convert':{description:'Freeze the generated cabinet into editable physical baffles, mouth and wave route. Preserves its geometry and drivers.',schema:empty},
-  'layout.set':{description:'Set an explicit custom cabinet, internal baffles, mouth and wave route. Baffle and route XY coordinates are relative to the inner cavity, not outer walls.',schema:z.object({layout:layoutSchema}).strict()},
-  'cabinet.set':{description:'Change custom outer cabinet dimensions. Route and baffle coordinates stay fixed so the agent can make intentional follow-up edits.',schema:z.object({width:z.number().min(40).max(4000).optional(),height:z.number().min(40).max(4000).optional(),depth:z.number().min(40).max(4000).optional()}).strict()},
-  'baffle.upsert':{description:'Add or replace an internal baffle by stable ID, with exact start/end positions and stock thickness. Supports angled boards and clipped mitred ends.',schema:z.object({baffle:baffleSchema}).strict()},
-  'baffle.remove':{description:'Remove one internal baffle by ID. Validate or retrace the wave route afterwards.',schema:z.object({id}).strict()},
-  'route.set':{description:'Set the intended closed-end-to-mouth wave path. The app checks wall/board intersections and derives varying section area from the physical clear cavity.',schema:z.object({points:z.array(xy).min(2).max(512)}).strict()},
-  'route.trace':{description:'Trace a clearance-weighted path through physical baffles to the mouth. Keeps the existing closed end unless start is supplied; returns the exact route and diagnostics.',schema:z.object({start:xy.optional(),cellSize:number(3,50,'Tracing grid spacing, mm; maximum 120,000 cells').optional()}).strict()},
-  'mouth.set':{description:'Place the actual open mouth in a cabinet side; end caps are generated around this opening. Retrace or update the route endpoint afterwards.',schema:z.object({mouth:mouthSchema}).strict()},
-  'driver.set':{description:'Edit primary driver parameters. Data source notes are retained. Geometry and acoustic parameters are always validated.',schema:z.object({parameters:driverSchema.partial()}).strict()},
-  'library.list':{description:'List synthetic example drivers and stored user drivers with full T/S parameters and notes.',schema:empty,read:true},
-  'library.upsert':{description:'Save or replace a user driver by ID.',schema:z.object({driver:driverSchema}).strict()},
-  'library.remove':{description:'Remove a stored user driver; does not alter drivers already copied into projects.',schema:z.object({id:z.string()}).strict()},
-  'library.replace':{description:'Replace the stored driver library atomically; intended for desktop import/synchronization.',schema:z.object({drivers:z.array(driverSchema).max(200)}).strict()},
-  'driver.select':{description:'Copy a known example/library driver into the primary source. Cabinet changes remain explicit.',schema:z.object({id:z.string()}).strict()},
-  'mount.upsert':{description:'Add or replace a source mount with its own driver, position, face, voltage scale and phase. Multiple drivers are acoustically coupled through the shared line.',schema:z.object({mount:mountSchema}).strict()},
-  'mount.remove':{description:'Remove a source mount by ID. At least one source must remain.',schema:z.object({id}).strict()},
-  'snapshot.create':{description:'Save a named comparison/checkpoint of the entire project for plotting, restoring or comparing drivers.',schema:z.object({name:z.string().max(150),color:z.string().regex(/^#[0-9a-f]{6}$/i).optional()}).strict()},
-  'snapshot.list':{description:'List saved project comparisons.',schema:empty,read:true},
-  'snapshot.restore':{description:'Restore a saved comparison as the active project, retaining undo history.',schema:z.object({id:z.string()}).strict()},
-  'snapshot.remove':{description:'Delete a saved comparison by ID.',schema:z.object({id:z.string()}).strict()},
-  'snapshot.replace':{description:'Synchronize the desktop comparison collection atomically.',schema:z.object({snapshots:z.array(z.object({id:z.string(),name:z.string().max(150),project:projectSchema,color:z.string().regex(/^#[0-9a-f]{6}$/i)})).max(32)}).strict()},
-  'history.undo':{description:'Undo the last committed workspace mutation. Revision numbers remain monotonic.',schema:empty},
-  'history.redo':{description:'Redo an undone workspace mutation.',schema:empty},
-  'view.get':{description:'Read visible tab, camera, display toggles, selected panel, chart and pressure-probe state.',schema:empty,read:true},
-  'view.set':{description:'Control the live desktop in guided or advanced mode. Field displayMode selects slice/volume/fronts. Opacity, pressureCurve, frontShading, contours, particles, magnification and renderQuality change drawing only. Fractional frames interpolate physical time. Partial patches preserve unrelated view settings.',schema:viewSchema.omit({field:true,mode:true}).partial().extend({mode:z.enum(['guided','advanced']).optional(),field:fieldViewBase.partial().optional()})},
-  'view.capture':{description:'Capture an actual rendered full desktop, 3D model or response chart as a PNG artifact. Returned image is suitable for checking the agent design visually.',schema:z.object({region:z.enum(['window','model','chart','field']).optional()}).strict()},
-  'field.run':{description:'Start an experimental 3D acoustic FDTD study in the actual cabinet and exterior air, with two-way T/S piston coupling. Includes solved reflections and interference, finite grid/PML diagnostics and a bounded recording. Returns a job; GPU uses the live desktop, CPU reference is available without WebGPU.',schema:z.object({settings:fieldSettingsSchema.partial().optional(),show:z.boolean().optional()}).strict()},
-  'field.capabilities':{description:'Get spatial solver CPU/GPU availability, numerical limits and model scope.',schema:empty,read:true},
-  'field.result':{description:'Read a completed spatial study metadata and artifact. Optionally retrieve one solved frame (bounded downsample) and full-rate probe/driver traces (bounded time samples). Values are physical SI, coordinates mm; source project and numerical assumptions are included.',schema:z.object({id:z.string(),frame:z.number().int().min(0).max(639).optional(),traces:z.boolean().optional()}).strict(),read:true},
-  'field.open':{description:'Select a completed spatial study in the actual desktop wave view. Its own recorded geometry is displayed, with a stale-project notice if appropriate.',schema:z.object({id:z.string()}).strict()},
-  'analysis.run':{description:'Start an asynchronous, revision-labelled coupled acoustic simulation. Poll job.get. Invalid geometry fails explicitly.',schema:z.object({samples:z.number().int().min(24).max(1200).optional()}).strict()},
-  'analysis.pressure':{description:'Return actual normalized pressure along the active route at one frequency.',schema:z.object({frequency:number(5,5000,'Frequency, Hz'),samples:z.number().int().min(10).max(1000).optional()}).strict(),read:true},
-  'analysis.sweep':{description:'Start a bounded numeric parameter sweep, retaining invalid-case diagnostics. Paths address existing numeric fields only; no code expressions.',schema:z.object({path:z.string().max(200),values:z.array(z.number().finite()).min(1).max(64),samples:z.number().int().min(24).max(500).optional()}).strict()},
-  'analysis.optimise':{description:'Start a deterministic bounded search. Generated mode uses the built-in cabinet search; custom mode requires explicit numeric parameter bounds. Results do not change the live project until job.apply.',schema:z.object({parameters:z.array(parameterSchema).min(1).max(8).optional(),iterations:z.number().int().min(10).max(3000).optional(),retrace:z.boolean().optional()}).strict()},
-  'analysis.compare':{description:'Compare current and saved projects at the same target band and drive voltage. Returns both full responses and geometry; compare per-driver results against their own limits.',schema:z.object({ids:z.array(z.string()).min(1).max(8),samples:z.number().int().min(24).max(300).optional()}).strict()},
-  'job.get':{description:'Get an asynchronous job status, source revision, progress and error. Set includeResult for complete response/candidate data.',schema:z.object({id:z.string(),includeResult:z.boolean().optional()}).strict(),read:true},
-  'job.list':{description:'List recent analysis jobs and progress.',schema:empty,read:true},
-  'job.cancel':{description:'Cancel a running job and terminate its worker. No partial result is applied to the project.',schema:z.object({id:z.string()}).strict()},
-  'job.apply':{description:'Apply a completed optimisation candidate. Rejects stale results unless allowStale is explicitly true.',schema:z.object({id:z.string(),candidate:z.number().int().min(0).max(5).optional(),allowStale:z.boolean().optional()}).strict()},
-  'export.create':{description:'Export a project, numerical CSV, full fabrication bundle, exact geometry manifest, SCAD, CadQuery source, engineering report or STEP assembly to a workspace-relative filename. STEP needs the optional local CAD runtime.',schema:z.object({format:z.enum(['project','response','bundle','manifest','scad','cadquery','report','step']),filename:z.string().max(200).optional()}).strict()},
-  'artifact.list':{description:'List artifacts created in this workspace.',schema:empty,read:true},
-  'artifact.read':{description:'Read a created artifact by stable ID. MCP returns the first 1 MiB chunk for files above 2 MiB; follow nextOffset until complete. Explicit offset/length reads are base64 byte chunks. Never an arbitrary filesystem path.',schema:z.object({id:z.string(),offset:z.number().int().nonnegative().optional(),length:z.number().int().min(1).max(1048576).optional()}).strict(),read:true},
+const number = (min: number, max: number, description: string) =>
+  z.number().finite().min(min).max(max).describe(description);
+const id = z
+  .string()
+  .regex(/^[-a-zA-Z0-9_]{1,64}$/)
+  .describe("Stable identifier; letters, numbers, underscore and hyphen.");
+const xy = z.tuple([
+  number(-5000, 5000, "x in mm"),
+  number(-5000, 5000, "y in mm"),
+]);
+const xyz = z.tuple([
+  z.number().finite(),
+  z.number().finite(),
+  z.number().finite(),
+]);
+export const driverSchema = z
+  .object({
+    id: z.string().min(1).max(2000),
+    name: z.string().min(1).max(150),
+    note: z.string().max(2000),
+    fs: number(10, 5000, "Free-air resonance, Hz"),
+    qes: number(0.08, 3, "Electrical Q"),
+    qms: number(0.3, 30, "Mechanical Q"),
+    vas: number(0.0001, 1000, "Equivalent compliance volume, L"),
+    re: number(0.5, 32, "DC resistance, ohm"),
+    le: number(0, 10, "Voice-coil inductance, mH"),
+    sd: number(0.5, 2000, "Effective cone area, cm²"),
+    xmax: number(0.01, 40, "One-way peak linear excursion, mm"),
+    cutout: number(25, 600, "Through-cut diameter, mm"),
+    frame: number(30, 700, "Frame diameter, mm"),
+    depth: number(10, 500, "Mounting depth behind baffle, mm"),
+  })
+  .strict();
+export const designSchema = z
+  .object({
+    length: number(
+      0.5,
+      6,
+      "Generated centreline length, m; custom route length comes from geometry",
+    ),
+    areaRatio: number(
+      0.5,
+      8,
+      "Generated line area divided by primary cone area",
+    ),
+    laneWidth: number(50, 700, "Generated lane width, mm"),
+    folds: z.number().int().min(1).max(4),
+    thickness: number(6, 40, "Default stock thickness, mm"),
+    driverPosition: number(
+      0.01,
+      0.8,
+      "Primary source fraction from closed end",
+    ),
+    damping: number(0, 5, "Distributed attenuation at 100 Hz, Np/m"),
+    voltage: number(0.1, 80, "Base drive voltage, V RMS"),
+    temperature: number(0, 40, "Air temperature, °C"),
+  })
+  .strict();
+export const targetsSchema = z
+  .object({
+    low: number(15, 150, "Target low frequency, Hz"),
+    high: number(60, 500, "Target high frequency, Hz"),
+    maxHeight: number(200, 2500, "Maximum outer height, mm"),
+    maxWidth: number(100, 1800, "Maximum outer width, mm"),
+    maxDepth: number(100, 1200, "Maximum outer depth, mm"),
+    minLength: number(0.5, 6, "Minimum route length, m"),
+    maxLength: number(0.5, 6, "Maximum route length, m"),
+    maxVelocity: number(1, 50, "Peak mouth velocity limit, m/s"),
+  })
+  .strict();
+const faceSchema = z.enum(["front", "back", "left", "right", "top", "bottom"]);
+export const baffleSchema = z
+  .object({
+    id,
+    label: z.string().max(150),
+    start: xy,
+    end: xy,
+    thickness: number(
+      6,
+      80,
+      "Stock thickness, mm; omitted uses project default",
+    ).optional(),
+    pose: z
+      .object({
+        center: xyz,
+        size: z.tuple([
+          number(1, 4000, "Board width, mm"),
+          number(1, 4000, "Board height, mm"),
+        ]),
+        rotation: xyz,
+      })
+      .strict()
+      .optional(),
+  })
+  .strict();
+export const mouthSchema = z
+  .object({
+    side: faceSchema,
+    center: xy.optional(),
+    height: number(5, 4000, "Front/back mouth height, mm").optional(),
+    offset: number(0, 4000, "Mouth centre offset along the inner side, mm"),
+    width: number(5, 4000, "Clear mouth width, mm"),
+  })
+  .strict();
+export const layoutSchema = z
+  .object({
+    width: number(40, 4000, "Outer width, mm"),
+    height: number(40, 4000, "Outer height, mm"),
+    depth: number(40, 4000, "Outer depth, mm"),
+    baffles: z.array(baffleSchema).max(64),
+    route: z
+      .array(xy)
+      .min(2)
+      .max(512)
+      .describe(
+        "Closed-end-to-mouth polyline in the internal XY cavity, mm; y increases upward. Geometry samples clear section widths.",
+      ),
+    mouth: mouthSchema,
+  })
+  .strict();
+export const mountSchema = z
+  .object({
+    id,
+    driver: driverSchema,
+    position: number(
+      0.0001,
+      0.9999,
+      "Fraction of route length measured from the closed end",
+    ),
+    face: faceSchema,
+    at: xy
+      .optional()
+      .describe(
+        "Physical face-plane centre in outer-cabinet mm: front/back X,Y; sides Z,Y; top/bottom X,Z. Omit to follow the legacy route fraction.",
+      ),
+    voltageScale: number(0, 10, "Multiplier of base RMS voltage"),
+    phase: number(-360, 360, "Excitation phase in degrees"),
+  })
+  .strict();
+export const projectSchema = z
+  .object({
+    version: z.literal(1),
+    name: z.string().max(150),
+    driver: driverSchema,
+    design: designSchema,
+    targets: targetsSchema,
+    layout: layoutSchema.optional(),
+    mounts: z.array(mountSchema).min(1).max(8).optional(),
+  })
+  .strict();
+export const fieldSettingsSchema = z
+  .object({
+    cellMm: number(6, 40, "3D grid spacing, mm"),
+    paddingMm: number(
+      80,
+      600,
+      "Exterior air padding, mm; must contain the PML plus free air",
+    ),
+    durationMs: number(5, 500, "Physical simulation duration, ms"),
+    frequency: number(20, 2000, "Carrier frequency, Hz"),
+    signal: z.enum(["burst", "tone"]),
+    frames: z.number().int().min(12).max(640),
+    volume: z.boolean(),
+    axis: z.enum(["xy", "xz", "yz"]),
+    slice: number(
+      0,
+      1,
+      "Slice fraction across the cabinet dimension normal to the plane",
+    ),
+    backend: z.enum(["auto", "cpu", "webgpu"]),
+    attenuation: number(
+      0,
+      2,
+      "Optional uniform attenuation, Np/m; not a calibrated stuffing model",
+    ),
+  })
+  .strict();
+const driverViewFields = {
+  showDrivers: z.boolean(),
+  driverMotionScale: number(
+    1,
+    500,
+    "Visual cone-displacement multiplier only; 1 is physical scale, pressure and recorded values are unchanged",
+  ),
+};
+const visualViewFields = {
+  opacity: number(
+    0,
+    3,
+    "Display opacity multiplier only; raw pressure and scale are unchanged",
+  ),
+  pressureCurve: z.enum(["linear", "soft"]),
+  frontShading: z.boolean(),
+  displayMode: z.enum(["slice", "volume", "fronts"]),
+  contours: z.boolean(),
+  particles: z.boolean(),
+  particleScale: number(
+    1,
+    10000,
+    "Visual air displacement multiplier; recorded values remain physical, amplified drawing is clipped at cabinet solids",
+  ),
+  renderQuality: z.enum(["auto", "high", "low"]),
+  interpolation: z.boolean(),
+};
+const fieldViewBase = z
+  .object({
+    jobId: z.string().nullable(),
+    frame: z.number().min(0).max(639),
+    playing: z.boolean(),
+    fps: z.number().min(1).max(60),
+    metric: z.enum(["pressure", "velocity", "intensity"]),
+    range: z.number().min(0).max(1e8),
+    ...driverViewFields,
+    ...visualViewFields,
+  })
+  .strict();
+export const fieldViewSchema = fieldViewBase.extend({
+  showDrivers: driverViewFields.showDrivers.default(true),
+  driverMotionScale: driverViewFields.driverMotionScale.default(50),
+  displayMode: visualViewFields.displayMode.default("volume"),
+  contours: visualViewFields.contours.default(true),
+  particles: visualViewFields.particles.default(false),
+  particleScale: visualViewFields.particleScale.default(1000),
+  renderQuality: visualViewFields.renderQuality.default("auto"),
+  interpolation: visualViewFields.interpolation.default(true),
+  opacity: visualViewFields.opacity.default(1),
+  pressureCurve: visualViewFields.pressureCurve.default("soft"),
+  frontShading: visualViewFields.frontShading.default(true),
+});
+export const defaultFieldView = fieldViewSchema.parse({
+  jobId: null,
+  frame: 0,
+  playing: false,
+  fps: 24,
+  metric: "pressure",
+  range: 0,
+});
+export const viewSchema = z
+  .object({
+    mode: z.enum(["guided", "advanced"]).default("guided"),
+    tab: z.enum(["design", "field", "optimise", "build", "method"]),
+    leftTab: z.enum(["enclosure", "driver"]),
+    section: z.boolean(),
+    exploded: z.boolean(),
+    path: z.boolean(),
+    camera: z.object({ eye: xyz, target: xyz }).strict().nullable(),
+    selectedPanel: z.string().max(64).nullable(),
+    metric: z.enum(["spl", "impedance", "excursion", "velocity", "groupDelay"]),
+    components: z.boolean(),
+    probeFrequency: number(15, 500, "Pressure probe, Hz"),
+    comparisons: z.array(z.string()).max(8),
+    field: fieldViewSchema.default(defaultFieldView),
+  })
+  .strict();
+export type ViewState = z.infer<typeof viewSchema>;
+export const defaultView: ViewState = {
+  mode: "guided",
+  tab: "design",
+  leftTab: "enclosure",
+  section: true,
+  exploded: false,
+  path: true,
+  camera: null,
+  selectedPanel: null,
+  metric: "spl",
+  components: false,
+  probeFrequency: 50,
+  comparisons: [],
+  field: defaultFieldView,
+};
+export interface WorkspaceState {
+  version: 1;
+  revision: number;
+  projectRevision: number;
+  project: Project;
+  library: Driver[];
+  snapshots: { id: string; name: string; project: Project; color: string }[];
+  view: ViewState;
+  updatedAt: string;
+  initialized: boolean;
+}
+export const parameterSchema = z
+  .object({
+    path: z
+      .string()
+      .min(1)
+      .max(200)
+      .describe(
+        "Existing numeric project path, e.g. design.driverPosition, driver.qes, layout.baffles.0.end.0",
+      ),
+    min: z.number().finite(),
+    max: z.number().finite(),
+  })
+  .strict();
+const empty = z.object({}).strict();
+export const commands = {
+  "workspace.batch": {
+    description:
+      "Apply up to 64 project/layout/driver/library/snapshot/view edits as one atomic revision and undo step. Any error rolls back the entire batch. Commands use the same arguments as their individual tools.",
+    schema: z
+      .object({
+        commands: z
+          .array(
+            z
+              .object({
+                name: z.string().max(80),
+                args: z.record(z.string(), z.unknown()).optional(),
+              })
+              .strict(),
+          )
+          .min(1)
+          .max(64),
+        requireValidGeometry: z.boolean().optional(),
+      })
+      .strict(),
+  },
+  "status.get": {
+    description:
+      "Get live connection, revision, workspace path, model scope, CAD capability and diagnostics.",
+    schema: empty,
+    read: true,
+  },
+  "workspace.get": {
+    description:
+      "Read the complete authoritative desktop workspace, including project, drivers, snapshots and view.",
+    schema: empty,
+    read: true,
+  },
+  "workspace.bootstrap": {
+    description:
+      "Import the pre-MCP renderer state once, only if this workspace has never been initialized.",
+    schema: z
+      .object({
+        project: projectSchema,
+        library: z.array(driverSchema).max(200),
+        snapshots: z
+          .array(
+            z.object({
+              id: z.string(),
+              name: z.string(),
+              project: projectSchema,
+              color: z.string().regex(/^#[0-9a-f]{6}$/i),
+            }),
+          )
+          .max(32),
+      })
+      .strict(),
+  },
+  "project.new": {
+    description:
+      "Create a clean generated project, optionally using a named example driver. Previous work remains in undo history.",
+    schema: z
+      .object({
+        name: z.string().max(150).optional(),
+        driverId: z.string().optional(),
+      })
+      .strict(),
+  },
+  "project.replace": {
+    description:
+      "Atomically replace the full project. Schema validation always runs; geometric issues are returned for iterative correction.",
+    schema: z
+      .object({
+        project: projectSchema,
+        requireValidGeometry: z.boolean().optional(),
+      })
+      .strict(),
+  },
+  "project.patch": {
+    description:
+      "Patch explicit project fields without replacing unrelated data. Null layout/mounts restores generated/single-source mode.",
+    schema: z
+      .object({
+        name: z.string().max(150).optional(),
+        driver: driverSchema.partial().optional(),
+        design: designSchema.partial().optional(),
+        targets: targetsSchema.partial().optional(),
+        layout: layoutSchema.nullable().optional(),
+        mounts: z.array(mountSchema).min(1).max(8).nullable().optional(),
+      })
+      .strict(),
+  },
+  "project.inspect": {
+    description:
+      "Inspect actual panels, baffle geometry, driver mounting centres, route length and sampled physical cross-sections. Coordinates are mm; section distances are m.",
+    schema: empty,
+    read: true,
+  },
+  "project.validate": {
+    description:
+      "Return geometry issues, target/driver headroom checks and model limits. Does not silently manufacture or simulate invalid geometry.",
+    schema: empty,
+    read: true,
+  },
+  "project.save": {
+    description:
+      "Save a version-1 .aegir.json project under the workspace files directory, without dialogs.",
+    schema: z.object({ filename: z.string().max(200) }).strict(),
+  },
+  "project.open": {
+    description:
+      "Load an existing JSON project from the workspace files directory. Legacy WaveLab JSON is supported.",
+    schema: z.object({ filename: z.string().max(200) }).strict(),
+  },
+  "layout.convert": {
+    description:
+      "Freeze the generated cabinet into editable physical baffles, mouth and wave route. Preserves its geometry and drivers.",
+    schema: empty,
+  },
+  "layout.set": {
+    description:
+      "Set an explicit custom cabinet, internal baffles, mouth and wave route. Baffle and route XY coordinates are relative to the inner cavity, not outer walls.",
+    schema: z.object({ layout: layoutSchema }).strict(),
+  },
+  "cabinet.set": {
+    description:
+      "Change custom outer cabinet dimensions. Route and baffle coordinates stay fixed so the agent can make intentional follow-up edits.",
+    schema: z
+      .object({
+        width: z.number().min(40).max(4000).optional(),
+        height: z.number().min(40).max(4000).optional(),
+        depth: z.number().min(40).max(4000).optional(),
+      })
+      .strict(),
+  },
+  "baffle.upsert": {
+    description:
+      "Add or replace an internal baffle by stable ID, with exact start/end positions and stock thickness. Optional pose defines a free rectangular 3D board with centre, local width/height and ZYX Euler radians. Without pose, start/end form a full-depth XY partition with clipped mitred ends.",
+    schema: z.object({ baffle: baffleSchema }).strict(),
+  },
+  "baffle.remove": {
+    description:
+      "Remove one internal baffle by ID. Validate or retrace the wave route afterwards.",
+    schema: z.object({ id }).strict(),
+  },
+  "route.set": {
+    description:
+      "Set the intended closed-end-to-mouth wave path. The app checks wall/board intersections and derives varying section area from the physical clear cavity.",
+    schema: z.object({ points: z.array(xy).min(2).max(512) }).strict(),
+  },
+  "route.trace": {
+    description:
+      "Trace a clearance-weighted path through physical baffles to the mouth. Keeps the existing closed end unless start is supplied; returns the exact route and diagnostics.",
+    schema: z
+      .object({
+        start: xy.optional(),
+        cellSize: number(
+          3,
+          50,
+          "Tracing grid spacing, mm; maximum 120,000 cells",
+        ).optional(),
+      })
+      .strict(),
+  },
+  "mouth.set": {
+    description:
+      "Place the actual open mouth on any cabinet face. Front/back use an inner-XY centre and rectangular width/height; other faces use offset/width and span the inner depth. Retrace or update the route endpoint afterwards.",
+    schema: z.object({ mouth: mouthSchema }).strict(),
+  },
+  "driver.set": {
+    description:
+      "Edit primary driver parameters. Data source notes are retained. Geometry and acoustic parameters are always validated.",
+    schema: z.object({ parameters: driverSchema.partial() }).strict(),
+  },
+  "library.list": {
+    description:
+      "List synthetic example drivers and stored user drivers with full T/S parameters and notes.",
+    schema: empty,
+    read: true,
+  },
+  "library.upsert": {
+    description: "Save or replace a user driver by ID.",
+    schema: z.object({ driver: driverSchema }).strict(),
+  },
+  "library.remove": {
+    description:
+      "Remove a stored user driver; does not alter drivers already copied into projects.",
+    schema: z.object({ id: z.string() }).strict(),
+  },
+  "library.replace": {
+    description:
+      "Replace the stored driver library atomically; intended for desktop import/synchronization.",
+    schema: z.object({ drivers: z.array(driverSchema).max(200) }).strict(),
+  },
+  "driver.select": {
+    description:
+      "Copy a known example/library driver into the primary source. Cabinet changes remain explicit.",
+    schema: z.object({ id: z.string() }).strict(),
+  },
+  "mount.upsert": {
+    description:
+      "Add or replace a source mount with its own driver, position, face, voltage scale and phase. Optional at sets physical face-plane millimetres on any of six cabinet faces. 3D studies couple sources through the actual air; 1D analysis requires a valid single route.",
+    schema: z.object({ mount: mountSchema }).strict(),
+  },
+  "mount.remove": {
+    description:
+      "Remove a source mount by ID. At least one source must remain.",
+    schema: z.object({ id }).strict(),
+  },
+  "snapshot.create": {
+    description:
+      "Save a named comparison/checkpoint of the entire project for plotting, restoring or comparing drivers.",
+    schema: z
+      .object({
+        name: z.string().max(150),
+        color: z
+          .string()
+          .regex(/^#[0-9a-f]{6}$/i)
+          .optional(),
+      })
+      .strict(),
+  },
+  "snapshot.list": {
+    description: "List saved project comparisons.",
+    schema: empty,
+    read: true,
+  },
+  "snapshot.restore": {
+    description:
+      "Restore a saved comparison as the active project, retaining undo history.",
+    schema: z.object({ id: z.string() }).strict(),
+  },
+  "snapshot.remove": {
+    description: "Delete a saved comparison by ID.",
+    schema: z.object({ id: z.string() }).strict(),
+  },
+  "snapshot.replace": {
+    description: "Synchronize the desktop comparison collection atomically.",
+    schema: z
+      .object({
+        snapshots: z
+          .array(
+            z.object({
+              id: z.string(),
+              name: z.string().max(150),
+              project: projectSchema,
+              color: z.string().regex(/^#[0-9a-f]{6}$/i),
+            }),
+          )
+          .max(32),
+      })
+      .strict(),
+  },
+  "history.undo": {
+    description:
+      "Undo the last committed workspace mutation. Revision numbers remain monotonic.",
+    schema: empty,
+  },
+  "history.redo": {
+    description: "Redo an undone workspace mutation.",
+    schema: empty,
+  },
+  "view.get": {
+    description:
+      "Read visible tab, camera, display toggles, selected panel, chart and pressure-probe state.",
+    schema: empty,
+    read: true,
+  },
+  "view.set": {
+    description:
+      "Control the live desktop in guided or advanced mode. Field displayMode selects slice/volume/fronts. Opacity, pressureCurve, frontShading, contours, particles, magnification and renderQuality change drawing only. Fractional frames interpolate physical time. Partial patches preserve unrelated view settings.",
+    schema: viewSchema
+      .omit({ field: true, mode: true })
+      .partial()
+      .extend({
+        mode: z.enum(["guided", "advanced"]).optional(),
+        field: fieldViewBase.partial().optional(),
+      }),
+  },
+  "view.capture": {
+    description:
+      "Capture an actual rendered full desktop, 3D model or response chart as a PNG artifact. Returned image is suitable for checking the agent design visually.",
+    schema: z
+      .object({
+        region: z.enum(["window", "model", "chart", "field"]).optional(),
+      })
+      .strict(),
+  },
+  "field.run": {
+    description:
+      "Start an experimental 3D acoustic FDTD study in the actual cabinet and exterior air, with two-way T/S piston coupling. Includes solved reflections and interference, finite grid/PML diagnostics and a bounded recording. Returns a job; GPU uses the live desktop, CPU reference is available without WebGPU.",
+    schema: z
+      .object({
+        settings: fieldSettingsSchema.partial().optional(),
+        show: z.boolean().optional(),
+      })
+      .strict(),
+  },
+  "field.capabilities": {
+    description:
+      "Get spatial solver CPU/GPU availability, numerical limits and model scope.",
+    schema: empty,
+    read: true,
+  },
+  "field.result": {
+    description:
+      "Read a completed spatial study metadata and artifact. Optionally retrieve one solved frame (bounded downsample) and full-rate probe/driver traces (bounded time samples). Values are physical SI, coordinates mm; source project and numerical assumptions are included.",
+    schema: z
+      .object({
+        id: z.string(),
+        frame: z.number().int().min(0).max(639).optional(),
+        traces: z.boolean().optional(),
+      })
+      .strict(),
+    read: true,
+  },
+  "field.open": {
+    description:
+      "Select a completed spatial study in the actual desktop wave view. Its own recorded geometry is displayed, with a stale-project notice if appropriate.",
+    schema: z.object({ id: z.string() }).strict(),
+  },
+  "analysis.run": {
+    description:
+      "Start an asynchronous, revision-labelled coupled acoustic simulation. Poll job.get. Invalid geometry fails explicitly.",
+    schema: z
+      .object({ samples: z.number().int().min(24).max(1200).optional() })
+      .strict(),
+  },
+  "analysis.pressure": {
+    description:
+      "Return actual normalized pressure along the active route at one frequency.",
+    schema: z
+      .object({
+        frequency: number(5, 5000, "Frequency, Hz"),
+        samples: z.number().int().min(10).max(1000).optional(),
+      })
+      .strict(),
+    read: true,
+  },
+  "analysis.sweep": {
+    description:
+      "Start a bounded numeric parameter sweep, retaining invalid-case diagnostics. Paths address existing numeric fields only; no code expressions.",
+    schema: z
+      .object({
+        path: z.string().max(200),
+        values: z.array(z.number().finite()).min(1).max(64),
+        samples: z.number().int().min(24).max(500).optional(),
+      })
+      .strict(),
+  },
+  "analysis.optimise": {
+    description:
+      "Start a deterministic bounded search. Generated mode uses the built-in cabinet search; custom mode requires explicit numeric parameter bounds. Results do not change the live project until job.apply.",
+    schema: z
+      .object({
+        parameters: z.array(parameterSchema).min(1).max(8).optional(),
+        iterations: z.number().int().min(10).max(3000).optional(),
+        retrace: z.boolean().optional(),
+      })
+      .strict(),
+  },
+  "analysis.compare": {
+    description:
+      "Compare current and saved projects at the same target band and drive voltage. Returns both full responses and geometry; compare per-driver results against their own limits.",
+    schema: z
+      .object({
+        ids: z.array(z.string()).min(1).max(8),
+        samples: z.number().int().min(24).max(300).optional(),
+      })
+      .strict(),
+  },
+  "job.get": {
+    description:
+      "Get an asynchronous job status, source revision, progress and error. Set includeResult for complete response/candidate data.",
+    schema: z
+      .object({ id: z.string(), includeResult: z.boolean().optional() })
+      .strict(),
+    read: true,
+  },
+  "job.list": {
+    description: "List recent analysis jobs and progress.",
+    schema: empty,
+    read: true,
+  },
+  "job.cancel": {
+    description:
+      "Cancel a running job and terminate its worker. No partial result is applied to the project.",
+    schema: z.object({ id: z.string() }).strict(),
+  },
+  "job.apply": {
+    description:
+      "Apply a completed optimisation candidate. Rejects stale results unless allowStale is explicitly true.",
+    schema: z
+      .object({
+        id: z.string(),
+        candidate: z.number().int().min(0).max(5).optional(),
+        allowStale: z.boolean().optional(),
+      })
+      .strict(),
+  },
+  "export.create": {
+    description:
+      "Export a project, numerical CSV, full fabrication bundle, exact geometry manifest, SCAD, CadQuery source, engineering report or STEP assembly to a workspace-relative filename. STEP needs the optional local CAD runtime.",
+    schema: z
+      .object({
+        format: z.enum([
+          "project",
+          "response",
+          "bundle",
+          "manifest",
+          "scad",
+          "cadquery",
+          "report",
+          "step",
+        ]),
+        filename: z.string().max(200).optional(),
+      })
+      .strict(),
+  },
+  "artifact.list": {
+    description: "List artifacts created in this workspace.",
+    schema: empty,
+    read: true,
+  },
+  "artifact.read": {
+    description:
+      "Read a created artifact by stable ID. MCP returns the first 1 MiB chunk for files above 2 MiB; follow nextOffset until complete. Explicit offset/length reads are base64 byte chunks. Never an arbitrary filesystem path.",
+    schema: z
+      .object({
+        id: z.string(),
+        offset: z.number().int().nonnegative().optional(),
+        length: z.number().int().min(1).max(1048576).optional(),
+      })
+      .strict(),
+    read: true,
+  },
 } as const;
-export type CommandName=keyof typeof commands;
-export interface Command {name:CommandName;args?:Record<string,unknown>;expectedRevision?:number;expectedProjectRevision?:number;actor?:string}
-export function parseProject(value:unknown):Project {const p=projectSchema.parse(value);validateProject(p);return p;}
-export function parseDriver(value:unknown):Driver {return driverSchema.parse(value);}
+export type CommandName = keyof typeof commands;
+export interface Command {
+  name: CommandName;
+  args?: Record<string, unknown>;
+  expectedRevision?: number;
+  expectedProjectRevision?: number;
+  actor?: string;
+}
+export function parseProject(value: unknown): Project {
+  const p = projectSchema.parse(value);
+  validateProject(p);
+  return p;
+}
+export function parseDriver(value: unknown): Driver {
+  return driverSchema.parse(value);
+}

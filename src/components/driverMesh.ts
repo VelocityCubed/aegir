@@ -2,6 +2,7 @@ import * as THREE from "three";
 import type { Geometry } from "../core/types";
 import { driverColour } from "../core/driverVisuals";
 import type { DriverMotion } from "../field/driverMotion";
+import { faceFrame } from "../core/spatial";
 
 export interface DriverModel {
   id: string;
@@ -24,7 +25,7 @@ export function createDriverModel(
     piston = new THREE.Group();
   group.name = `driver:${mount.id}`;
   group.position.set(...mount.center);
-  if (mount.face === "front") group.rotation.y = Math.PI;
+  group.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),new THREE.Vector3(...faceFrame(mount.face).normal));
   group.userData = { driverId: mount.id, driverName: driver.name };
   const dark = new THREE.MeshStandardMaterial({
     color: "#19242c",

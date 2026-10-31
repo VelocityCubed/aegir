@@ -59,6 +59,9 @@ def export(project, destination):
         for hole in p['holes']:
             cutter = cq.Workplane('XY').center(hole['x'], hole['y']).circle(hole['radius']).extrude(p['thickness']+2, both=True)
             part = part.cut(cutter)
+        for opening in p.get('openings', []):
+            cutter = cq.Workplane('XY').center(opening['x'], opening['y']).rect(opening['width'], opening['height']).extrude(p['thickness']+2, both=True)
+            part = part.cut(cutter)
         for axis, angle in zip([(1, 0, 0), (0, 1, 0), (0, 0, 1)], p['rotation']):
             if angle:
                 part = part.rotate((0, 0, 0), axis, math.degrees(angle))

@@ -39,6 +39,7 @@ import { useSimulation, usePressure } from "./agent/useSimulation";
 import { FieldWorkbench } from "./components/FieldWorkbench";
 import { useFieldExecutor } from "./field/useFieldExecutor";
 import { AgentPanel } from "./components/AgentPanel";
+import { CabinetEditor } from "./components/CabinetEditor";
 import { LayoutEditor } from "./components/LayoutEditor";
 import { ModelView } from "./components/ModelView";
 import { ResponseChart } from "./components/ResponseChart";
@@ -137,6 +138,21 @@ export default function App() {
     revision: number;
     step: number;
   } | null>(null);
+  const [cabinetEditor, setCabinetEditor] = useState<{
+    project: Project;
+    revision: number;
+  } | null>(null);
+  const openCabinet = async () => {
+    try {
+      const current = window.desktop
+        ? await workspace.command({ name: "workspace.get" })
+        : workspace.state;
+      setCabinetEditor({
+        project: structuredClone(current.project),
+        revision: current.projectRevision,
+      });
+    } catch {}
+  };
   const [help, setHelp] = useState<string | null>(null);
   const closeHelp = useCallback(() => setHelp(null), []);
   const openSetup = async (step = 0, source?: Project) => {
@@ -178,6 +194,7 @@ export default function App() {
     file = useRef<HTMLInputElement>(null),
     importType = useRef<"project" | "driver">("project");
   const geometry = useMemo(() => buildGeometry(project), [project]);
+  const fitErrors = geometry.physicalErrors ?? geometry.errors;
   const analysis = useSimulation(project, snapshots, activeComparisons),
     simulation = analysis.simulation,
     comparisons = analysis.comparisons;
@@ -283,14 +300,14 @@ export default function App() {
     }
   };
   const bundle = async () => {
-    if (analysis.pending || simulation.error) {
+    if (!geometry.errors.length && (analysis.pending || simulation.error)) {
       notify("Wait for a valid simulation before exporting a response bundle.");
       return;
     }
     setBusy(true);
     try {
       await exportData(
-        makeBundle(project, simulation),
+        makeBundle(project, geometry.errors.length ? undefined : simulation),
         safeName(project.name) + "-build.zip",
       );
     } catch (e) {
@@ -350,6 +367,7 @@ export default function App() {
     if (job.status === "cancelled") activeJob.current = null;
   }, [workspace.jobs, notify]);
   const startOptimizer = () => {
+    if(geometry.errors.length){notify("The fast search needs a valid single-route line model. Use 3D wave studies to compare spatial cabinet designs.");return;}
     if (window.desktop) {
       setProgress(0);
       setValid(0);
@@ -429,14 +447,14 @@ export default function App() {
   const sources = sourceHeadroom(project, simulation),
     excursionRatio = Math.max(0, ...sources.map((s) => s.ratio));
   const electricalFields: [keyof Driver, string, string, number, number][] = [
-    ["fs", "Resonance · Fs", "Hz", 10, 250],
-    ["vas", "Compliance volume · Vas", "L", 0.2, 1000],
+    ["fs", "Resonance · Fs", "Hz", 10, 5000],
+    ["vas", "Compliance volume · Vas", "L", 0.0001, 1000],
     ["qes", "Electrical Q · Qes", "", 0.08, 3],
     ["qms", "Mechanical Q · Qms", "", 0.3, 30],
     ["re", "DC resistance · Re", "Ω", 0.5, 32],
     ["le", "Inductance · Le", "mH", 0, 10],
-    ["sd", "Cone area · Sd", "cm²", 10, 2000],
-    ["xmax", "Linear excursion · Xmax", "mm", 0.5, 40],
+    ["sd", "Cone area · Sd", "cm²", 0.5, 2000],
+    ["xmax", "Linear excursion · Xmax", "mm", 0.01, 40],
     ["cutout", "Cutout diameter", "mm", 25, 600],
     ["frame", "Frame diameter", "mm", 30, 700],
     ["depth", "Mounting depth", "mm", 10, 500],
@@ -666,6 +684,12 @@ export default function App() {
               </div>
               {leftTab === "enclosure" ? (
                 <>
+                  <div className="cabinet-editor-launch">
+                    <button onClick={openCabinet}>
+                      <Box size={16} />
+                      Customise cabinet
+                    </button>
+                  </div>
                   <LayoutEditor
                     drivers={[...examples, ...library]}
                     project={project}
@@ -1006,6 +1030,10 @@ export default function App() {
                         Width × height × depth · {geometry.airVolume.toFixed(1)}{" "}
                         litres of air
                       </p>
+                      <button className="primary" onClick={openCabinet}>
+                        <Box size={16} />
+                        Customise cabinet
+                      </button>
                       <button onClick={() => openSetup(1)}>
                         Adjust cabinet
                         <ArrowRight size={16} />
@@ -1032,17 +1060,16 @@ export default function App() {
               {!advanced && (
                 <div
                   className={
-                    "design-health " +
-                    (geometry.errors.length ? "has-issues" : "")
+                    "design-health " + (fitErrors.length ? "has-issues" : "")
                   }
                 >
                   <span>
-                    {geometry.errors.length ? (
+                    {fitErrors.length ? (
                       <TriangleAlert size={18} />
                     ) : (
                       <Check size={18} />
                     )}
-                    {geometry.errors.length
+                    {fitErrors.length
                       ? "The cabinet needs a fit adjustment."
                       : "Driver and panels fit in the geometry check."}
                   </span>
@@ -1050,22 +1077,42 @@ export default function App() {
                     What this check means
                     <CircleHelp size={16} />
                   </button>
-                  {geometry.errors.length > 0 && (
+                  {fitErrors.length > 0 && (
                     <ul>
-                      {geometry.errors.map((error) => (
+                      {fitErrors.map((error) => (
                         <li key={error}>{error}</li>
                       ))}
                     </ul>
                   )}
                 </div>
               )}
-              <ResponseChart
-                simulation={simulation}
-                project={project}
-                comparisons={comparisons}
-                view={view}
-                onViewChange={workspace.setView}
-              />
+              {!fitErrors.length && geometry.errors.length ? (
+                <div className="notice">
+                  <Waves size={20} />
+                  <div>
+                    <b>This cabinet needs a 3D wave study.</b>
+                    <p>
+                      The single-route response estimate is unavailable for this
+                      layout. The actual panels and openings remain available
+                      for wave studies and CAD export.
+                    </p>
+                    <button onClick={() => setTab("field")}>
+                      Explore sound waves <ArrowRight size={15} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {" "}
+                  <ResponseChart
+                    simulation={simulation}
+                    project={project}
+                    comparisons={comparisons}
+                    view={view}
+                    onViewChange={workspace.setView}
+                  />
+                </>
+              )}
               {!advanced && (
                 <button
                   className="quiet-help"
@@ -1241,7 +1288,7 @@ export default function App() {
                 <div className="optimizer-start">
                   <p>
                     {project.layout
-                      ? "Vary the main driver position from 5% to 45% of the physical route."
+                      ? "Place the main driver along 5% to 45% of the 1D route guide. Other drivers stay fixed."
                       : "Vary line length, area, lane width, driver position and 1–4 passes."}{" "}
                     Smaller scores favour a smooth target band, bass extension,
                     excursion headroom and compact volume.
@@ -1404,16 +1451,17 @@ export default function App() {
                   <h3>Manufacturing ZIP</h3>
                   <p>
                     Individual-panel STL, DXF and SVG files, reference assembly
-                    STL, cut list, response CSV, editable project, and OpenSCAD
-                    + CadQuery source.
+                    STL, cut list, editable project, and OpenSCAD + CadQuery
+                    source. A response CSV is included when the 1D model
+                    applies.
                   </p>
                   <button
                     className="primary"
                     disabled={
                       busy ||
-                      analysis.pending ||
-                      Boolean(simulation.error) ||
-                      geometry.errors.length > 0
+                      (!geometry.errors.length &&
+                        (analysis.pending || Boolean(simulation.error))) ||
+                      (geometry.physicalErrors ?? geometry.errors).length > 0
                     }
                     onClick={bundle}
                   >
@@ -1441,7 +1489,11 @@ export default function App() {
                   </p>
                   <button
                     className="secondary"
-                    disabled={busy || !cad || geometry.errors.length > 0}
+                    disabled={
+                      busy ||
+                      !cad ||
+                      (geometry.physicalErrors ?? geometry.errors).length > 0
+                    }
                     onClick={step}
                   >
                     {busy ? (
@@ -1460,12 +1512,12 @@ export default function App() {
                   </small>
                 </article>
               </div>
-              {geometry.errors.length > 0 && (
+              {(geometry.physicalErrors ?? geometry.errors).length > 0 && (
                 <div className="notice error">
                   <TriangleAlert size={18} />
                   <div>
                     <b>Resolve geometry errors before manufacturing.</b>
-                    {geometry.errors.map((e) => (
+                    {(geometry.physicalErrors ?? geometry.errors).map((e) => (
                       <p key={e}>{e}</p>
                     ))}
                   </div>
@@ -2048,11 +2100,36 @@ export default function App() {
       <footer className="app-footer">
         <span>
           <AegirMark />
-          ÆONFORGE / ÆGIR <em>v0.6.0</em>
+          ÆONFORGE / ÆGIR <em>v0.7.0</em>
         </span>
         <span>Small-signal predictions · verify with a prototype</span>
         <span>ENGINEERED FOR ETERNITY</span>
       </footer>
+      {cabinetEditor && (
+        <CabinetEditor
+          project={cabinetEditor.project}
+          library={[...examples, ...library]}
+          onClose={() => setCabinetEditor(null)}
+          onApply={async (next) => {
+            if (window.desktop)
+              await workspace.command({
+                name: "project.replace",
+                args: { project: next },
+                expectedProjectRevision: cabinetEditor.revision,
+              });
+            else {
+              if (workspace.state.projectRevision !== cabinetEditor.revision)
+                throw Error(
+                  "Your design changed while the editor was open. Close and reopen it to include those changes.",
+                );
+              setProject(next);
+            }
+            notify(
+              "Cabinet applied. Run a new wave study to inspect the changed air path.",
+            );
+          }}
+        />
+      )}
       {setup && (
         <SetupWizard
           project={setup.project}

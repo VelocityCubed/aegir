@@ -6,7 +6,7 @@ export function LayoutEditor({project:p,geometry:g,command,drivers=[]}:{project:
   const [route,setRoute]=useState(''),[expanded,setExpanded]=useState(false),[message,setMessage]=useState('');
   const call=(name:Command['name'],args:Record<string,unknown>={})=>command({name,args}).catch(e=>setMessage(e.message));
   const baffle=(b:Baffle,key:'start'|'end',axis:number,value:number)=>{const next=structuredClone(b);next[key][axis]=value;void call('baffle.upsert',{baffle:next});};
-  const mount=(m:DriverMount,key:string,value:unknown)=>void call('mount.upsert',{mount:{...m,[key]:value}});
+  const mount=(m:DriverMount,key:string,value:unknown)=>void call('mount.upsert',{mount:{...m,[key]:value,...(key==='position'?{at:undefined}:{})}});
   return <section className="control-section layout-editor"><div className="section-caption"><span>PHYSICAL LAYOUT / AGENT READY</span></div>
     {!p.layout?<><p className="field-help">Convert the generated line to place individual baffles, shape the wave path and add drivers.</p><button onClick={()=>call('layout.convert')}>Edit baffles & wave route</button></>:<>
       <div className="field-grid">{(['width','height','depth'] as const).map(key=><Field key={key} label={'Cabinet '+key} unit="mm" value={p.layout![key]} onChange={value=>call('cabinet.set',{[key]:value})} min={40} max={4000}/>)}</div>

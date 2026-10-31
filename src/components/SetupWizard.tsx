@@ -30,7 +30,7 @@ export const driverInputs = [
     "Compliance volume · Vas",
     "L",
     "The equivalent air volume of the suspension.",
-    0.2,
+    0.0001,
     1000,
   ],
   [
@@ -47,7 +47,7 @@ export const driverInputs = [
     "Cone area · Sd",
     "cm²",
     "Effective radiating area, not frame area.",
-    10,
+    0.5,
     2000,
   ],
   [
@@ -55,7 +55,7 @@ export const driverInputs = [
     "Linear excursion · Xmax",
     "mm",
     "One-way peak linear travel; use the maker's definition.",
-    0.5,
+    0.01,
     40,
   ],
   [
@@ -175,7 +175,8 @@ export function SetupWizard({
     }
     try {
       validateProject(draft);
-      if (geometry.errors.length) throw Error(geometry.errors[0]);
+      if ((geometry.physicalErrors ?? geometry.errors).length)
+        throw Error((geometry.physicalErrors ?? geometry.errors)[0]);
       setSaving(true);
       await onApply(draft);
       onClose();
@@ -518,11 +519,11 @@ export function SetupWizard({
                   </dd>
                 </div>
               </dl>
-              {geometry.errors.length ? (
+              {(geometry.physicalErrors ?? geometry.errors).length ? (
                 <div className="wizard-issues" role="alert">
                   <b>Adjust the fit before applying</b>
                   <ul>
-                    {geometry.errors.map((e) => (
+                    {(geometry.physicalErrors ?? geometry.errors).map((e) => (
                       <li key={e}>{e}</li>
                     ))}
                   </ul>
@@ -584,7 +585,11 @@ export function SetupWizard({
         <button
           className="primary"
           onClick={() => void next()}
-          disabled={saving || (step === 2 && geometry.errors.length > 0)}
+          disabled={
+            saving ||
+            (step === 2 &&
+              (geometry.physicalErrors ?? geometry.errors).length > 0)
+          }
         >
           {saving
             ? "Applying…"

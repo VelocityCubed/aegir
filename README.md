@@ -14,7 +14,7 @@ This is **source-available, not OSI open source**. See [licensing details](docs/
 
 ## Run from source
 
-Open `release/AEONFORGE-Aegir-0.6.0-x64.exe` after packaging, or use the unpacked executable in `release/win-unpacked/`. Install the optional CadQuery runtime with the setup command below if STEP export is needed. Generated binaries and private runtime profiles are excluded from this repository.
+Open `release/AEONFORGE-Aegir-0.7.0-x64.exe` after packaging, or use the unpacked executable in `release/win-unpacked/`. Install the optional CadQuery runtime with the setup command below if STEP export is needed. Generated binaries and private runtime profiles are excluded from this repository.
 
 From source (Node 22.12+):
 
@@ -38,12 +38,14 @@ The default workspace is guided. **Advanced tools** keeps the full engineering c
 
 1. Open **Guided setup**. Keep the current driver, choose a clearly marked synthetic example, use a saved driver, or enter all measured/manufacturer data. Setup is a draft: cancel leaves the project unchanged.
 2. Shape the cabinet with the live preview. Existing custom baffles, mouths, routes and other drivers are retained unless you explicitly choose a generated replacement. Review the fit before applying. A concurrent project edit cannot be silently overwritten.
-3. On **Design**, inspect the cabinet and frequency response. **Choose or edit driver** and **Adjust cabinet** reopen the relevant setup step. Save comparisons to inspect alternatives. Use Advanced tools for individual baffles, routes, mounts, phase and full T/S controls.
+3. On **Design**, inspect the cabinet and frequency response. **Choose or edit driver** and **Adjust cabinet** reopen the relevant setup step. Save comparisons to inspect alternatives. **Customise cabinet** opens a direct editor: drag drivers on any of six faces, add/drag partition ends to form slopes, or move/rotate/resize free 3D boards. Snapping, undo/redo, precise fields and a synthetic multiway folded template are included. Edits remain a draft until applied. See [the cabinet editor guide](docs/CABINET-EDITOR.md).
 4. On **Explore waves**, choose pulse or tone and frequency, then run a study and press Play. A completed study prioritizes the model; expand **Study settings** to change the calculation. The signed-pressure legend, optional air motion and **What am I seeing?** explain playback. **Appearance & playback** adjusts opacity, pressure-front shading and drawing quality without changing raw acoustic results. See [the field guide](docs/SPATIAL-FIELD.md).
 5. On **Refine**, set the target band and size limits, find bounded candidates, then compare the trade-offs before applying one. Older wave studies keep their original geometry. Search scores are explicit and do not prove a global optimum.
 6. On **Build & export**, review the panels and export the manufacturing ZIP, or optional STEP solids. Save the project JSON as a portable record. Add CAM settings, joinery and hardware in your fabrication workflow, then prototype and measure.
 
 **Help** opens a searchable side panel you can read while working. **Learn** provides short walkthroughs and model limitations; it never starts a tour or blocks the workspace automatically.
+
+![Direct cabinet editor with independent drivers and free 3D boards](docs/media/cabinet-editor.png)
 
 ![Guided design workspace with the supplied ÆONFORGE identity](docs/media/guided-design.png)
 
@@ -51,16 +53,17 @@ The default workspace is guided. **Advanced tools** keeps the full engineering c
 
 | File | Purpose |
 | --- | --- |
-| `geometry-manifest.json` | Authoritative exact panel solid definitions, including clipped angled boards |
+| `geometry-manifest.json` | Authoritative exact panel solid definitions, including clipped angled boards, rotated 3D boards and rectangular slots |
 | `project.aegir.json` | Editable app project, driver and optimisation brief |
 | `panels/*.stl` | Closed local panel meshes including through-cut driver hole; import as mm |
-| `panels/*.dxf` | Millimetre panel outlines and circular holes on the CUT layer |
+| `panels/*.dxf` | Millimetre panel outlines and circular/rectangular openings on the CUT layer |
 | `panels/*.svg` | 1:1 mm panel profiles |
 | `assembly-reference.stl` | Positioned reference assembly of touching panel shells |
 | `enclosure.scad` | OpenSCAD geometry snapshot |
 | `enclosure.py` | Runnable CadQuery assembly snapshot, generates real STEP solids and panel STLs |
 | `cut-list.csv` | Panel dimensions, thickness and quantities for one cabinet |
-| `response.csv` | SPL components, impedance/phase, excursion, velocity, group delay |
+| `response.csv` | SPL components, impedance/phase, excursion, velocity, group delay; only where the 1D model applies |
+| `MODEL-NOTES.txt` | Geometry-only bundle diagnostics when a 1D response is unavailable |
 | `BUILD-NOTES.txt` | Joinery, orientation, units, modelling assumptions and limitations |
 
 **STL is a mesh format, not a cutting toolpath.** DXF/SVG are the useful 2D cutting outlines. Add cutter compensation/kerf, nesting, holding tabs, screw patterns, recesses and toolpaths in your chosen CAM software. No sheet nesting, G-code, cutter-radius offsets or fastening design is claimed. Front/back overlap the sides; caps and dividers fit between sides and between front/back. Keep the physical mouth open. Bottom mouths need a stand. Angled boards carry notes: stock face DXF/SVG outlines do not encode end mitres; use the exact 3D solid for machining/fitting.
@@ -88,6 +91,8 @@ Or use `cad/export_step.py geometry-manifest.json enclosure.step`. The backend a
 
 The fast response/optimisation solver is an independently implemented 1D frequency-domain transfer-matrix model coupled to a linear T/S driver. It accounts for a closed stub upstream of the driver, the downstream line, radiation impedance, electrical back EMF and coherent cone/mouth summation. This is wave modelling, not just a quarter-wavelength calculator. The quarter-wave value remains a clearly labelled estimate. A separate experimental 3D time-domain solver powers Wave propagation.
 
+Free 3D boards, isolated driver chambers and front/back slots use the **3D wave study**; the app does not invent a single-route 1D response for them. Physically valid designs still export CAD. Drivers may be mounted on any of six shell faces with independent face-plane coordinates.
+
 Generated layouts use **uniform area and 1–4 folded passes**. Custom layouts support **geometry-derived variable sections and up to eight coupled source mounts**, and frequency-independent real characteristic impedance with phenomenological distributed attenuation proportional to square-root frequency. The rectangular mouth is approximated by a low-ka baffled circular piston of equal area. SPL assumes co-located half-space sources at 1 m; voltage is RMS and excursion/air speed are peak. See [the equations and definitions](docs/PHYSICS.md) and [research/tool decisions](docs/RESEARCH.md).
 
 In the 1D model, variable clear areas are approximated by cascaded small uniform sections. That model does **not** resolve dedicated mass-loading ports, spatial horn/fold scattering, baffle diffraction, source separation/directivity, room loading, crossovers, panel resonances, thermal compression or nonlinear distortion. The 3D field solves spatial propagation around rigid solids, with piston sources and exterior air; it requires grid/padding convergence and has no calibrated stuffing, elastic structure or nonlinear model. Neither model subtracts basket/magnet displacement or unmodelled braces. Loss is not calibrated to stuffing type/density, and sound-speed reduction by stuffing is not included. The 1D inspector reports approximate plane-wave and radiation-model limits; use that model well below both. Numerical checks are **not independent physical validation**.
@@ -100,6 +105,7 @@ The OpenAI API is intentionally unnecessary: a deterministic solver is a better 
 npm test                 # acoustic, CAD-mesh, export, input and optimisation regression checks
 npm run build            # strict TypeScript + production renderer
 npm run test:e2e         # real Electron UI + native bridge + local STEP backend
+npm run test:editor      # direct cabinet gestures, spatial CAD and CPU/GPU source orientation
 npm run test:field       # real Electron/MCP spatial CPU/GPU parity, playback and recovery
 npm run test:mcp         # real stdio agent → desktop → two-source simulation → CAD
 npm run test:cad         # reimport agent STEP and validate every STL panel

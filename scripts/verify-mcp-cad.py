@@ -12,7 +12,7 @@ def polygon_area(points):
     return abs(sum(a[0]*b[1]-a[1]*b[0] for a,b in zip(points,points[1:]+points[:1])))/2
 def panel_volume(p):
     if p.get('footprint'):return polygon_area(p['footprint']['polygon'])*p['footprint']['depth']
-    return (p['width']*p['height']-sum(math.pi*h['radius']**2 for h in p['holes']))*p['thickness']
+    return (p['width']*p['height']-sum(math.pi*h['radius']**2 for h in p['holes'])-sum(o['width']*o['height'] for o in p.get('openings',[])))*p['thickness']
 expected=sum(panel_volume(p) for p in panels)
 actual=sum(s.Volume() for s in solids)
 assert math.isclose(actual,expected,rel_tol=1e-7),(actual,expected)
