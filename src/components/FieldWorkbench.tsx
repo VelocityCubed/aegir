@@ -9,7 +9,8 @@ import {
 } from "lucide-react";
 import { Field } from "./Field";
 import { ModelView } from "./ModelView";
-import { fieldSolidContours } from "../field/grid";
+import { PressureMap } from "./PressureMap";
+import { pressureGradientCss } from "../field/transfer";
 import { buildGeometry } from "../core/geometry";
 import { decodeField, encodeField } from "../field/archive";
 import {
@@ -18,10 +19,10 @@ import {
   type FieldSettings,
 } from "../field/types";
 import { fieldScale } from "../field/pixels";
-import { PlanePlayback, frameBlend } from "../field/playback";
-import { PressureContours } from "../field/contours";
+import { frameBlend } from "../field/playback";
 import { driverMotionAt } from "../field/driverMotion";
 import { driverColour } from "../core/driverVisuals";
+import {fieldCheckSettings} from '../field/convergence';
 import type { Command, ViewState, WorkspaceState } from "../agent/contracts";
 import type { ViewPatch } from "../agent/useWorkspace";
 
@@ -46,6 +47,7 @@ export function FieldWorkbench({
     6,
     Math.min(
       fieldDefaults.cellMm,
+      Math.max(6,Math.floor(state.project.design.thickness/Math.SQRT2)),
       Math.floor(
         Math.min(
           ...sourceDrivers.map((d) =>
@@ -64,11 +66,49 @@ export function FieldWorkbench({
     [error, setError] = useState(""),
     [loading, setLoading] = useState(false),
     [frame, setFrame] = useState(v.frame),
-    [sample, setSample] = useState<number | null>(null),
     [probe, setProbe] = useState(0);
+  const frequencyDependent =
+    (!!state.project.system?.physics &&
+      (state.project.system.physics.ductLoss !== "none" ||
+        !!state.project.system.physics.stuffing?.length)) ||
+    state.project.design.damping > 0;
+  useEffect(() => {
+    if (frequencyDependent && settings.signal !== "steady")
+      setSettings((s) => ({
+        ...s,
+        signal: "steady",
+        durationMs: Math.max(s.durationMs, Math.min(500, 20000 / s.frequency)),
+        frames: Math.max(160, s.frames),
+      }));
+  }, [frequencyDependent, settings.signal]);
   const result = loadedId === id ? loadedResult : null;
-  const canvas = useRef<HTMLCanvasElement>(null),
-    qualityPanel = useRef<HTMLDetailsElement>(null),
+  const [checking,setChecking]=useState(false),[checkProgress,setCheckProgress]=useState(''),[checkReport,setCheckReport]=useState<any>(null),checkCancelled=useRef(false),checkJob=useRef<string|null>(null),projectRevision=useRef(state.projectRevision);
+  projectRevision.current=state.projectRevision;
+  useEffect(()=>()=>{checkCancelled.current=true;if(checkJob.current)void command({name:'job.cancel',args:{id:checkJob.current}}).catch(()=>{});},[command]);
+  const checkCalculation=async()=>{
+    setError('');setCheckReport(null);setChecking(true);checkCancelled.current=false;
+    const revision=state.projectRevision,ids:string[]=[];
+    try{
+      const runs=fieldCheckSettings(settings);
+      for(const [i,s]of runs.entries()){
+        if(checkCancelled.current)throw Error('Calculation check cancelled. Completed studies are retained.');
+        if(projectRevision.current!==revision)throw Error('The design changed. Restart the calculation check for this version.');
+        setCheckProgress(`Check ${i+1} of ${runs.length} · ${s.cellMm} mm${i===3?' · shifted grid':i===4?' · larger exterior':''}`);
+        const j=await command({name:'field.run',args:{settings:s,show:false},expectedProjectRevision:revision});checkJob.current=j.id;
+        let job=j;
+        while(job.status==='running'||job.status==='queued'){
+          await new Promise(r=>setTimeout(r,500));
+          if(checkCancelled.current||projectRevision.current!==revision){await command({name:'job.cancel',args:{id:j.id}});throw Error('Calculation check stopped. Completed studies are retained.');}
+          job=await command({name:'job.get',args:{id:j.id}});
+        }
+        checkJob.current=null;
+        if(job.status!=='completed')throw Error(job.error??'A calculation check could not complete. Try a coarser starting grid or shorter duration.');
+        ids.push(j.id);
+      }
+      setCheckReport({...await command({name:'field.compare',args:{ids}}),projectRevision:revision});
+    }catch(e){setError((e as Error).message);}finally{checkJob.current=null;setChecking(false);setCheckProgress('');}
+  };
+  const qualityPanel = useRef<HTMLDetailsElement>(null),
     latest = useRef(v),
     currentFrame = useRef(frame);
   latest.current = v;
@@ -107,7 +147,6 @@ export function FieldWorkbench({
       setLoadedId(id);
       setSettings({ ...fieldDefaults, ...field.meta.settings });
       setFrame(Math.min(latest.current.frame, field.meta.times.length - 1));
-      setSample(null);
     })()
       .catch((e) => {
         if (!cancelled) setError(e.message);
@@ -134,58 +173,11 @@ export function FieldWorkbench({
     request = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(request);
   }, [v.playing, v.fps, result, maxFrame]);
-  const playback = useMemo(
-    () => (result ? new PlanePlayback(result) : null),
-    [result],
-  );
-  const contoursBuffer = useMemo(
-    () => (result ? new PressureContours(result.mask.length) : null),
-    [result],
-  );
-  const displayed = useMemo(
-    () =>
-      playback?.update(
-        safeFrame,
-        v.metric,
-        v.range,
-        v.interpolation,
-        v.opacity,
-        v.pressureCurve,
-      ),
-    [
-      playback,
-      safeFrame,
-      v.metric,
-      v.range,
-      v.interpolation,
-      v.opacity,
-      v.pressureCurve,
-    ],
-  );
   const physicalTime = result
     ? frameBlend(result, safeFrame, v.interpolation).time
     : 0;
-  const raster = useMemo(() => {
-    if (!result || !playback) return null;
-    const canvas = document.createElement("canvas");
-    canvas.width = result.meta.plane.width;
-    canvas.height = result.meta.plane.height;
-    return {
-      canvas,
-      image: new ImageData(
-        playback.pixels as Uint8ClampedArray<ArrayBuffer>,
-        canvas.width,
-        canvas.height,
-      ),
-    };
-  }, [result, playback]);
   const geometry = useMemo(
     () => (result ? buildGeometry(result.meta.project) : null),
-    [result],
-  );
-  const contours = useMemo(
-    () =>
-      result ? fieldSolidContours(result.meta.project, result.meta.plane) : [],
     [result],
   );
   const driverMotion = useMemo(
@@ -198,171 +190,6 @@ export function FieldWorkbench({
         : [],
     [result, safeFrame, v.interpolation],
   );
-  useEffect(() => {
-    if (!result || !displayed || !raster || !canvas.current) return;
-    const el = canvas.current,
-      {
-        width,
-        height,
-        originMm,
-        u,
-        w: vAxis,
-      } = { ...result.meta.plane, w: result.meta.plane.v },
-      scale = Math.min(
-        16,
-        Math.max(1, Math.ceil(900 / Math.max(width, height))),
-      );
-    if (el.width !== width * scale || el.height !== height * scale) {
-      el.width = width * scale;
-      el.height = height * scale;
-    }
-    const ctx = el.getContext("2d")!;
-    ctx.fillStyle = "#0b141d";
-    ctx.fillRect(0, 0, el.width, el.height);
-    const buffer = raster.canvas;
-    buffer.getContext("2d")!.putImageData(raster.image, 0, 0);
-    ctx.save();
-    ctx.translate(0, el.height);
-    ctx.scale(1, -1);
-    ctx.drawImage(buffer, 0, 0, el.width, el.height);
-    ctx.restore();
-    if (v.contours && v.metric === "pressure" && contoursBuffer) {
-      const lines = contoursBuffer.update(
-        displayed.samples,
-        result.mask,
-        width,
-        height,
-        fieldScale(result, "pressure", v.range),
-        result.meta.rho * result.meta.c,
-      );
-      ctx.strokeStyle = "#d5edf4";
-      ctx.lineWidth = 1;
-      ctx.globalAlpha = 0.65;
-      ctx.beginPath();
-      for (let i = 0; i < lines.count; i += 4) {
-        ctx.moveTo(
-          lines.segments[i] * scale,
-          (height - lines.segments[i + 1]) * scale,
-        );
-        ctx.lineTo(
-          lines.segments[i + 2] * scale,
-          (height - lines.segments[i + 3]) * scale,
-        );
-      }
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-    }
-    ctx.fillStyle = "#8c979f";
-    for (const polygon of contours) {
-      ctx.beginPath();
-      polygon.forEach(([x, y], i) =>
-        i
-          ? ctx.lineTo(x * scale, (height - y) * scale)
-          : ctx.moveTo(x * scale, (height - y) * scale),
-      );
-      ctx.closePath();
-      ctx.fill();
-    }
-    const data = displayed.samples,
-      start = 0;
-    ctx.strokeStyle = "#dce9ee";
-    ctx.lineWidth = 1;
-    const spacing = Math.max(3, Math.ceil(Math.max(width, height) / 20));
-    for (let y = spacing; y < height; y += spacing)
-      for (let x = spacing; x < width; x += spacing) {
-        const i = x + y * width;
-        if (!result.mask[i]) continue;
-        const at = start + i * 4,
-          p = data[at],
-          vx = data[at + 1],
-          vy = data[at + 2],
-          vz = data[at + 3],
-          a = vx * u[0] + vy * u[1] + vz * u[2],
-          b = vx * vAxis[0] + vy * vAxis[1] + vz * vAxis[2],
-          factor = v.metric === "intensity" ? p : 1,
-          norm = Math.hypot(a, b);
-        const magnitude = v.metric === "intensity" ? Math.abs(p) * norm : norm,
-          strength = Math.min(
-            1,
-            magnitude /
-              Math.max(
-                1e-12,
-                fieldScale(
-                  result,
-                  v.metric === "intensity" ? "intensity" : "velocity",
-                  0,
-                ),
-              ),
-          );
-        if (strength < 0.04) continue;
-        ctx.globalAlpha = 0.3 + 0.7 * strength;
-        const sign = factor < 0 ? -1 : 1,
-          len = scale * spacing * 0.4 * strength,
-          dx = (a / norm) * len * sign,
-          dy = (-b / norm) * len * sign,
-          px = (x + 0.5) * scale,
-          py = (height - y - 0.5) * scale;
-        ctx.beginPath();
-        ctx.moveTo(px - dx * 0.5, py - dy * 0.5);
-        ctx.lineTo(px + dx * 0.5, py + dy * 0.5);
-        ctx.lineTo(
-          px + dx * 0.5 - dx * 0.3 + dy * 0.3,
-          py + dy * 0.5 - dy * 0.3 - dx * 0.3,
-        );
-        ctx.moveTo(px + dx * 0.5, py + dy * 0.5);
-        ctx.lineTo(
-          px + dx * 0.5 - dx * 0.3 - dy * 0.3,
-          py + dy * 0.5 - dy * 0.3 + dx * 0.3,
-        );
-        ctx.stroke();
-      }
-    ctx.globalAlpha = 1;
-    if (v.showDrivers)
-      geometry?.mounts.forEach((mount, index) => {
-        const delta = mount.center.map((p, i) => p - originMm[i]);
-        const x =
-          (delta.reduce((s, p, i) => s + p * u[i], 0) /
-            result.meta.plane.pitchMm +
-            0.5) *
-          scale;
-        const y =
-          (height -
-            0.5 -
-            delta.reduce((s, p, i) => s + p * vAxis[i], 0) /
-              result.meta.plane.pitchMm) *
-          scale;
-        ctx.strokeStyle = driverColour(index);
-        ctx.fillStyle = "#0c141c";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(x, y, 5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        ctx.font = `bold ${Math.max(12, scale * 1.2)}px sans-serif`;
-        ctx.fillStyle = driverColour(index);
-        ctx.textBaseline = "bottom";
-        ctx.fillText(`D${index + 1}`, x + 9, y - 5);
-      });
-    if (sample !== null) {
-      const x = sample % width,
-        y = Math.floor(sample / width);
-      ctx.strokeStyle = "#fff";
-      ctx.strokeRect(x * scale, (height - 1 - y) * scale, scale, scale);
-    }
-  }, [
-    result,
-    displayed,
-    raster,
-    contoursBuffer,
-    v.contours,
-    v.range,
-    safeFrame,
-    sample,
-    v.metric,
-    v.showDrivers,
-    contours,
-    geometry,
-  ]);
   const run = () => {
     setError("");
     void command({
@@ -374,10 +201,20 @@ export function FieldWorkbench({
   const update = (key: keyof FieldSettings, value: number | string) =>
     setSettings((s) => {
       const next = { ...s, [key]: value };
+      if (key === "signal" && value === "steady") {
+        next.durationMs = Math.max(
+          next.durationMs,
+          Math.min(500, 20000 / next.frequency),
+        );
+        next.frames = Math.max(160, next.frames);
+      }
       if (key === "frequency")
         next.durationMs = Math.max(
           next.durationMs,
-          Math.min(500, 6000 / Number(value)),
+          Math.min(
+            500,
+            (next.signal === "steady" ? 20000 : 6000) / Number(value),
+          ),
         );
       if (key === "cellMm")
         next.paddingMm = Math.max(
@@ -407,7 +244,14 @@ export function FieldWorkbench({
     const m = result.meta,
       out: { t: number; p: number }[] = [],
       stride = Math.max(1, Math.ceil(m.steps / 1000));
-    for (let i = 0; i < m.steps; i += stride)
+    for (
+      let i =
+        m.settings.signal === "steady"
+          ? Math.max(0, Math.floor(m.times[0] / m.dt) - 1)
+          : 0;
+      i < m.steps;
+      i += stride
+    )
       out.push({
         t: (i + 1) * m.dt,
         p: result.data[
@@ -418,17 +262,76 @@ export function FieldWorkbench({
       });
     return out;
   }, [result, probe]);
+  const historyStart = history[0]?.t ?? 0,
+    historyEnd = history.at(-1)?.t ?? 1,
+    historyPosition = (t: number) =>
+      20 +
+      ((t - historyStart) / Math.max(1e-12, historyEnd - historyStart)) * 680;
   const historyPeak = Math.max(1e-9, ...history.map((v) => Math.abs(v.p))),
     wavePath = history
       .map(
         (v, i) =>
-          `${i ? "L" : "M"}${20 + (v.t / (meta ? meta.steps * meta.dt : 1)) * 680},${90 - (v.p / historyPeak) * 65}`,
+          `${i ? "L" : "M"}${historyPosition(v.t)},${90 - (v.p / historyPeak) * 65}`,
       )
       .join(" ");
-  const sampleIndex =
-      sample ??
-      Math.floor(((meta?.plane.width ?? 1) * (meta?.plane.height ?? 1)) / 2),
-    sampleAt = sampleIndex * 4;
+  const whole3d = Boolean(
+    meta?.volume && v.metric === "pressure" && v.displayMode !== "slice",
+  );
+  const sectionControls = meta ? (
+    <>
+      <label>
+        Section{" "}
+        <select
+          aria-label="Pressure section plane"
+          value={v.slicePlane}
+          onChange={(e) =>
+            change({
+              slicePlane: e.target.value as typeof v.slicePlane,
+            })
+          }
+        >
+          <option value="auto">Best cabinet view</option>
+          <option value="recorded">Original recording</option>
+          <option value="yz" disabled={!meta!.volume}>
+            Side · YZ
+          </option>
+          <option value="xy" disabled={!meta!.volume}>
+            Front · XY
+          </option>
+          <option value="xz" disabled={!meta!.volume}>
+            Top · XZ
+          </option>
+        </select>
+      </label>
+      <label>
+        Position{" "}
+        <input
+          aria-label="Pressure section position"
+          type="range"
+          min={0}
+          max={1}
+          step={0.01}
+          disabled={!meta!.volume || v.slicePlane === "recorded"}
+          value={v.slicePosition}
+          onChange={(e) => change({ slicePosition: Number(e.target.value) })}
+        />
+        {Math.round(v.slicePosition * 100)}%
+      </label>
+    </>
+  ) : null;
+  const pressureMap = result ? (
+    <PressureMap
+      result={result!}
+      frame={safeFrame}
+      metric={v.metric}
+      range={v.range}
+      curve={v.pressureCurve}
+      interpolation={v.interpolation}
+      contours={v.contours}
+      plane={v.slicePlane}
+      position={v.slicePosition}
+    />
+  ) : null;
   return (
     <section
       className={"field-workbench" + (result ? " has-result" : "")}
@@ -445,6 +348,25 @@ export function FieldWorkbench({
           show pressure changing inside the air channel and around its opening.
         </p>
       </div>
+      {result?.meta.studyModel === "basic-wave" && (
+        <p className="studio-model-note">
+          Basic wave study: crossover, frequency-dependent filling and
+          additional coil branches are excluded from this recording. Your design
+          is unchanged. Use Response or Measurements for the supported crossover
+          calculation.
+        </p>
+      )}
+      {result?.meta.steadyState && (
+        <p className="studio-model-note">
+          {result.meta.steadyState.settled
+            ? "Steady-tone settling check passed."
+            : "Still settling — use a longer study before interpreting the result as a steady response."}{" "}
+          Change between recorded phasor windows:{" "}
+          {(result.meta.steadyState.relativeChange * 100).toFixed(2)}%.
+          Geometry, material and radiation accuracy still need appropriate
+          resolution checks.
+        </p>
+      )}
       <div className="field-layout">
         <details
           className="surface field-settings"
@@ -484,17 +406,27 @@ export function FieldWorkbench({
                   value={settings.signal}
                   onChange={(e) => update("signal", e.target.value)}
                 >
-                  <option value="burst">Pulse · see reflections</option>
-                  <option value="tone">
+                  <option value="steady">Steady tone · complete model</option>
+                  <option value="burst" disabled={frequencyDependent}>
+                    Pulse · see reflections
+                  </option>
+                  <option value="tone" disabled={frequencyDependent}>
                     Continuous tone · see interference
                   </option>
                 </select>
               </label>
             </div>
+            {frequencyDependent && (
+              <p className="studio-model-note">
+                Steady tone keeps the crossover, driver model and
+                frequency-dependent materials. The final four cycles are
+                recorded; startup through the filling is not predicted.
+              </p>
+            )}
             <div className="field-run-actions">
               <button
                 className="primary"
-                disabled={!window.desktop || selectedJob?.status === "running"}
+                disabled={!window.desktop || checking || selectedJob?.status === "running"}
                 onClick={run}
               >
                 <Activity size={16} />
@@ -502,11 +434,15 @@ export function FieldWorkbench({
                   ? "Calculating…"
                   : "Run spatial study"}
               </button>
+              <button disabled={!window.desktop||checking||selectedJob?.status==='running'} onClick={()=>void checkCalculation()}>Check calculation quality</button>
               <p>
-                {settings.durationMs.toFixed(0)} ms of physical sound, slowed
-                down for playback.
+                {settings.signal === "steady"
+                  ? `${settings.durationMs.toFixed(0)} ms settling time; final four cycles recorded.`
+                  : `${settings.durationMs.toFixed(0)} ms of physical sound, slowed down for playback.`}
               </p>
             </div>
+            {checking&&<div className="field-run-progress" role="status"><span>{checkProgress}</span><button onClick={()=>{checkCancelled.current=true;}}>Cancel check</button></div>}
+            {checkReport&&<div className="studio-model-note" role="status"><strong>{checkReport.projectRevision!==state.projectRevision?'Design changed — run the check again':checkReport.passed?'Grid changes are small at this frequency':'More refinement is needed'}</strong><p>Five calculations compare finer grids, a shifted grid and a larger exterior. This checks numerical sensitivity at {checkReport.frequencyHz} Hz; it does not establish physical accuracy.</p><details><summary>Check details</summary>{checkReport.issues.map((issue:string)=><p key={issue}>{issue}</p>)}<p>Limits: 0.5% cavity volume and piston area, 1% impedance, 2% pressure, 1% settling. Evidence saved with the project files.</p></details></div>}
             {selectedJob?.status === "running" && (
               <div className="field-run-progress" role="status">
                 <progress max={1} value={selectedJob.progress} />
@@ -532,6 +468,7 @@ export function FieldWorkbench({
                 Calculation settings<span>Grid, duration & recording</span>
               </summary>
               <div className="field-calculation-grid">
+                <label className="select-field">Wall geometry<select aria-label="Wall geometry" value={settings.geometry??'fitted'} onChange={e=>update('geometry',e.target.value)}><option value="fitted">Fitted walls · recommended</option><option value="staircase">Whole-cell preview</option></select></label>
                 <Field
                   label="Physical duration"
                   value={settings.durationMs}
@@ -747,32 +684,47 @@ export function FieldWorkbench({
                 </select>
               </div>
               <div className="field-display-row">
-                <label className="select-field">
-                  Show
-                  <select
-                    aria-label="Field display"
-                    value={
-                      meta!.volume && v.metric === "pressure"
-                        ? v.displayMode
-                        : "slice"
-                    }
-                    onChange={(e) =>
-                      change({
-                        displayMode: e.target.value as typeof v.displayMode,
-                        metric: "pressure",
-                        range: 0,
-                      })
-                    }
-                  >
-                    <option value="slice">Recorded slice</option>
-                    <option value="volume" disabled={!meta!.volume}>
-                      Pressure volume
-                    </option>
-                    <option value="fronts" disabled={!meta!.volume}>
-                      Pressure fronts · ±35% range
-                    </option>
-                  </select>
-                </label>
+                <div
+                  className="field-view-switch"
+                  role="group"
+                  aria-label="Wave view"
+                >
+                  {(
+                    [
+                      { mode: "slice", label: "Slice" },
+                      { mode: "volume", label: "Whole 3D wave" },
+                      { mode: "fronts", label: "3D wave surfaces" },
+                    ] as const
+                  ).map(({ mode, label }) => (
+                    <button
+                      key={mode}
+                      aria-pressed={
+                        (meta!.volume && v.metric === "pressure"
+                          ? v.displayMode
+                          : "slice") === mode
+                      }
+                      disabled={mode !== "slice" && !meta!.volume}
+                      onClick={() =>
+                        setView({
+                          field: {
+                            displayMode: mode,
+                            ...(mode !== "slice"
+                              ? {
+                                  metric: "pressure" as const,
+                                  ...(v.metric !== "pressure"
+                                    ? { range: 0 }
+                                    : {}),
+                                }
+                              : {}),
+                          },
+                          ...(mode !== "slice" ? { section: true } : {}),
+                        })
+                      }
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
                 <label className="field-check">
                   <input
                     type="checkbox"
@@ -785,7 +737,7 @@ export function FieldWorkbench({
                 <details className="wave-reading-help">
                   <summary>What am I seeing?</summary>
                   <p>
-                    Blue is lower pressure (−), silver is higher pressure (+).
+                    Blue is lower pressure (−), orange is higher pressure (+).
                     Fronts join equal-pressure locations; they are not rays. Air
                     markers oscillate locally at {v.particleScale}×
                     displacement. The wave travels through the channel while air
@@ -794,19 +746,59 @@ export function FieldWorkbench({
                   </p>
                 </details>
               </div>
+              {whole3d && (
+                <p className="field-volume-description">
+                  {v.displayMode === "fronts"
+                    ? `Surfaces mark +${(scale * 0.35).toPrecision(3)} Pa and −${(scale * 0.35).toPrecision(3)} Pa throughout the 3D field.`
+                    : "The whole recorded pressure volume is shown in 3D, inside and around the cabinet."}{" "}
+                  Drag to orbit, scroll to zoom, and press Play to watch it
+                  move. Blue is rarefaction; orange is compression.
+                </p>
+              )}
+              {!meta!.volume && (
+                <p className="field-help">
+                  This recording contains a slice only. Enable “Record 3D
+                  pressure and air motion” in Study settings and calculate a new
+                  recording to see the whole wave.
+                </p>
+              )}
+              {v.metric === "pressure" && (
+                <div className="field-section-toolbar">
+                  {!whole3d && sectionControls}
+                  <div className="field-pressure-range">
+                    <span>Colour range ±{scale.toPrecision(3)} Pa</span>
+                    <button
+                      aria-label="Reveal weaker pressure"
+                      onClick={() => change({ range: scale / 2 })}
+                    >
+                      More contrast
+                    </button>
+                    <button
+                      aria-label="Expand pressure range"
+                      onClick={() => change({ range: scale * 2 })}
+                    >
+                      Less contrast
+                    </button>
+                    <button onClick={() => change({ range: 0 })}>
+                      Auto range
+                    </button>
+                  </div>
+                </div>
+              )}
               <div className="field-legend" aria-label="Field colour scale">
                 {v.metric === "pressure" ? (
-                  <>
-                    <span>
-                      <i className="negative-swatch" />−{scale.toPrecision(3)}{" "}
-                      Pa · rarefaction
-                    </span>
-                    <span>0 · equilibrium</span>
-                    <span>
-                      <i className="positive-swatch" />+{scale.toPrecision(3)}{" "}
-                      Pa · compression
-                    </span>
-                  </>
+                  <div className="pressure-overview-scale">
+                    <div
+                      style={{
+                        background: pressureGradientCss(v.pressureCurve),
+                      }}
+                    />
+                    <div>
+                      <span>−{scale.toPrecision(3)} Pa · rarefaction</span>
+                      <span>0 · equilibrium</span>
+                      <span>+{scale.toPrecision(3)} Pa · compression</span>
+                    </div>
+                  </div>
                 ) : (
                   <>
                     <span>0</span>
@@ -850,7 +842,9 @@ export function FieldWorkbench({
                   View calculation checks
                 </button>
               </div>
-              <div className="field-views">
+              <div
+                className={`field-views${whole3d ? " field-whole-wave" : ""}`}
+              >
                 <ModelView
                   geometry={geometry!}
                   driver={meta!.project.driver}
@@ -867,6 +861,8 @@ export function FieldWorkbench({
                       meta!.volume && v.metric === "pressure"
                         ? v.displayMode
                         : "slice",
+                    slicePlane: v.slicePlane,
+                    slicePosition: v.slicePosition,
                     contours: v.contours,
                     particles: v.particles,
                     particleScale: v.particleScale,
@@ -880,62 +876,20 @@ export function FieldWorkbench({
                     showDrivers: v.showDrivers,
                   }}
                 />
-                <article className="surface field-map">
-                  <div className="section-header">
-                    <h3>{meta!.plane.axis.toUpperCase()} field slice</h3>
-                    <span>
-                      {v.metric === "pressure" ? "±" : ""}
-                      {scale.toPrecision(3)} {unit}
-                    </span>
-                  </div>
-                  <canvas
-                    aria-label="Solved acoustic field"
-                    data-physical-time={physicalTime}
-                    data-field-frame={safeFrame}
-                    ref={canvas}
-                    onPointerMove={(e) => {
-                      const r = e.currentTarget.getBoundingClientRect(),
-                        x = Math.min(
-                          meta!.plane.width - 1,
-                          Math.max(
-                            0,
-                            Math.floor(
-                              ((e.clientX - r.left) / r.width) *
-                                meta!.plane.width,
-                            ),
-                          ),
-                        ),
-                        y = Math.min(
-                          meta!.plane.height - 1,
-                          Math.max(
-                            0,
-                            Math.floor(
-                              (1 - (e.clientY - r.top) / r.height) *
-                                meta!.plane.height,
-                            ),
-                          ),
-                        );
-                      setSample(x + y * meta!.plane.width);
-                    }}
-                  />
-                  <p className="field-help">
-                    Fixed scale for this recording; values beyond the colour
-                    range clip. Arrows show{" "}
-                    {v.metric === "intensity"
-                      ? "instantaneous energy flux"
-                      : "particle velocity"}
-                    , not particles travelling with the wave.{" "}
-                    {v.metric === "pressure" &&
-                      "Blue is rarefaction (−); silver is compression (+)."}
-                    {v.showDrivers &&
-                      " D labels are projected mount positions."}
-                  </p>
-                  <p className="field-sample">
-                    {result.mask[sampleIndex]
-                      ? `${displayed!.samples[sampleAt].toPrecision(4)} Pa · ${Math.hypot(displayed!.samples[sampleAt + 1], displayed!.samples[sampleAt + 2], displayed!.samples[sampleAt + 3]).toPrecision(3)} m/s`
-                      : "Rigid solid / outside recorded air"}
-                  </p>
-                </article>
+                {whole3d ? (
+                  <details className="field-volume-inspector">
+                    <summary>
+                      Inspect a section{" "}
+                      <span>Point values and pressure history</span>
+                    </summary>
+                    <div className="field-section-toolbar">
+                      {sectionControls}
+                    </div>
+                    {pressureMap}
+                  </details>
+                ) : (
+                  pressureMap
+                )}
               </div>
               <details
                 className="surface field-appearance"
@@ -1173,14 +1127,18 @@ export function FieldWorkbench({
                     strokeWidth="1.7"
                   />
                   <path
-                    d={`M${20 + (physicalTime / (meta!.steps * meta!.dt)) * 680} 10V170`}
+                    d={`M${historyPosition(physicalTime)} 10V170`}
                     stroke="#bec5c9"
                   />
                 </svg>
                 <p className="field-help">
                   Full-rate probe recording · ±{historyPeak.toPrecision(3)} Pa ·
-                  0–{(meta!.steps * meta!.dt * 1000).toFixed(2)} ms. Physical
-                  positions are stored in the study archive.
+                  {(historyStart * 1000).toFixed(2)}–
+                  {(historyEnd * 1000).toFixed(2)} ms.
+                  {meta!.settings.signal === "steady"
+                    ? " Final tone window; numerical settling startup is omitted."
+                    : ""}{" "}
+                  Physical positions are stored in the study archive.
                 </p>
               </details>
               <details
@@ -1199,12 +1157,13 @@ export function FieldWorkbench({
                 {meta!.quality && (
                   <p className="field-help">
                     CAD cavity {meta!.quality.cadCavityLitres.toFixed(2)} L ·
-                    voxel cavity {meta!.quality.voxelCavityLitres.toFixed(2)} L
+                    calculated cavity {meta!.quality.voxelCavityLitres.toFixed(2)} L
                     · {(meta!.quality.volumeError * 100).toFixed(1)}% volume
                     difference · {meta!.quality.pointsPerWavelength.toFixed(1)}{" "}
                     cells / shortest estimated wavelength.
                   </p>
                 )}
+                {meta!.quality?.scope&&<p className="field-help">{meta!.quality.scope}</p>}
                 <table>
                   <thead>
                     <tr>

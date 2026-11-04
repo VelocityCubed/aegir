@@ -1,0 +1,2 @@
+# Large local recordings are reproducible; metadata is kept in verification.json.
+*.aegir-field.zip

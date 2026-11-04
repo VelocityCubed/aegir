@@ -1,5 +1,125 @@
 # Verification record
 
+## 2026-11-04: 0.9.5 source units and conservative geometry
+
+136 TypeScript tests and three Python cavity-spectrum checks pass. New native
+tests execute the actual quality-check button, five sequential grids, saved JSON
+evidence, cut-cell cavity modes, persistence, and CPU/GPU parity with stuffing and
+a crossover (relativeL2 difference2.67e-6). Original projects/snapshots preserved.
+
+King's explicit cycle/Hz definition fixes a2π error in the historical fibre-law
+argument: stuffed opening/driver ratio RMS improves2.735→0.173dB without fitting.
+Independent Python/cmath/SciPy checks complex line load/flux and material values.
+Exact integrated cavity volume is68.58L on20/16/12mm and shifted grids. The
+five-run100Hz driven-field test correctly returns **refine-further** because
+pressure remains grid-sensitive. No physical accuracy certificate is claimed.
+Current evidence and limits: [agent audit](speaker-design/numerical-validation-2026-11-04.md),
+[standalone report](speaker-design/models/convergence-upgrade/comparison.html).
+
+## 2026-11-02: 0.9.1 worksheet inputs and convergence
+
+109 TypeScript tests and six Python analytic/element checks pass. Separate
+passive/active worksheet projects retain the original main-report case. General
+explicit air and 1D integration controls are consistent across the acoustic,
+material, modal and field paths. Native tests cover persisted controls, three
+modal meshes, worksheet circuit values, save/reload, coupled3D explicit air and
+steady-window traces.
+
+An independent conforming P1/P2 tetrahedral FEM is checked against analytic3D
+cavity modes before comparing Satori. Full acoustic acceptance remains unachieved;
+both the uniform FEM and voxel cases fail mesh convergence. The accuracy gate
+returns failure with explicit blockers. See [MODEL-VALIDATION.md](MODEL-VALIDATION.md)
+for sources, commands, numerical results and limits.
+
+
+## 2026-11-02: 0.9 visual circuits and coupled fields
+
+104 tests pass across fourteen TypeScript test files. New independent checks cover
+loaded dividers, shared-branch Kirchhoff conservation, analytic LC/ESR, drawn versus
+legacy acoustic and measured-load equivalence, implicit-midpoint AC refinement,
+passive stored energy, active filters, single-frequency constitutive-law refinement
+and phasor stationarity. Source build passes.
+
+Native Electron acceptance covers palette drag/drop insertion, component motion,
+manual terminal wiring, voltage/phase/impedance feedback, SI values, undo/duplicate,
+invalid networks, native circuit and BOM files, import, apply/reload, draft isolation
+and stale-edit rejection. Real CPU/WebGPU studies include an RLC/active/RpLp circuit
+and an additional steady-tone material case. Relative pressure L2 differences were
+6.49e-6 and 1.73e-4 respectively; the latter phasor windows differed by 8.59e-4.
+These synthetic checks establish implementation consistency and stationarity, not
+measured loudspeaker accuracy. No parameters were fitted to a design reference.
+
+Read [the circuit and field contract](CROSSOVER-BUILDER.md) before interpreting
+these results. Frequency-dependent media use numerical relaxation at one selected
+frequency; their broadband startup is not implemented. Grid/time-step/padding
+convergence, independent material characterization and physical validation remain
+necessary. Older verification sections describe their historical versions.
+
+
+## 2026-11-01: 0.8 studio redesign
+
+90 tests pass across eleven TypeScript test files. The added checks cover actual
+CAD input versus validation profiles, independence from reference sample counts,
+voltage/distance scaling across three different synthetic drivers/geometries, and
+an explicit basic wave input that preserves the original project. Three Python
+cavity checks remain independent analytic/refinement tests. Production build passes.
+
+Real desktop workflows cover Shape / Simulate / Export, edits/undo, native save and
+exports, version overlays, loaded crossover SI units, saved drivers, stale edits,
+measurement conditions, geometry-only fallback, basic wave recording without
+project mutation, reload and responsive layouts. Native physics checks cover
+imports, modal meshes, cancellation, measured-data and sensitivity workers. The
+direct editor retains real pointer gestures, panel/driver manipulation, draft
+cancel/undo/conflict handling, STEP export and CPU/GPU handoff.
+
+Reference-document panels and hidden validation-profile substitution are removed
+from the normal product. Older benchmark data/projects remain preserved. This
+does not establish universal physical validation; the [studio calculation
+contract](STUDIO.md) states the supported models, numerical checks and remaining
+topology, material and radiation limits.
+
+## 2026-11-01: loss, radiation, measured data and cavity modes
+
+86 tests pass across ten TypeScript test files. Three independent Python checks
+verify analytic tube refinement, transverse cavity modes and disconnected-domain
+rejection. Production build and the legacy whole-speaker desktop workflow pass.
+The physical-model desktop harness covers controls, imports, condition metadata,
+reload, measured-response and sensitivity workers, native modal meshes and
+cancellation. See [PHYSICS-UPGRADES.md](PHYSICS-UPGRADES.md) for reproduction,
+equations and numerical results. Private study records remain excluded from app
+packages. Previous project, workspace/history and executable payload are preserved.
+
+The new Satori benchmark improves impedance peak height and diagnostic SPL error,
+but does not establish complete published-response reproduction. The 10-to-8mm
+cavity refinement fails the 1% mesh/volume stability criterion. Unknown source
+voltage, assumed material transport and approximate baffle radiation remain.
+The older `verify:satori` acceptance gate still fails deliberately.
+
+## 2026-11-01: whole-speaker reference studies
+
+75 tests pass across nine test files, including independent loaded-circuit
+Kirchhoff checks, Butterworth corner response, analytic tube eigenfrequencies,
+sealed-back source isolation, schema/history/export persistence and published
+Satori comparison failures. `npm run build` passes. `npm run test:system` verifies
+the actual two-driver Electron render, 20kHz graph, reference results, validation,
+reload persistence and stale-edit rejection.
+
+`npm run test:field` passes with an open-back primary and sealed-back secondary,
+including actual CPU/GPU coupling, playback, restart and cancellation. Relative
+pressure L2 difference was1.9442e-6 (about0.000194%). This verifies implementation
+parity, not agreement with a physical speaker.
+
+`npm run verify:satori` currently exits1 deliberately: whole-speaker published
+response acceptance remains unachieved. The report records both mismatches and
+unimplemented comparisons. Figure8 profile volume and higher Figure11 axial modes
+agree closely; empty-line driven impedance and full anechoic response do not.
+Read [SYSTEM-STUDIES.md](SYSTEM-STUDIES.md) for units, cases and remaining limits.
+
+The updated unpacked development app was opened with the two-way Satori project;
+the previous workspace/project/history were preserved. Live revision9 exports
+include project, report, geometry manifest, ZIP and a STEP cabinet with both driver
+holes. Personal research/wiki data is excluded from application packaging.
+
 ## ÆGIR 0.6.0: guided workflow and pressure appearance
 
 51 regression tests pass. The additions verify that opacity/mapping changes preserve signed samples, cancellation nodes and physical time, and that partial view edits and restart retain Advanced mode and appearance settings. The existing acoustic, driver, energy and CAD regressions remain in the suite.

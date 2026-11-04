@@ -1,0 +1,690 @@
+{
+  "scope": "Unloaded rigid cavity with sealed driver apertures and pressure-zero physical mouth. FEM shares CAD boundary input but has independent conforming mesh and consistent-mass assembly. Neither solver is a driven frequency response.",
+  "analytic": [
+    {
+      "frequenciesHz": [
+        86.00002927850151,
+        258.0070261285557,
+        430.08635243542557,
+        580.3818937516369,
+        602.4405355200998,
+        629.7123498972785,
+        718.489341988065,
+        775.5401069541977
+      ],
+      "relativeResiduals": [
+        2.2156684237224201e-13,
+        2.8218588565288388e-14,
+        1.4206268791217995e-14,
+        8.095521440522491e-15,
+        7.80604264196792e-15,
+        9.040149301189107e-15,
+        8.29897749508449e-15,
+        1.899304436164997e-12
+      ],
+      "meta": {
+        "cellMm": 100,
+        "cells": 400,
+        "nodes": 857,
+        "cavityLitres": 60,
+        "cadCavityLitres": 60,
+        "mouthAreaMm2": 60000,
+        "method": "Independent conforming tetrahedral P[0 1 2 3 4 5 6 7] FEM; exactly integrated consistent mass/stiffness",
+        "boundary": "Rigid walls and sealed drivers; pressure-zero physical mouth plane"
+      },
+      "exact": [
+        86,
+        258,
+        430,
+        579.7474545964916,
+        602,
+        628.7090830512242,
+        716.6666666666667,
+        774
+      ],
+      "errorPercent": [
+        0.00003404476920376709,
+        0.002723305641749718,
+        0.020081961726869935,
+        0.10943371119875867,
+        0.07317865782390243,
+        0.15957568819990886,
+        0.254326789032322,
+        0.19898022664053272
+      ]
+    },
+    {
+      "frequenciesHz": [
+        86.0000081108999,
+        258.00203191881974,
+        430.0258015829968,
+        579.8998116240374,
+        602.13536814082,
+        628.9447458878661,
+        717.1398026961108,
+        774.5097875626454
+      ],
+      "relativeResiduals": [
+        5.844883778695061e-13,
+        7.321012443631304e-14,
+        3.520017808985537e-14,
+        1.5400224208111137e-14,
+        1.7358573421611282e-14,
+        1.5660104709468855e-14,
+        1.6388233338405017e-14,
+        2.1501174486780748e-13
+      ],
+      "meta": {
+        "cellMm": 75,
+        "cells": 992,
+        "nodes": 1949,
+        "cavityLitres": 60.00000000000001,
+        "cadCavityLitres": 60,
+        "mouthAreaMm2": 60000,
+        "method": "Independent conforming tetrahedral P[0 1 2 3 4 5 6 7] FEM; exactly integrated consistent mass/stiffness",
+        "boundary": "Rigid walls and sealed drivers; pressure-zero physical mouth plane"
+      },
+      "exact": [
+        86,
+        258,
+        430,
+        579.7474545964916,
+        602,
+        628.7090830512242,
+        716.6666666666667,
+        774
+      ],
+      "errorPercent": [
+        0.000009431278957805489,
+        0.0007875654340017135,
+        0.00600036813878102,
+        0.026279895899117278,
+        0.022486402129562322,
+        0.03748360616937507,
+        0.06601898085265567,
+        0.06586402618158349
+      ]
+    },
+    {
+      "frequenciesHz": [
+        86.00000265836148,
+        258.0006073136412,
+        430.00783109805263,
+        579.7862497486292,
+        602.0426710285225,
+        628.7684148581077,
+        716.7838826981671,
+        774.1457429764392
+      ],
+      "relativeResiduals": [
+        1.145616398498096e-12,
+        3.1636164558304104e-13,
+        1.293833730164471e-13,
+        6.763108770214522e-14,
+        7.640373701241806e-14,
+        3.3146198384593685e-14,
+        2.2993539920276968e-14,
+        1.6067078507125468e-13
+      ],
+      "meta": {
+        "cellMm": 50,
+        "cells": 2605,
+        "nodes": 4645,
+        "cavityLitres": 60,
+        "cadCavityLitres": 60,
+        "mouthAreaMm2": 60000,
+        "method": "Independent conforming tetrahedral P[0 1 2 3 4 5 6 7] FEM; exactly integrated consistent mass/stiffness",
+        "boundary": "Rigid walls and sealed drivers; pressure-zero physical mouth plane"
+      },
+      "exact": [
+        86,
+        258,
+        430,
+        579.7474545964916,
+        602,
+        628.7090830512242,
+        716.6666666666667,
+        774
+      ],
+      "errorPercent": [
+        0.0000030911180060044785,
+        0.00023539288418472637,
+        0.001821185593642305,
+        0.006691733069286165,
+        0.007088210718020349,
+        0.00943708441358826,
+        0.01635572532563412,
+        0.01882984191721171
+      ]
+    }
+  ],
+  "FEM": {
+    "studies": [
+      {
+        "frequenciesHz": [
+          45.480548201653775,
+          148.798725135042,
+          242.24422559379934,
+          341.4921294948637,
+          435.69695705886824,
+          527.2476281787325,
+          602.7884966056788,
+          678.6978328013984
+        ],
+        "relativeResiduals": [
+          7.63699401094608e-12,
+          9.408219076455586e-13,
+          3.2450746929027117e-13,
+          3.4475758926292223e-13,
+          1.9246083406817087e-13,
+          2.2586641632644457e-13,
+          1.2587246474045565e-13,
+          8.709684718795369e-13
+        ],
+        "meta": {
+          "cellMm": 40,
+          "cells": 6786,
+          "nodes": 11941,
+          "cavityLitres": 72.93313651168756,
+          "cadCavityLitres": 72.93313651168756,
+          "mouthAreaMm2": 12903.199999999995,
+          "method": "Independent conforming tetrahedral P[0 1 2 3 4 5 6 7] FEM; exactly integrated consistent mass/stiffness",
+          "boundary": "Rigid walls and sealed drivers; pressure-zero physical mouth plane"
+        }
+      },
+      {
+        "frequenciesHz": [
+          41.31561896056723,
+          146.51232984794328,
+          241.7143379276597,
+          339.98773942305354,
+          435.18314718494224,
+          525.9293640493364,
+          602.4119664973172,
+          678.3972882679672
+        ],
+        "relativeResiduals": [
+          1.7084106932323575e-11,
+          3.3657897803661963e-12,
+          8.673201612553428e-13,
+          2.6430275879272056e-13,
+          3.709635738589902e-13,
+          1.517588089525583e-13,
+          1.369579408981169e-13,
+          1.0322571918191063e-12
+        ],
+        "meta": {
+          "cellMm": 30,
+          "cells": 14997,
+          "nodes": 24850,
+          "cavityLitres": 72.93313651168756,
+          "cadCavityLitres": 72.93313651168756,
+          "mouthAreaMm2": 12903.199999999995,
+          "method": "Independent conforming tetrahedral P[0 1 2 3 4 5 6 7] FEM; exactly integrated consistent mass/stiffness",
+          "boundary": "Rigid walls and sealed drivers; pressure-zero physical mouth plane"
+        }
+      },
+      {
+        "frequenciesHz": [
+          40.36088066803821,
+          146.00905472217832,
+          241.48826479401205,
+          339.60536652093873,
+          434.85083362309945,
+          525.5379342056144,
+          602.1592768992614,
+          678.3443944393551
+        ],
+        "relativeResiduals": [
+          5.1865669811954394e-11,
+          1.1587429689352182e-11,
+          2.69170098793899e-12,
+          1.1883376493874756e-12,
+          1.270689079113425e-12,
+          3.849949102830479e-13,
+          7.261896559604458e-13,
+          8.395344689686132e-11
+        ],
+        "meta": {
+          "cellMm": 20,
+          "cells": 45970,
+          "nodes": 71212,
+          "cavityLitres": 72.93313651168758,
+          "cadCavityLitres": 72.93313651168756,
+          "mouthAreaMm2": 12903.199999999995,
+          "method": "Independent conforming tetrahedral P[0 1 2 3 4 5 6 7] FEM; exactly integrated consistent mass/stiffness",
+          "boundary": "Rigid walls and sealed drivers; pressure-zero physical mouth plane"
+        }
+      }
+    ],
+    "convergencePercent": [
+      -2.310841073058212,
+      -0.343503598835182,
+      -0.0935290540006406,
+      -0.11246667387585507,
+      -0.07636177181777892,
+      -0.07442631472565076,
+      -0.04194631118054071,
+      -0.007796880902499748
+    ],
+    "meshStableWithin1Percent": false,
+    "refinement": {
+      "modes": [
+        {
+          "status": "refine-further",
+          "stable": false,
+          "changes": [
+            -0.1008076206013438,
+            -0.02365504113702535
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "refine-further",
+          "stable": false,
+          "changes": [
+            -0.015605480367909184,
+            -0.0034468761319123315
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            -0.0021922061830615455,
+            -0.0009361661273291449
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            -0.00442483624369241,
+            -0.0011259330381966565
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            -0.0011806750267092407,
+            -0.0007642012758122556
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            -0.002506542169933718,
+            -0.0007448174874638999
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            -0.0006250375644941839,
+            -0.00041963913494278847
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            -0.0004430214250981675,
+            -0.00007797488863415753
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        }
+      ],
+      "volume": {
+        "status": "stable",
+        "stable": true,
+        "changes": [
+          0,
+          1.948477111350436e-16
+        ],
+        "observedOrder": null,
+        "extrapolated": null,
+        "discretizationEstimate": null,
+        "relativeTolerance": 0.01,
+        "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+      },
+      "modeAssociation": "frequency-order; crossings/degenerate modes require shape comparison"
+    },
+    "note": "Requires at least three mesh levels and consistent refinement. Numerical stationarity is not physical validation; sorted frequencies can change identity near crossings."
+  },
+  "voxel": {
+    "studies": [
+      {
+        "meta": {
+          "cellMm": 40,
+          "dimensions": [
+            7,
+            24,
+            9
+          ],
+          "pitchMm": [
+            36.285714285714285,
+            38.89375,
+            36.68888888888889
+          ],
+          "cells": 1470,
+          "cavityLitres": 76.11449830833334,
+          "cadCavityLitres": 72.76926587168758,
+          "mouthAreaMm2": 12903.199999999986,
+          "boundary": "Rigid walls and driver apertures; p=0 on physical mouth plane, including stock-depth outlet neck.",
+          "method": "Cell-centred finite volume; staircase volume with exact solid-crossing face barriers. Refine mesh; this is not an exact curved-surface FEM."
+        },
+        "frequenciesHz": [
+          35.93424740978558,
+          139.84665582317416,
+          235.99590346028097,
+          329.6483718876861,
+          425.53778246154957,
+          519.7202334827047,
+          589.2782035982273,
+          667.5920511269843
+        ],
+        "relativeResiduals": [
+          8.050936621265635e-13,
+          1.5468280165549247e-13,
+          9.821287916698683e-14,
+          4.113841888880942e-14,
+          2.550320307914234e-14,
+          1.9741624842038938e-14,
+          2.913787989557828e-14,
+          1.1475136665763196e-11
+        ]
+      },
+      {
+        "meta": {
+          "cellMm": 30,
+          "dimensions": [
+            9,
+            32,
+            12
+          ],
+          "pitchMm": [
+            28.22222222222222,
+            29.170312499999998,
+            27.516666666666666
+          ],
+          "cells": 3330,
+          "cavityLitres": 75.43490457343748,
+          "cadCavityLitres": 72.76926587168758,
+          "mouthAreaMm2": 12903.199999999995,
+          "boundary": "Rigid walls and driver apertures; p=0 on physical mouth plane, including stock-depth outlet neck.",
+          "method": "Cell-centred finite volume; staircase volume with exact solid-crossing face barriers. Refine mesh; this is not an exact curved-surface FEM."
+        },
+        "frequenciesHz": [
+          36.085232515214955,
+          137.7351302804379,
+          235.26610616788946,
+          327.7793701158567,
+          419.3053614978349,
+          507.5622988693323,
+          582.1349373377557,
+          662.0843464134683
+        ],
+        "relativeResiduals": [
+          1.6057406420240304e-12,
+          2.9663505459951246e-13,
+          1.1965942500117227e-13,
+          6.248979997019615e-14,
+          5.23497491147752e-14,
+          2.899457924974853e-14,
+          4.396007463097286e-14,
+          2.364163150476261e-10
+        ]
+      },
+      {
+        "meta": {
+          "cellMm": 20,
+          "dimensions": [
+            13,
+            47,
+            17
+          ],
+          "pitchMm": [
+            19.53846153846154,
+            19.860638297872338,
+            19.423529411764704
+          ],
+          "cells": 9458,
+          "cavityLitres": 71.28711246202752,
+          "cadCavityLitres": 72.76926587168758,
+          "mouthAreaMm2": 10981.44680851064,
+          "boundary": "Rigid walls and driver apertures; p=0 on physical mouth plane, including stock-depth outlet neck.",
+          "method": "Cell-centred finite volume; staircase volume with exact solid-crossing face barriers. Refine mesh; this is not an exact curved-surface FEM."
+        },
+        "frequenciesHz": [
+          33.00666210070651,
+          142.05451312781247,
+          233.74856386239955,
+          333.55682373398065,
+          420.7056245969012,
+          518.7563765118622,
+          593.2627609801126,
+          676.3104487210776
+        ],
+        "relativeResiduals": [
+          3.746543709677779e-12,
+          1.4194015171793596e-12,
+          7.424277177336839e-13,
+          1.8359388019081635e-13,
+          1.008296910054384e-13,
+          2.0638019186161508e-13,
+          8.488265328921194e-14,
+          1.1011386554551114e-11
+        ]
+      }
+    ],
+    "convergencePercent": [
+      -8.531385832723682,
+      3.1360066517380325,
+      -0.6450322701422095,
+      1.7626044055432333,
+      0.33394829344999266,
+      2.2054588505620476,
+      1.9115539935203207,
+      2.148684285419611
+    ],
+    "meshStableWithin1Percent": false,
+    "refinement": {
+      "modes": [
+        {
+          "status": "unresolved",
+          "stable": false,
+          "changes": [
+            0.0041841244992869685,
+            -0.09327118280289698
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "unresolved",
+          "stable": false,
+          "changes": [
+            -0.015330333941943988,
+            0.030406516148404606
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "unresolved",
+          "stable": false,
+          "changes": [
+            -0.0031020077829260933,
+            -0.006492199483130262
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "unresolved",
+          "stable": false,
+          "changes": [
+            -0.005702011603624678,
+            0.01732074779178138
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "unresolved",
+          "stable": false,
+          "changes": [
+            -0.01486368059175617,
+            0.003328367906675764
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "unresolved",
+          "stable": false,
+          "changes": [
+            -0.023953580950468293,
+            0.02157867960640652
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "unresolved",
+          "stable": false,
+          "changes": [
+            -0.012270808368141383,
+            0.01875698994484833
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "unresolved",
+          "stable": false,
+          "changes": [
+            -0.008318735737147974,
+            0.021034869909981775
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        }
+      ],
+      "volume": {
+        "status": "unresolved",
+        "stable": false,
+        "changes": [
+          -0.009009009009009368,
+          -0.05818431927116362
+        ],
+        "observedOrder": null,
+        "extrapolated": null,
+        "discretizationEstimate": null,
+        "relativeTolerance": 0.01,
+        "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+      },
+      "modeAssociation": "frequency-order; crossings/degenerate modes require shape comparison"
+    },
+    "note": "Requires at least three mesh levels and consistent refinement. Numerical stationarity is not physical validation; sorted frequencies can change identity near crossings."
+  },
+  "published": {
+    "source": "King2023 main report Attachment3, first8 sorted3D ANSYS modes. Geometry/temperature conventions must still be matched.",
+    "frequenciesHz": [
+      35.4,
+      144.5,
+      242.8,
+      339.7,
+      438.2,
+      527.1,
+      605.8,
+      680.5
+    ],
+    "finiteElementDifferencePercent": [
+      14.013787197848071,
+      1.0443285274590375,
+      -0.5402533797314479,
+      -0.027857956744559154,
+      -0.7643008619124925,
+      -0.2963509380355944,
+      -0.6009777320466481,
+      -0.31676790016823553
+    ]
+  },
+  "crossMethodDifferencePercent": [
+    -18.221154854917508,
+    -2.70842216045466,
+    -3.2050008468173075,
+    -1.7810504141680394,
+    -3.252887641571911,
+    -1.2904030807981526,
+    -1.4774356653542209,
+    -0.2998396883575061
+  ],
+  "acceptance": "diagnostic; no material or geometric parameter fitted. Sorted mode identity needs shape confirmation near crossings."
+}

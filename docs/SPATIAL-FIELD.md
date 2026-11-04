@@ -1,4 +1,31 @@
-# Spatial wave propagation in ÆGIR 0.6.0
+# Spatial wave propagation in ÆGIR
+
+Version0.9.5 uses conservative cut-cell wall geometry by default: fractional air
+volumes and open face areas enter the pressure equations, piston port loading,
+and material-aware stability bound. Whole-cell geometry remains an explicit
+preview option. A cell containing disconnected air on opposite sides of a thin
+wall is rejected; refine rather than connecting those regions artificially.
+
+**Check calculation quality** runs three grid levels, a shifted finest grid and
+a larger exterior. It compares fixed physical pressure probes, complex terminal
+impedance, settling, cavity volume and piston area. The report is saved as JSON.
+A pass applies only to the tested frequency and probes; it is not a physical
+accuracy certificate. Per-run work/memory limits and a five-minute desktop
+timeout apply. Failed or unsettled runs do not count as passes.
+
+Unloaded cavity modes also use cut-cell volumes and symmetric mass-normalized
+face coupling. Their pressure-zero mouth includes the stock-depth neck, so modal
+domain volume and CAD body volume are reported separately.
+
+For the0.9.4 porous-material and spatial lining additions, read
+[MATERIALS.md](MATERIALS.md). Lining is placed at channel walls in steady-tone
+studies; a thickness-resolution warning is distinct from a convergence pass.
+
+Current0.9 electrical/material additions supersede the original air-only source
+contract below: [visual circuit and steady-tone equations](CROSSOVER-BUILDER.md).
+Use Simulate → Sound waves; crossovers remain active. Steady tone evaluates
+frequency-dependent losses at the selected frequency, records final four cycles
+and reports settling. It does not predict broadband startup through filling.
 
 **Wave propagation** is a separate, experimental **3D** time-domain solver. It
 uses the actual cabinet solids and surrounding air. The route line does not
@@ -155,7 +182,8 @@ Gaussian-envelope carrier, not a signal whose whole-window RMS equals the
 carrier setting. Tone voltage ramps over two carrier cycles.
 
 The optional uniform attenuation is a phenomenological matched pressure/velocity
-loss. The existing 1D damping slider is not imported as a stuffing material.
+loss. In0.9 the legacy1D damping slider is a frequency-local attenuation law in
+steady-tone studies; it is not a measured stuffing material.
 There is no calibrated porous fill, elastic cabinet, cone breakup, thermal
 compression, nonlinear distortion or port-turbulence model. Basket/magnet and
 bracing displacement are absent unless represented by modelled solids.
@@ -266,4 +294,57 @@ The default guided view keeps signal selection simple and collapses calculation 
 
 `field.opacity` (0–3, default 1) controls drawing opacity. `field.pressureCurve` selects `soft` (reveal weaker pressure) or `linear`. `field.frontShading` enables gradient shading of pressure fronts. The gradient comes from adjacent recorded pressure samples, with solid neighbours excluded. It changes lighting only: pressure sign, fixed colour range, ±35% front levels, zero crossings and timestamps are unchanged. No turbulence, buoyancy or invented small-scale detail is added.
 
-Blue is rarefaction and silver is compression, following the current brand palette. The legend states both sign and physical Pa. Recording resolution and drawing quality remain separate. Legacy archives do not need conversion. Agents can set `mode:"guided"|"advanced"` through `view.set` and use the appearance fields in its `field` patch.
+Blue is rarefaction and orange is compression, with brighter endpoints for larger magnitudes. The legend states both sign and physical Pa. Recording resolution and drawing quality remain separate. Legacy archives do not need conversion. Agents can set `mode:"guided"|"advanced"` through `view.set` and use the appearance fields in its `field` patch.
+
+## Pressure inspection (0.9.2)
+
+The default display is a signed pressure section. The 2D map is opaque so pressure
+does not disappear through compounded colour and alpha fading. The 3D section,
+volume and fronts share the blue–orange palette. Opacity affects the 3D overlay;
+it does not hide quantitative map values. `soft` enhances weak pressure visually;
+the legend uses that same transfer function. Range is fixed across the recording,
+not normalized each frame. Contrast buttons change range only, and the map reports
+the percentage of visible air samples beyond it. Reported extrema remain unclipped.
+
+`field.slicePlane` is `auto|recorded|xy|xz|yz`, `slicePosition` is 0–1 across the
+cabinet's normal extent. Automatic orientation uses the largest internal board's
+span to expose the channel. It is a viewing heuristic, not a solver constraint.
+`PressureSlice` selects the nearest existing volume plane and reports its actual
+coordinate and stored pitch. Side sections are upright (depth U, height V).
+Suitable original XY/XZ sections retain the finer original recording. Old archives
+without a volume fall back to the original plane. Alternate sections contain only
+stored scalar pressure; velocity/intensity always return to the original plane.
+No velocity is reconstructed or assumed from pressure. Drawing interpolation
+does not improve the stored spatial resolution or change geometry/solution data.
+
+Hover/click sampling maps the actual drawn canvas rectangle to grid coordinates,
+excluding its surrounding layout space. Clicking pins a physical sample. Its
+history uses its own fixed range across the entire recording, independently of
+the map contrast. Window RMS uses trapezoidal integration of recorded p² over
+physical timestamps. It describes this recording window, not a validated far-field
+SPL or steady-state RMS when settling/time sampling is inadequate. Section extrema
+and clipping percentages cover the currently visible map bounds.
+
+`npm run test:pressure-ui` tests the desktop against a generated synthetic study.
+Set `AEGIR_PRESSURE_FIXTURE` to an existing archive to test a preserved recording
+without solving again. It copies that archive into an isolated profile and checks
+its SHA256 after all display changes. `AEGIR_TEST_APP` can select the packaged app.
+Evidence is written under `test-results/pressure-ui/`. Unit tests independently
+check axis mapping, coordinates, masking, time interpolation and RMS quadrature.
+
+## Whole-wave selection (0.9.3)
+
+The main Wave view buttons are Slice, Whole 3D wave, and 3D wave surfaces. Whole
+3D wave uses the existing ray-marched signed pressure volume; surfaces use the
+existing ±35% of range level set, with its physical Pa threshold stated. These
+views fill the main viewport. An Inspect a section disclosure retains the map,
+plane selector, position slider and numeric inspector underneath. Those controls
+only move the inspection section; the volume remains visible in its entirety.
+The camera/cutaway orientation for a whole volume is independent of the inspector
+plane. Selecting a 3D mode restores pressure quantity and opens the cutaway.
+
+No recording conversion or new solve is needed when volume samples already exist.
+Slice-only recordings disable the two volume buttons and explain how to record a
+new volume. Saved project/recording data and all acoustic equations are unchanged.
+The pressure UI test now exercises actual buttons, persistence on reload, inspector
+isolation and time-varying volume pixels with driver/particle drawings hidden.

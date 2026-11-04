@@ -1,5 +1,7 @@
+import {circuitSchema} from './circuit-schema';
 import type { Project } from "./types";
 import { driverModel } from "./acoustics";
+import { crossoverSchema, systemSchema, measurementSchema } from './system-schema';
 const bounds: Record<string, [number, number]> = {
   fs: [10, 5000],
   qes: [0.08, 3],
@@ -34,6 +36,10 @@ export function validateProject(value: unknown): asserts value is Project {
   if (!value || typeof value !== "object")
     throw Error("Project must be a JSON object.");
   const p = value as Project;
+  if(p.circuit!==undefined)circuitSchema.parse(p.circuit);
+  if(p.system!==undefined){systemSchema.parse(p.system);
+    if(p.system.sweep[0]>p.targets?.low||p.system.sweep[1]<p.targets?.high)throw Error('System sweep must contain the target band.');
+  }
   if (p.version !== 1 || typeof p.name !== "string" || p.name.length > 150)
     throw Error("Unsupported project version or invalid name.");
   for (const [key, sample] of Object.entries({
@@ -92,6 +98,7 @@ export function validateProject(value: unknown): asserts value is Project {
   if (p.driver.frame < p.driver.cutout)
     throw Error("Driver frame must be larger than its cutout.");
   const model = driverModel(p);
+  if(p.driver.lossyInductance){const l=p.driver.lossyInductance;if(!Number.isFinite(l.resistance)||l.resistance<=0||l.resistance>1000||!Number.isFinite(l.inductance)||l.inductance<=0||l.inductance>100)throw Error('Invalid lossy inductance (Rp ohm, Lp mH).');}
   if (model.mmd <= 0 || model.rmd <= 0)
     throw Error(
       "These T/S values imply non-positive suspension mass or resistance after free-air correction. Check Fs, Vas, Sd and Qms.",
@@ -234,6 +241,10 @@ export function validateProject(value: unknown): asserts value is Project {
       )
         throw Error("Driver mount IDs must be unique safe identifiers.");
       ids.add(m.id);
+      if(m.measurements)measurementSchema.parse(m.measurements);
+      if(m.acousticOffsetMm&&(!Array.isArray(m.acousticOffsetMm)||m.acousticOffsetMm.length!==3||m.acousticOffsetMm.some(x=>!Number.isFinite(x)||Math.abs(x)>5000)))throw Error('Invalid acoustic-centre offset.');
+      if(m.rearLoading!==undefined&&!['cabinet','sealed-back'].includes(m.rearLoading))throw Error(`Invalid rear loading for ${m.id}.`);
+      if(m.crossover!==undefined)crossoverSchema.parse(m.crossover);
       if (
         !Number.isFinite(m.position) ||
         m.position <= 0 ||

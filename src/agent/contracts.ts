@@ -1,6 +1,8 @@
+import {circuitSchema} from '../core/circuit-schema';
 import { z } from "zod";
 import type { Driver, Project } from "../core/types";
 import { validateProject } from "../core/validation";
+import { crossoverSchema, systemSchema, measurementSchema } from '../core/system-schema';
 
 const number = (min: number, max: number, description: string) =>
   z.number().finite().min(min).max(max).describe(description);
@@ -33,6 +35,7 @@ export const driverSchema = z
     cutout: number(25, 600, "Through-cut diameter, mm"),
     frame: number(30, 700, "Frame diameter, mm"),
     depth: number(10, 500, "Mounting depth behind baffle, mm"),
+    lossyInductance: z.object({resistance:number(.000001,1000,'Rp, ohm'),inductance:number(.000001,100,'Lp, mH')}).strict().optional(),
   })
   .strict();
 export const designSchema = z
@@ -139,6 +142,10 @@ export const mountSchema = z
       ),
     voltageScale: number(0, 10, "Multiplier of base RMS voltage"),
     phase: number(-360, 360, "Excitation phase in degrees"),
+    rearLoading: z.enum(['cabinet','sealed-back']).optional(),
+    acousticOffsetMm: xyz.optional(),
+    measurements:measurementSchema.optional(),
+    crossover: crossoverSchema.optional(),
   })
   .strict();
 export const projectSchema = z
@@ -150,6 +157,8 @@ export const projectSchema = z
     targets: targetsSchema,
     layout: layoutSchema.optional(),
     mounts: z.array(mountSchema).min(1).max(8).optional(),
+    system: systemSchema.optional(),
+    circuit:circuitSchema.optional(),
   })
   .strict();
 export const fieldSettingsSchema = z
@@ -162,9 +171,11 @@ export const fieldSettingsSchema = z
     ),
     durationMs: number(5, 500, "Physical simulation duration, ms"),
     frequency: number(20, 2000, "Carrier frequency, Hz"),
-    signal: z.enum(["burst", "tone"]),
+    signal: z.enum(["burst", "tone", "steady"]),
     frames: z.number().int().min(12).max(640),
     volume: z.boolean(),
+    geometry: z.enum(['fitted','staircase']).optional(),
+    gridShiftMm: z.tuple([number(-20,20,'Grid phase shift, mm'),number(-20,20,'Grid phase shift, mm'),number(-20,20,'Grid phase shift, mm')]).optional(),
     axis: z.enum(["xy", "xz", "yz"]),
     slice: number(
       0,
@@ -188,6 +199,8 @@ const driverViewFields = {
   ),
 };
 const visualViewFields = {
+  slicePlane: z.enum(['auto','recorded','xy','xz','yz']),
+  slicePosition: number(0,1,'Section position across the cabinet; drawing from stored samples only'),
   opacity: number(
     0,
     3,
@@ -219,9 +232,11 @@ const fieldViewBase = z
   })
   .strict();
 export const fieldViewSchema = fieldViewBase.extend({
+  slicePlane: visualViewFields.slicePlane.default('auto'),
+  slicePosition: visualViewFields.slicePosition.default(.5),
   showDrivers: driverViewFields.showDrivers.default(true),
   driverMotionScale: driverViewFields.driverMotionScale.default(50),
-  displayMode: visualViewFields.displayMode.default("volume"),
+  displayMode: visualViewFields.displayMode.default("slice"),
   contours: visualViewFields.contours.default(true),
   particles: visualViewFields.particles.default(false),
   particleScale: visualViewFields.particleScale.default(1000),
@@ -243,6 +258,7 @@ export const viewSchema = z
   .object({
     mode: z.enum(["guided", "advanced"]).default("guided"),
     tab: z.enum(["design", "field", "optimise", "build", "method"]),
+    study: z.enum(['response','waves','resonances','measurements','variations']).default('response'),
     leftTab: z.enum(["enclosure", "driver"]),
     section: z.boolean(),
     exploded: z.boolean(),
@@ -260,6 +276,7 @@ export type ViewState = z.infer<typeof viewSchema>;
 export const defaultView: ViewState = {
   mode: "guided",
   tab: "design",
+  study: 'response',
   leftTab: "enclosure",
   section: true,
   exploded: false,
@@ -381,6 +398,8 @@ export const commands = {
         targets: targetsSchema.partial().optional(),
         layout: layoutSchema.nullable().optional(),
         mounts: z.array(mountSchema).min(1).max(8).nullable().optional(),
+        system: systemSchema.nullable().optional(),
+          circuit:circuitSchema.nullable().optional(),
       })
       .strict(),
   },
@@ -562,12 +581,13 @@ export const commands = {
   },
   "view.set": {
     description:
-      "Control the live desktop in guided or advanced mode. Field displayMode selects slice/volume/fronts. Opacity, pressureCurve, frontShading, contours, particles, magnification and renderQuality change drawing only. Fractional frames interpolate physical time. Partial patches preserve unrelated view settings.",
+      "Control the live desktop in guided or advanced mode. Field displayMode selects slice/volume/fronts. slicePlane auto/recorded/xy/xz/yz and slicePosition 0–1 reslice saved pressure samples; alternate planes do not invent velocity. Opacity, pressureCurve, frontShading, contours, particles, magnification and renderQuality change drawing only. Fractional frames interpolate physical time. Partial patches preserve unrelated view settings.",
     schema: viewSchema
-      .omit({ field: true, mode: true })
+      .omit({ field: true, mode: true, study: true })
       .partial()
       .extend({
         mode: z.enum(["guided", "advanced"]).optional(),
+        study:z.enum(['response','waves','resonances','measurements','variations']).optional(),
         field: fieldViewBase.partial().optional(),
       }),
   },
@@ -582,11 +602,12 @@ export const commands = {
   },
   "field.run": {
     description:
-      "Start an experimental 3D acoustic FDTD study in the actual cabinet and exterior air, with two-way T/S piston coupling. Includes solved reflections and interference, finite grid/PML diagnostics and a bounded recording. Returns a job; GPU uses the live desktop, CPU reference is available without WebGPU.",
+      "Start an experimental 3D acoustic FDTD study in the actual cabinet and exterior air, with two-way T/S piston coupling. Includes drawn/legacy RLC, active-filter and RpLp coil coupling, solved reflections/interference, finite grid/PML diagnostics and a bounded recording. Frequency-dependent media require signal steady; this is single-frequency relaxation, not broadband material startup. Returns a job; GPU uses the live desktop, CPU reference is available without WebGPU.",
     schema: z
       .object({
         settings: fieldSettingsSchema.partial().optional(),
         show: z.boolean().optional(),
+          basicWaveModel: z.boolean().optional(),
       })
       .strict(),
   },
@@ -608,6 +629,10 @@ export const commands = {
       .strict(),
     read: true,
   },
+  "field.compare": {
+    description:"Compare completed steady-tone grids, fixed pressure probes, terminal impedance, settling, piston area and cavity volume. Requires three grid levels plus shifted-grid and exterior-padding checks for a pass. Numerical sensitivity only, not physical validation. Saves JSON evidence.",
+    schema:z.object({ids:z.array(z.string()).min(2).max(8)}).strict(),
+  },
   "field.open": {
     description:
       "Select a completed spatial study in the actual desktop wave view. Its own recorded geometry is displayed, with a stale-project notice if appropriate.",
@@ -620,9 +645,12 @@ export const commands = {
       .object({ samples: z.number().int().min(24).max(1200).optional() })
       .strict(),
   },
+  "analysis.reference": {
+    description: "Compare the current system against source-labelled reference curves and ideal closed/open axial modes. Reports absolute errors and incompatible test conditions without fitting offsets. Returns a revision-labelled job; poll job.get.",
+    schema: z.object({samples:z.number().int().min(24).max(1200).optional()}).strict(),
+  },
   "analysis.pressure": {
-    description:
-      "Return actual normalized pressure along the active route at one frequency.",
+    description: "Return actual normalized pressure along the active route at one frequency.",
     schema: z
       .object({
         frequency: number(5, 5000, "Frequency, Hz"),
@@ -631,6 +659,9 @@ export const commands = {
       .strict(),
     read: true,
   },
+  'analysis.modal':{description:'Solve unloaded3D rigid-cavity modes with p=0 at the actual mouth, no drivers or exterior radiation. Runs multiple mesh sizes and reports convergence. Requires desktop Python/SciPy. Returns a cancellable revision-labelled job.',schema:z.object({cellMm:z.array(number(8,60,'Cell pitch mm')).min(2).max(4).refine(s=>s.slice(1).every((v,i)=>v<s[i]),'Modal cell sizes must strictly decrease.').default([16,12,9]),geometry:z.enum(['fitted','staircase']).default('fitted'),count:z.number().int().min(2).max(24).default(12)}).strict()},
+  'analysis.sensitivity':{description:'Diagnose reference error with bounded independent parameter perturbations. Reports peak height/frequency/width and RMS influence, without fitting or applying any candidate.',schema:z.object({referenceId:z.string(),parameters:z.array(z.object({path:z.string().max(100),fraction:number(.001,.25,'Relative perturbation')}).strict()).min(1).max(12)}).strict()},
+  'analysis.measured':{description:'Compute a loaded crossover sum from imported mounted acoustic groups and impedance traces. Requires phase, common timing, known voltage/position and baffle/terminus coverage. Does not double-count a simulated TL, or infer excursion from acoustic measurements.',schema:z.object({samples:z.number().int().min(24).max(1200).optional()}).strict()},
   "analysis.sweep": {
     description:
       "Start a bounded numeric parameter sweep, retaining invalid-case diagnostics. Paths address existing numeric fields only; no code expressions.",

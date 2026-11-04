@@ -1,0 +1,1250 @@
+
+===== PAGE 1 =====
+Anatomy of a Transmission Line Loudspeaker
+Martin J. King
+40 Dorsman Dr.
+Clifton Park, NY 12065
+MJKing57@aol.com
+
+===== PAGE 2 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Introduction :
+For the past several years, I have been performing transmission line loudspeaker
+simulations using MathCad(1) computer models. When I started deriving the transmission
+line equations of motion I wanted to be able to easily simulate tapered, straight, and
+expanding geometries. To accommodate the geometry variable in the derivation, I
+merged the one dimensional exponential horn wave equation with a fiber damping
+correlation I had empirically formulated. The fiber damping model was generated using
+data acquired from measurements of the electrical impedance and the SPL output of a
+straight test transmission line. The details of the transmission line modeling can be found
+on my website (www.quarter-wave.com).
+There have been two or three major revisions to my MathCad transmission line
+models in the past couple of years. Some of the changes corrected errors in the derived
+equations while others extended the capabilities of the worksheets to represent
+additional types of enclosures. Since September of 2000, versions of the MathCad
+worksheets have been available for downloading and have received wide use by
+transmission line and TQWT DIY speaker building enthusiasts. To the best of my
+knowledge, the speakers built based on these MathCad worksheets have been very
+successful and performance measurements correlate extremely well with the MathCad
+simulation predictions.
+While people have been applying my calculation methods to design transmission
+line loudspeakers for several years, there are always questions posted on Internet
+discussion forums or asked directly through private e-mails concerning how the
+transmission line enclosure actually functions. For example, questions concerning the
+electrical impedance curve and if it is a double or a single humped curve are often
+posed. A second significant point of discussion revolves around the resonances of the
+air column and the quarter wavelength frequencies and standing wave shapes. Over the
+years I have provided my responses to these two questions, and also to a host of other
+inquiries, by responding on discussion forums or by return e-mail. I decided recently that
+a useful document might be one that pulls some of these responses together and
+expands them to describe the inner workings of a transmission line enclosure. The result
+is this article which I have titled Anatomy of a Transmission Line Loudspeaker. I hope
+that the reader finds it both interesting and informative.
+Displacement, Velocity, and Acceleration :
+Three expressions need to be defined to allow the discussion to proceed and
+hopefully have some physical meaning for most readers. In the following paragraphs
+sinusoidal displacement, velocity, and acceleration will be referred to over and over
+again. For example, the equations describing one possible sinusoidal displacement
+function and its relationship to velocity and acceleration are shown below.
+displacement = x(t) = sin(ω t )
+velocity = u(t) = dx/dt = ω cos(ω t) = ω sin(ω t + 90 degrees)
+acceleration = a(t) = d2x/dt2 = -ω2 sin(ω t) = ω2 sin(ω t + 180 degrees)
+Page 1 of 46
+
+===== PAGE 3 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+In all of these expressions, the frequency ω has units of radians per second and is
+related to the more commonly used frequency variable f, having units of Hz or cycles per
+second, by the following expression.
+ω = 2π f
+Reviewing the expressions for displacement, velocity, and acceleration; it is
+observed that each time you differentiate with respect to time the magnitude increases
+by a factor of ω and the phase shifts by 90 degrees. To help visualize a sinusoidal
+displacement, and the act of shifting it on the time axis by 90 degrees and 180 degrees
+to produce velocity and acceleration respectively, a sample plot is shown below in Figure
+1. The magnitudes of the displacement and velocity curves have been scaled to produce
+a more easily visible comparison.
+Figure 1 : Displacement, Velocity, and Acceleration Curves
+Red curve = displacement = x(t)
+Blue curve = velocity = u(t)
+Magenta curve = acceleration = a(t)
+For the plot shown in Figure 1, the frequency was set equal to 1 Hz so that 90
+degree and 180 degree phase shifts correspond to 0.25 and 0.5 seconds respectively on
+the time axis. Notice that the blue velocity curve is 90 degrees out of phase and that the
+magenta acceleration curve is 180 degrees out of phase with the red displacement
+curve. Recognizing the magnitude and phase relationships between the displacement,
+the velocity, and the acceleration is a key point to take away from this section.
+Frequently consulting the curves shown in Figure 1 should help when trying to
+understand what is being described in subsequent sections.
+Page 2 of 46
+
+===== PAGE 4 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Mechanical Vibration Theory :
+One Degree of Freedom System :
+To appreciate how a transmission line enclosure works, a little background
+information about mechanical vibration theory is required. The starting point for this
+section is the single degree of freedom system as shown in Figure 2. A single degree of
+freedom system is comprised of a mass, a damper, and a spring. Motion is allowed only
+in a single direction, in this case the vertical direction. The mass moves up and down at
+one end of the spring and damper while the other ends are anchored to ground. The
+mass has a displacement, velocity, and acceleration as described in the preceding
+section. The positive sign convention is denoted on the right side of the figure by the
+arrow pointing upward.
+Figure 2 : Single Degree of Freedom Mechanical System
+The equation of motion for the single degree of freedom system is shown below.
+Notice that this equation sums acceleration, velocity, and displacement terms to react a
+forcing function on the right side of the equals sign. For a unit sinusoidal forcing function,
+F is equal to 1 Newton.
+m d2x/dt2 + c dx/dt + k x = F cos(ω t )
+In simple mechanical models typically a degree of freedom (or motion
+opportunity) is assigned to each lumped mass in the system. For the system shown in
+Figure 2, there is one mass hence a single degree of freedom and a single natural
+frequency. As the number of masses increases, so do the number of degrees of freedom
+and therefore the number of natural or resonant frequencies. For a continuous system,
+such as a column of air vibrating in the axial direction, the number of masses is infinite
+as are the number of resonant frequencies.
+An undergraduate level vibration textbook(2, 3) will contain the complete derivation
+and solution of the differential equation of motion for the single degree of freedom
+system, so it will not be repeated. Instead, a sample problem will be used to calculate
+and plot the response of the mass when it is subjected to a 1 Newton sinusoidal
+Page 3 of 46
+
+===== PAGE 5 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+excitation sweeping the frequency range from 10 Hz to 100 Hz. To set up and perform
+the numerical simulation, a few key variables must first be defined.
+Assume the mass is 25 gm and that the system’s natural frequency is 40 Hz. The
+natural frequency of a single degree of freedom system is calculated using the well-
+known equation shown below.
+f = 1/2π (k / m)1/2
+n
+Knowing the mass and frequency allows the spring rate to be calculated. The calculated
+spring rate is 1579 Newton/m. Finally, the damping value is set to produce a Q of 50 at
+the 40 Hz resonance. This is a very lightly damped mechanical system that can be
+subjected to a 1 Newton sinusoidal excitation and numerically solved at discrete
+frequencies using MathCad. This is the process I used to perform all of the simulations
+presented in this section.
+Figures 3, 4, and 5 show the displacement, velocity, and acceleration responses
+for this single degree of freedom system subjected to a unit sinusoidal excitation. There
+are several classic properties of each response curve that will be described in the
+following paragraphs. But before diving into the details of each particular curve, it should
+be noted that this is a linear analysis. Basically, this means that if the excitation force
+were doubled the displacement, velocity, and acceleration response would also double.
+If the excitation force were halved, the response would also be halved. The numerical
+response, extracted from the curves shown in Figure 3, 4, or 5, can be scaled to
+determine the response of the system to any magnitude of sinusoidal forcing function.
+One other feature common to all three response plots is the system behavior at
+resonance. A sharp peak at 40 Hz is seen in all three of the response plots. This is
+typical of a lightly damped mechanical system. At the resonant frequency, a small
+excitation level will produce a greatly amplified response when compared to other
+frequencies. What is sometimes neglected is the sudden phase shift that occurs as the
+forcing function sweeps through the resonant frequency. In each response plot, a 180
+degree phase shift occurs as the frequency sweep traverses the resonant frequency of
+40 Hz.
+One example of a resonance that everybody has heard at one time or another is
+the tone produced by rubbing a crystal wine glass typically used at a formal reception. If
+you wet your finger and gently trace the perimeter of the glass, a ringing sound is
+generated that can be heard across the room. The glass resonates producing a tone that
+is a function of the size and shape of the glass and the amount of liquid remaining in the
+bottom of the glass. The response produced is grossly out of proportion to the excitation
+provided by your wet finger. If you rubbed your wet finger on one of the tables or chairs
+at the reception, with a similar pressure, chances are the sound produced would be
+inaudible even to you. The significant sound level produced by the wine glass is due to
+the excitation of a lightly damped resonance.
+Page 4 of 46
+
+===== PAGE 6 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 3 shows the displacement response for the unit sinusoidal excitation as it
+is swept from 10 Hz to 100 Hz. At low frequencies, the displacement is approaching a
+constant magnitude and the phase angle is zero. This is indicative of the forcing function
+working only against the spring without any influence from the mass or the damper.
+Calculating the deflection of the system’s spring, due to a 1 Newton static force,
+produces the following value.
+f / k = (1 Newton) / (1579 Newton/m) = 0.633 mm
+The magnitude of the displacement at 10 Hz is 0.674 mm and the trend is decreasing at
+lower frequencies. At 1 Hz, the displacement value is approximately 0.633 mm. This
+means that at low frequencies the response is stiffness controlled.
+Figure 3 : Displacement Response per Newton of Excitation
+A second distinctive feature of the plot is the sharp peak at the resonant
+frequency of 40 Hz with a corresponding phase of 90 degrees. The velocity term in the
+equation of motion determines the magnitude of this peak. For this lightly damped
+system, the response peak magnitude is 31.663 mm, which as expected is
+approximately a factor of 50 (the system Q) greater than the low frequency response
+magnitude of 0.633 mm.
+Page 5 of 46
+
+===== PAGE 7 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+The final feature to be noted is the negative slope of the magnitude plot and the
+corresponding phase angle above resonance. The magnitude is falling off rapidly and
+the phase is 180 degrees relative to the forcing function. This region of the response
+curve is completely controlled by the force working to accelerate and decelerate the
+mass. So at high frequencies, the response is mass controlled.
+Figure 4 presents the velocity response for the unit sinusoidal excitation as it is
+swept from 10 Hz to 100 Hz. Notice the symmetry of the magnitude about the 40 Hz
+resonant frequency and the asymmetry of the phase about the 0 degree axis at 40 Hz.
+Figure 4 : Velocity Response per Newton of Excitation
+The velocity response will be very important when considering the acoustic
+impedance of transmission line geometries. Acoustic equations and calculated results
+are typically stated in terms of velocity and pressure. Straying slightly off topic for a
+moment, the acoustic impedance of a transmission line is defined by the following
+expression.
+Z (ω) = p(ω) / U(ω)
+acoustic
+where
+p(ω) = pressure = force / area
+U(ω) = volume velocity = area x velocity
+Page 6 of 46
+
+===== PAGE 8 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Looking at the velocity phase plot, below resonance the phase is -90 degrees
+indicating a displacement-controlled response. Above resonance the phase is +90
+degrees, which is consistent with an acceleration-controlled response Please review
+Figure 1 if this is not clear. Finally at resonance, the phase passes through zero
+confirming that damping is the dominant term at this frequency. These observations
+parallel the results from the discussion of the displacement response on the previous
+pages.
+Figure 5 shows the acceleration response for the unit sinusoidal excitation as it is
+swept from 10 Hz to 100 Hz. The magnitude plot looks like a mirror image of the
+displacement plot while the phase is shifted 180 degrees. Based on the discussion of the
+displacement and velocity response plots this should not be too surprising. Reviewing
+the three phase plots, the -90 degree phase shift of the entire plot with each successive
+differentiation can easily be observed.
+Figure 5 : Acceleration Response per Newton of Excitation
+Looking at the acceleration’s phase plot, below resonance the phase is -180
+degrees which is symptomatic of a displacement-controlled (stiffness controlled)
+response. Above resonance the phase is 0 degrees, which is again consistent with an
+acceleration-controlled (mass controlled) response. Finally at resonance, the phase
+passes through -90 degrees indicating that damping is the dominant term. Once again,
+Page 7 of 46
+
+===== PAGE 9 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+these observations parallel the results from the discussion of the displacement and
+velocity responses on the previous pages.
+Two Degree of Freedom System :
+If the single degree of freedom system shown in Figure 2 was duplicated, and the
+pair attached in series, a two degree of freedom system would be formed. Figure 6
+shows the resulting system. As described earlier, since there are now two masses we
+should expect two resonant frequencies. The positive sign conventions are denoted on
+the right side of the figure by the arrows pointing upward.
+Figure 6 : Two Degree of Freedom Mechanical System
+The equations of motion for the two degree of freedom system are shown below.
+Notice that the equations of motion contain acceleration, velocity, and displacement
+terms reacting forcing functions typically shown on the right side of the equations. For a
+unit sinusoidal forcing function, F is equal to 1 Newton. In this example, the forcing
+function is only applied to the lower mass m .
+1
+m d2x /dt2 + c d x/dt + k x - c (d x/dt - d x/dt) - k (x – x ) = F cos(ω t )
+1 1 1 1 1 1 2 2 1 2 2 1
+m d2x /dt2 + c (d x/dt - d x/dt) + k (x – x ) = 0
+2 2 2 2 1 2 2 1
+Page 8 of 46
+
+===== PAGE 10 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+If the two masses, the two springs, and the two dampers are equal (m = m , c =
+1 2 1
+c , k = k ) to the single degree of freedom values; should we expect that the resulting
+2 1 2
+two resonant frequencies are both 40 Hz? Again, an undergraduate level vibration
+textbook will contain the detailed derivation and solution of the coupled differential
+equations of motion for the two degree of freedom system, so it will not be repeated.
+Assuming this is a lightly damped system (high Q), Blevins’ textbook(4) can be consulted.
+This valuable textbook contains a comprehensive set of tables containing equations for
+the natural frequencies and corresponding mode shapes of a wide variety of physical
+systems.
+If we ignore damping for the moment, the equations shown in Table 6-2, Case 2,
+on page 48 can be used to calculate the natural frequencies of the two degree of
+freedom system to be calculated.
+f = 0.618 [1/2π (k / m)1/2] = 0.618 (40 Hz) = 24.7 Hz
+1
+f = 1.618 [1/2π (k / m)1/2] = 1.618 (40 Hz) = 64.7 Hz
+2
+Also from the same table, the mode shapes can be calculated normalized to the first
+mass m . The normalized mode shape displacements are shown below.
+1
+[X , X ] = [1.0 , 1.618]
+1 2
+[X , X ] = [1.0 , -0.618]
+1 2
+The concept of natural frequencies and mode shapes for multi-degree of freedom
+systems could probably use a few more sentences of explanation. For the two degree of
+freedom system shown in Figure 6, two resonant frequencies and two mode shapes
+were calculated. Neither of the two resonant frequencies corresponds to the 40 Hz
+resonance of the individual single degree of freedom systems which were combined to
+form this example. At these two resonant frequencies, a significantly amplified response
+should be expected similar to the single degree of freedom system described previously.
+If the system were excited at one of these natural frequencies, the amplitudes and
+phases of the motions of the two masses would be proportional to the matching mode
+shape defined above.
+Some properties of the mode shapes also need to be stated. Since the damping
+has not been included in the closed form solutions used to generate Blevins’ tables, the
+exact amplitude of the vibratory motion cannot be uniquely determined. Mode shapes
+can be specified normalized to unity at one location, in this case the mass m where the
+1
+forcing function is being applied. Since this is a linear system, as discussed earlier in this
+article, the absolute amplitude at the resonant frequency can be defined by the mode
+shape and an appropriate scale factor. Any vibrating deflected shape, at any arbitrary
+frequency, can be represented as a linear combination of a system’s mode shapes. The
+mode shapes become a form of coordinate system in the same way that an arbitrary
+position in space can be completely specified by three coordinates, for example the x, y,
+or z Cartesian coordinates.
+Page 9 of 46
+
+===== PAGE 11 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Once again, this is a very lightly damped mechanical system that can be
+subjected to a unit sinusoidal excitation and solved numerically at discrete frequencies
+using MathCad. Figures 7, 8, and 9 show the displacement, velocity, and acceleration
+responses for this two degree of freedom system when subjected to a 1 Newton
+sinusoidal excitation applied to mass m . The red curve in each of the plots represents
+1
+the response of mass m while the blue curve represents the response of mass m .
+1 2
+Figure 7 : Displacement Responses per Newton of Excitation
+The most obvious feature of the displacement response plot, shown in Figure 7,
+is the two separate resonance peaks. The frequencies, magnitudes at the peaks, and
+the relative phase of the two masses were extracted from the displacement response
+plot and are shown below.
+f = 24.7 Hz and [X , X ] = [36.768 , 59.422] in phase
+1 1 2
+f = 64.7 Hz and [X , X ] = [5.398, 3.341] out of phase
+2 1 2
+Page 10 of 46
+
+===== PAGE 12 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+The peak magnitudes can both be normalized, relative to m , and the sign of the m
+1 2
+displacement adjusted to account for the in or out of phase condition.
+f = 24.7 Hz and [X , X ] = [1.0 , 1.616]
+1 1 2
+f = 64.7 Hz and [X , X ] = [1.0 , -0.619]
+2 1 2
+These results match very closely the predictions from the tables contained in Blevins’
+textbook. The results above are the two resonant frequencies and the two normalized
+mode shapes for this particular two degree of freedom system.
+The other interesting feature in the plot is the deep narrow null in the
+displacement curve of m at the single degree of freedom resonant frequency of 40 Hz.
+1
+At 40 Hz, the lower mass m essentially stops moving while the motion of m continues
+1 2
+but at a reduced amplitude.
+As stated earlier, any particular set of displacements can be expressed as a
+scaled linear combination of the two mode shapes. For example, consider the following
+scaled combination.
+0.3 { -[1.0 , 1.616] + [1.0 , -0.619] } = [0.0 , -0.671]
+These values are essentially equal to the values extracted from Figure 7 at 40 Hz. The
+negative sign indicates that m is vibrating out of phase with the forcing function. The
+2
+actual calculated results, taken from Figure 7 at 40 Hz, are [0.013 , -0.633].
+One last characteristic of the displacement plot is the slope of the curves, above
+the second resonance, at the extreme right of the plot. The negative slope is double the
+rate of the negative slope seen in the single degree of freedom displacement plot. For
+the single degree of freedom system the slope is proportional to 1/ω while for the two
+degree of freedom system the slope is proportional to 1/ω2.
+Page 11 of 46
+
+===== PAGE 13 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Another interesting property of the two degree of freedom response curves is
+probably most easily seen in the velocity response shown in Figure 8. Looking
+specifically at the response for m , the red curve, if you split the plot at 40 Hz the two
+1
+pieces would strongly resemble separate single degree of freedom system plots similar
+to the curve shown in Figure 4. The first single degree of freedom system has a resonant
+frequency at 24.7 Hz while the second single degree of freedom system has a resonant
+frequency at 64.7 Hz. Both systems start with a phase of -90 degrees and transition to a
+phase of +90 degrees above each resonance. In the middle, at 40 Hz, the two single
+degree of freedom plots are approximately equal in magnitude and 180 degrees out of
+phase resulting in the deep null.
+Figure 8 : Velocity Responses per Newton of Excitation
+The acceleration response, contained in Figure 9, shows similar trends and
+produces many of the same observations as the displacement and velocity plots. Again,
+the acceleration response magnitude plot is very similar to a reversed displacement
+magnitude plot. In the displacement plot, the falling slope above the second resonance
+was twice as steep as the single degree of freedom plot. Now in the acceleration plot,
+Page 12 of 46
+
+===== PAGE 14 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+the rising slope below the first resonance is twice as steep as was observed in the
+corresponding single degree of freedom plot. For the single degree of freedom system
+the slope is proportional to ω while for the two degree of freedom system the slope is
+proportional to ω2. If we relate these acceleration slopes to speaker design, a closed
+box system (single degree of freedom) has a 12 dB/octave slope below the tuning
+frequency while a ported box system (two degrees of freedom) has a 24 dB/octave slope
+below the box tuning frequency.
+Figure 9 : Acceleration Responses per Newton of Excitation
+Extending the discussion, and becoming a little more abstract, the response of
+the two degree of freedom system can be thought of as a summed response of two new
+single degree of freedom systems with resonant frequencies at 24.7 and 64.7 Hz. These
+two new single degree of freedom systems are not simply the two original single degree
+of freedom systems, with masses m and m and 40 Hz natural frequencies, but are
+1 2
+based on the mass and stiffness distribution of the assembled system. The vibration of
+the assembled system is defined by discrete frequencies and mode shapes. Each mode
+shape is unique and independent of the others. Any motion of the assembled
+Page 13 of 46
+
+===== PAGE 15 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+mechanical system can be represented as a linear combination of these mode shapes.
+An analogy that might help people visualize this situation is the representation of a
+square wave as a linear summation of sine waves of different periods and magnitudes.
+The different periods represent unique frequencies and the resulting sine waves could
+be thought of as the mode shapes. The square wave can be expressed as the sum of an
+infinite number of sine waves.
+In summary, a few key concepts were illustrated in this section for lightly damped
+mechanical systems (hopefully clearly enough to be understood). First, two single
+degree of freedom systems were combined to form a two degree of freedom system.
+The original independent single degree of freedom resonant frequencies shift to become
+two new resonance frequencies that bracket the original values. This is a common
+phenomenon seen when bringing two independent dynamic systems together to form a
+larger combined dynamic system. Please recognize that the amount of frequency
+shifting will be a function of the physical properties of the independent systems. Second,
+the concept of multiple system natural frequencies and mode shapes was shown and it
+was demonstrated that any motion can be expressed as a scaled linear combination of
+the mode shapes. And finally, the relationship between the phase of displacement,
+velocity, and acceleration was shown and observed in the different response plots above
+and below resonance and as a 180 degree phase shift that occurs when passing
+through a system resonance.
+Page 14 of 46
+
+===== PAGE 16 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+The Classic Straight Transmission Line Loudspeaker System :
+The transmission line loudspeaker system is the combination of two independent
+dynamic systems, the driver and the transmission line enclosure. Figure 10 shows a
+hypothetical transmission line loudspeaker system. The three key components in the
+transmission line loudspeaker are the driver, the enclosure pipe, and the open end’s
+acoustic impedance. These three features determine the fundamental vibration
+characteristics, the resonant frequencies and mode shapes, of the transmission line
+loudspeaker system.
+Figure 10 : A Transmission Line Loudspeaker System
+Open End's
+Driver Pipe Acoustic Impedance
+Input Signal
+What about the effect of the fiber stuffing? This question is probably already
+troubling some readers. The fiber stuffing in a transmission line loudspeaker has been
+the black art in the design process for decades. The true role of the fiber stuffing has
+only recently started to be understood and described mathematically. To fully
+understand the vibration properties of the transmission line loudspeaker, the empty
+lightly damped system needs to be simulated and studied first. Adding fiber stuffing to a
+transmission line significantly attenuates the higher order standing waves but does not
+fundamentally change the basic physics; the fiber stuffing tends to hide the physics from
+view. Therefore, the following discussion will concentrate on an empty transmission line
+enclosure. The last step will be to introduce the fiber stuffing and demonstrate the
+performance benefits that it brings to the system.
+The starting point for the discussion is the transmission line enclosure itself.
+Analyzing this system will allow the basic relationships between resonant frequencies
+and mode shapes to be established. This is the most consistent discussion with what
+appears in classic acoustics texts and with most people’s basic understanding of
+transmission line physics. Next the open end’s acoustic impedance will be shown and
+the influence added to the classic acoustics results for the transmission line enclosure.
+This is a big step that is not really documented well in acoustics texts and is probably
+new ground for most readers. Then the independent driver and the transmission line
+enclosure systems will be assembled and the resulting combined system’s vibration
+properties plotted and discussed.
+Page 15 of 46
+
+===== PAGE 17 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+The Classic Acoustic Pipe Problem :
+The problem presented and solved in most acoustics texts(5, 6) is the one
+dimensional wave equation applied to a straight pipe where one end is open and the
+other end is excited by a rigid oscillating piston. The partial differential equation of
+motion is shown below
+∂2u(x,t)/∂t2 = c2 ∂2u(x,t)/∂x2
+with the assumed boundary conditions
+u(0,t) = u ejωt
+d
+∂u(L,t)/∂x = 0
+The relationship between pressure and velocity is used to completely describe the
+dynamics inside the pipe and characterize the impedance as seen by the oscillating
+piston.
+-∂p(x,t)/∂x = ρ ∂u(x,t)/∂t
+The equation of motion can be solved along the entire length of the pipe. The
+details of the solution can be found in the acoustics textbooks. Skipping right to the
+solution for the velocity and the pressure yields the following two equations.
+u(x,t) = [u tan(ω/c L) sin(ω/c x)+u cos(ω/c x)] ejωt
+d d
+p(x,t) = j ρc [u tan(ω/c L) cos(ω/c x) +u sin(ω/c x)] ejωt
+d d
+where
+j = imaginary number
+ω = 2 π f
+c = speed of sound, typically about 343 m/sec
+ρ = density of air, typically about 1.21 kg/m3
+L = length of the pipe
+To characterize the pipe, an expression for the acoustic impedance is derived. At
+x = 0, the velocity and pressure can be determined, from the equations above, and used
+to calculate the acoustic impedance.
+Z (ω) = p(0) / [S u(0)]
+acousitc 0
+Z (ω) = j ρc tan(ω/c L) / S
+acousitc 0
+For a transmission line, the cross-sectional area is denoted by the variable S with
+a subscript 0 or L to indicate if it is defined at the closed end (x = 0) or the open end (x =
+L) respectively. The pipe shown in Figure 10 has a constant cross-sectional area so S =
+S = S . From the expression for the acoustic impedance, it can be shown that at specific
+0 L
+frequencies, the impedance becomes infinite, since tan(n π/2) = +∞ or -∞ when n = 1, 3,
+5, ….. These frequencies are the quarter wavelength resonant frequencies of the
+straight pipe and occur at evenly spaced and predictable values.
+Page 16 of 46
+
+===== PAGE 18 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+f = n c / (4 L) where n = 1, 3, 5, 7, 9 ……
+n
+To demonstrate the natural frequencies and mode shapes of a classic open
+ended transmission line, a numerical example will be used to plot the responses.
+Assuming that the desired tuning frequency is 50 Hz, the required length can be
+calculated.
+L = n c / (4 f ) = 1 x (343 m/sec) / (4 x 50 Hz) = 1.72 m = 67.5 inches
+n
+The cross-sectional area is defined equal to 400 cm2, approximately 2 x S of an eight
+d
+inch driver. Figure 11 shows the acoustic impedance seen by the oscillating rigid piston.
+Figure 11 : Straight Transmission Line Enclosure Acoustic Impedance
+Page 17 of 46
+
+===== PAGE 19 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+The top two plots in Figure 11 contain the magnitude and phase of the acoustic
+impedance plotted using a logarithmic frequency scale. The bottom plot in Figure 11
+reproduces the magnitude plot but using a linear frequency scale. In the bottom plot, the
+evenly spaced and predictable resonant frequencies are easily seen at 50, 150, 250, …
+950 Hz. These are the fundamental 50 Hz quarter wavelength resonance and the first
+nine odd harmonics.
+In Figure 12 the first three pairs of standing waves, known as mode shapes, are
+shown as a function of the percentage of the pipe’s length. In each plot the velocity is
+represented by the red curve and the pressure by the blue curve. There are a number of
+classic transmission line properties depicted in these curves which are itemized below.
+1. The pressure is at a maximum at the closed end and is zero at the open
+end.
+2. The velocity is near a minimum at the closed end, it is equal to the small
+excitation velocity u , and is a maximum at the open end.
+d
+3. In the 3/4 wave plot, the pressure passes through zero and the velocity is
+a maximum at 33% of the length. The acoustic impedance at this point is
+zero. If a driver were placed at this axial position, the 3/4 wave resonance
+would not be excited.
+4. Since the velocity excitation is a constant, the displacement excitation
+decreases at higher frequencies. This explains the decreasing
+magnitudes of the standing waves for the higher harmonics.
+When studying the mode shapes in Figure 12, it should be recognized that these
+are captured at an instant in time corresponding to the peak magnitudes. In reality every
+point on the mode shape is vibrating vertically about the x axis (y = 0). The mode shapes
+could have just as easily been shown as a mirror image below the x axis. If time were
+moving forward, the lines would oscillate up and down with the same relative shape
+between the position shown and the mirror image position below the x axis. The rate at
+which the lines move between these two extreme positions is determined by the
+resonant frequency, the higher order mode shapes move up and down at a much more
+rapid pace.
+The frequencies of the standing wave resonances and the shapes of the waves,
+the mode shapes, are probably what most people associate with classic transmission
+line enclosures. The plots presented so far should be a simplified review for most
+transmission line aficionados. Unfortunately, as we introduce reality into the classic
+closed form solution of the wave equation, things will get a little more complicated.
+Page 18 of 46
+
+===== PAGE 20 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 12 : Quarter Wavelength Standing Waves
+∂u(L,t)/∂x = 0 at x = L
+Page 19 of 46
+
+===== PAGE 21 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+The Open End Acoustic Boundary Condition :
+The next level of refinement to the transmission line enclosure model is to
+replace the simple boundary condition at the open end with an acoustic impedance
+boundary condition. The new boundary conditions are shown below.
+u(0,t) = u ejωt
+d
+p(L) / [S u(L)] = Z (ω)
+L mouth
+The boundary condition at the open end of a transmission line is modeled using
+the acoustic impedance of a piston in an infinite baffle. The equation for the acoustic
+impedance of a circular piston in an infinite baffle is shown below and plotted in Figure
+13.
+Z (ω) = ρc / S {[1 – 2 J (2 ω/c a ) / (2 ω/c a )] + j [2 H (2 ω/c a ) / (2 ω/c a )]}
+mouth L 1 L L 1 L L
+a = radius of the equivalent circular piston
+L
+J and H = forms of Bessel functions
+1 1
+S = S
+L mouth
+Figure 13 : Assumed Acoustic Impedance Boundary Condition
+at the Open End of a Transmission Line
+Red Curve = Real Part
+Blue Curve = Imaginary Part
+The radius of an equivalent piston can be calculated from a rectangular cross-
+section. Since we are interested in frequencies below 1000 Hz, the position along the
+curve in Figure 13 can be defined.
+a = (400 cm2 / π)1/2 = 11.3 cm = 4.44 inches
+L
+Page 20 of 46
+
+===== PAGE 22 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+2 ω/c a = 2 (1000 Hz / 2 / π / 343 m/sec) 0.113 m = 4.146
+L
+Re plotting Figure 13 to show only the frequency range of interest produces Figure 14.
+The real part of the acoustic impedance, the red curve, acts as a damper transferring
+energy from the open end of the transmission line into the room. The imaginary part of
+the acoustic impedance, the blue curve, acts as an additional mass reflecting energy
+back into the transmission line and also making the line effectively a bit longer then the
+previously calculated actual physical length. The reflection of energy back into the
+transmission line is what produces standing waves.
+Figure 14 : Acoustic Impedance at the Open End
+Red Curve = Real Part
+Blue Curve = Imaginary Part
+The impact of adding the open end acoustic impedance to the mathematical
+model of the transmission line enclosure can be seen in the impedance plots shown in
+Figure 15. Comparing Figures 11 and 15, the influence of the real part of the open end
+acoustic impedance is seen as a dramatic attenuation of the higher order standing
+waves. Also, if you look closely the imaginary part has caused the tuning frequency to
+drop slightly in Figure 15, compared to Figure 11, for the same physical length of
+transmission line enclosure. The new slightly lower resonant frequencies are at 47, 142,
+238, … 920 Hz. Figure 16 presents the same quarter wave mode shapes, that were
+shown in Figure 12, including the new boundary condition at the open end.
+Page 21 of 46
+
+===== PAGE 23 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 15 : Straight Transmission Line Enclosure Acoustic Impedance
+Impedance Boundary Condition at x = L
+Page 22 of 46
+
+===== PAGE 24 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 16 : Quarter Wavelength Standing Waves
+Impedance Boundary Condition at x = L
+Page 23 of 46
+
+===== PAGE 25 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+At this point in the discussion, the model of the transmission line enclosure and
+its more complex open end boundary condition has been demonstrated. The key points
+to be remembered are that the straight pipe has resonant frequencies which are
+reasonably predictable, that the mode shapes are odd integer multiples of sine (velocity)
+and cosine (pressure) quarter waves, and that the open end boundary condition
+significantly attenuates the higher order modes. This model represents one of the two
+physical subsystems that need to be combined to form a complete transmission line
+speaker system.
+The Driver :
+The assumed driver will also have a resonant frequency of 50 Hz to match the
+calculated physical length of the transmission line enclosure. A generic driver is defined
+below based on key input properties and resulting derived properties. When looking at
+the relationships used to calculate the derived properties, please keep in mind that
+MathCad internally automatically converts frequency in Hz to frequency in rad/sec. This
+property of MathCad leads to equations that may not look exactly like those familiar to
+the DIY speaker designer. In equations containing a frequency term, a 2π multiplier may
+be missing or added depending on the desired units of the calculated result. The
+electrical impedance of the generic driver in an infinite baffle is plotted in Figure 17; the
+resonance generated peak is clearly seen at 50 Hz.
+Page 24 of 46
+
+===== PAGE 26 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 17 : Electrical Impedance of the Generic Driver Mounted in an Infinite Baffle
+Combining the Driver with the Transmission Line Enclosure to Form a System :
+At this point in the discussion, we have a driver which is a single degree of
+freedom system and a transmission line enclosure which is a multi-degree of freedom
+system. Both systems have fundamental tuning frequencies of approximately 50 Hz.
+Remembering what happened previously when we combined two single degree of
+freedom systems, we should expect that the combined transmission line speaker system
+will have a pair of resonant frequencies that bracket 50 Hz. To demonstrate this theory,
+the driver was placed at the closed end of the unstuffed transmission line enclosure and
+the MathCad worksheet “TL_Open_End.mcd” was used to perform a computer
+simulation. The SPL curves and the electrical impedance curve were calculated and the
+results are shown in Figure 18.
+The top plot in Figure 18 is the combined system SPL response. Without fiber
+damping, the response is extremely ragged above 200 Hz due to the strong enclosure
+resonances. However, below 200 Hz the response is not too bad with a 24 dB/octave
+roll-off below 50 Hz. Adding the fiber damping in the next section will greatly improve the
+overall SPL response by significantly reducing the deep nulls to become more of a
+rippled response.
+Page 25 of 46
+
+===== PAGE 27 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 18 : Straight Transmission Line System Simulation Results
+(Stuffing Density = 0.0 lb/ft3)
+Page 26 of 46
+
+===== PAGE 28 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+The bottom two plots in Figure 18 seem to present a conflicting story with respect
+to the resonances in the transmission line speaker system. The first three peaks in the
+open end’s response, shown in the middle plot, occur at 48, 146, and 240 Hz which are
+almost the same as the transmission line enclosure results shown in Figure 15.
+However, the electrical impedance plot at the bottom of Figure 18 has peaks at 32, 68,
+149, and 242 Hz with a minimum near 50 Hz. To try and determine which peaks
+represent system resonances, and which are not, the pressure and velocity profiles
+along the length of the transmission line are plotted in Figure 19.
+Starting with the higher frequency mode shapes at 149 and 242 Hz, the mode
+shapes look very similar to the lower two plots in Figure 16. The frequencies and the
+mode shapes are almost identical to the transmission line enclosure results. Adding the
+driver to the transmission line enclosure had a small impact on these higher frequency
+modes.
+The top plot in Figure 16 looks similar to the middle plot in Figure 19. However,
+think back to the two degree of freedom problem where the resonant frequencies were
+the two peaks in the displacement plot and the null in the middle was just a linear
+combination of the two mode shapes. Assume that the resonant frequencies and mode
+shapes correspond to the results at 32 and 68 Hz which are the two electrical
+impedance peaks in Figure 18. Earlier it was stated that the mode shapes form a
+coordinate system and that any motion can be expressed as a scaled linear combination
+of the mode shapes. Scaling the plots corresponding to the electrical impedance peaks,
+in Figure 19, and then adding them produces the velocity and pressure curves shown in
+Figure 20. The curves shown in Figure 20 match the velocity and pressure profiles at the
+electrical impedance minimum as seen in the second plot of Figure 19.
+Reversing the argument, assume that 48 Hz is a resonance and the mode
+shapes are the quarter waves shown in the second plot of Figure 19. Can this velocity
+and pressure profile be scaled and added to any of the other mode shapes to produce
+the velocity and pressure profiles contained in the first and third plots of Figure 19? The
+answer is no, therefore 50 Hz is not a resonant frequency and the velocity and pressure
+profiles are not mode shapes.
+In summary, the first four resonant frequencies and mode shapes for the
+transmission line speaker system occur at 32, 68, 149, and 242 Hz. The impedance
+minimum near 50 Hz is not a resonant frequency even though the velocity and pressure
+profiles look very similar to the quarter wavelength resonance calculated for the
+transmission line enclosure. One last thought; thinking about a bass reflex system, is
+the bass produced by the port at the impedance minimum where driver motion
+essentially stops a resonance? Hopefully looking back at the preceding discussion and
+after thinking a little the answer should be obvious. If not, the answer is included in the
+conclusions section.
+Page 27 of 46
+
+===== PAGE 29 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 19 : Pressure and Velocity Profiles at Selected Frequencies of the Electrical
+Impedance Curve for a Straight Transmission Line (Stuffing Density = 0.0 lb/ft3)
+(continued)
+Page 28 of 46
+
+===== PAGE 30 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 19 (continued)
+Figure 20 : Summed Mode Shapes for a Straight Transmission Line
+Page 29 of 46
+
+===== PAGE 31 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Adding the Fiber Stuffing :
+The stuffing density used in many older rule of thumb transmission line designs is
+0.5 lb/ft3 for the entire length of the line. Adding stuffing to the model and rerunning the
+MathCad simulation produces the plots shown in Figure 21. The first thing that jumps out
+is how much smoother the system SPL curve is in the top plot. This plot is representative
+of classic transmission line performance which produces a ripple in the pass band when
+the driver is mounted at the closed end. The middle plot does not contain any of the
+sharp peaks and nulls in the driver and open end SPL responses. And finally, the
+impedance curve is now a single humped curve which many people associate with a
+correctly stuffed transmission line.
+To see what is taking place inside the transmission line enclosure, the pressure
+and velocity profiles are plotted in Figure 22. Comparing the curves in Figure 22 with
+those presented in Figure 19 the reader can observe the impact the stuffing has on
+damping the standing waves. Believe it or not, the input to the driver is identical in both
+sets of plots.
+Again, starting with the higher frequency model shapes at 149 and 242 Hz, the
+mode shapes look very similar to the last two plots in Figure 19. However, the fiber
+damping has significantly reduced the amplitude of the response eliminating the peaks
+at these frequencies seen in the middle plot of Figure 18.
+The three plots that correspond to the double humps and the minimum between
+them have also changed significantly. The first plot at 32 Hz exhibits an almost constant
+velocity along the length which leads to a zero pressure condition. The air in the
+transmission line is moving as a solid slug at 32 Hz essentially adding the equivalent air
+mass to the driver’s moving mass. Since this resonance is so well damped, the first
+hump in the impedance curve is eliminated. The velocity and pressure curves at 50 Hz
+and 68 Hz are similar to the previous curves just attenuated slightly. Again, the velocity
+and pressure curves at 50 Hz can be expressed as a linear combination of the curves
+plotted at the 32 and 68 Hz resonances.
+Page 30 of 46
+
+===== PAGE 32 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 21 : Straight Transmission Line System Simulation Results
+(Stuffing Density = 0.5 lb/ft3)
+Page 31 of 46
+
+===== PAGE 33 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 22 : Pressure and Velocity Profiles at Selected Frequencies of the Electrical
+Impedance Curve for a Straight Transmission Line (Stuffing Density = 0.5 lb/ft3)
+(continued)
+Page 32 of 46
+
+===== PAGE 34 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 22 (continued)
+Page 33 of 46
+
+===== PAGE 35 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Tapered and Expanding Transmission Line Systems :
+Probably one of the most common mistakes people make when designing a
+transmission line speaker system involves determining the appropriate line length for a
+tapered or expanding (TQWT) enclosure geometry. The length required for the same
+tuning frequency is different for tapered, straight, or expanding enclosure geometries. To
+demonstrate this concept, two additional enclosures will be sized, analyzed, and results
+presented in a similar manner to what was described in the previous sections. The three
+geometries are shown below where the straight case has already been shown. Each
+enclosure’s length was determined for the simple open end boundary condition so the
+final tuning will be slightly lower after the open end’s acoustic impedance is introduced.
+Variable Tapered Straight Expanding
+Length (in) 48.5 67.3 87.5
+S 5 x S 2 x S 1 x S
+0 d d d
+S 1 x S 2 x S 5 x S
+L d d d
+Comparing Figures 15, 23, and 26 it can be seen that the fundamental tuning
+frequency is approximately 50 Hz, modified by the more complex open end acoustic
+impedance boundary condition, but that the harmonics occur at different frequency
+intervals. For the shorter tapered geometry the next resonance is higher in frequency
+while for the longer expanding geometry the next resonance is lower in frequency when
+compared to the results for the straight transmission line geometry. This is a key concept
+often missed.
+Comparing the bottom plot in Figures 15, 23, and 27 it is also clear that the
+number of resonances that will impact the combined system response is less for the
+tapered transmission line enclosure. Figure 23 shows only three well damped peaks
+below 500 Hz. These observations carry over into the plots shown in Figures 16, 24, and
+28. Adding fiber stuffing to the tapered and expanding transmission line speaker
+systems produces the responses plotted in Figures 26 and 30. Reviewing the final
+transmission line SPL responses shown in the top curves of Figures 21, 26, and 30 a
+strong argument can be made for the advantages of tapered transmission line designs.
+One final point worth noting is seen in the mode shape plots of Figures 19, 25,
+and 29. For the straight transmission line the 3/4 and 5/4 wavelength mode shapes are
+typical of odd multiples of the quarter sine and cosine waves. However for the tapered
+and expanding geometries, these mode shapes start to become a little distorted and are
+not as close to perfect quarter wavelength shapes. For the tapered transmission line, the
+first two resonances show a distorted shape with the velocity increasing significantly at
+the open end. For the expanding transmission line, the velocity distortion occurs at the
+opposite end. Please note that by distortion I mean deviation from the perfect sine or
+cosine wave and not audible distortion of the signal being reproduced.
+Summing up what can be observed for these two new geometries. Sizing the
+length of a tapered and expanding transmission line is not as simple as the straight
+transmission line. All of the behaviors noted for the straight transmission line system with
+respect to combining driver and enclosure systems also apply to these geometries. And
+finally, after reviewing Figures 21, 26, and 30 I can see real advantages for tapered
+transmission line enclosure geometries if a classic transmission line is to be designed
+and constructed.
+Page 34 of 46
+
+===== PAGE 36 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 23 : Tapered Transmission Line Enclosure Acoustic Impedance
+Impedance Boundary Condition at x = L
+Page 35 of 46
+
+===== PAGE 37 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 24 : Tapered Transmission Line System Simulation Results
+(Stuffing Density = 0.0 lb/ft3)
+Page 36 of 46
+
+===== PAGE 38 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 25 : Pressure and Velocity Profiles at Selected Frequencies of the Electrical
+Impedance Curve for a Tapered Transmission Line (Stuffing Density = 0.0 lb/ft3)
+Velocity and Pressure Profiles in the Pipe - First Impedance Peak (34 Hz)
+500
+400
+300
+( )
+Re u 200
+q
+100
+−3
+10
+0
+( ) 100
+Im p
+q
+200
+300
+400
+500
+0 10 20 30 40 50 60 70 80 90 100
+q
+Velocity and Pressure Profiles in the Pipe - Impedance Null (46 Hz)
+500
+400
+300
+( )
+Re u 200
+q
+100
+−3
+10
+0
+( ) 100
+Im p
+q
+200
+300
+400
+500
+0 10 20 30 40 50 60 70 80 90 100
+q
+Velocity and Pressure Profiles in the Pipe - Second Impedance Peak (65 Hz)
+500
+400
+300
+( )
+Re u 200
+q
+100
+−3
+10
+0
+( ) 100
+Im p
+q
+200
+300
+400
+500
+0 10 20 30 40 50 60 70 80 90 100
+q
+(continued)
+Page 37 of 46
+
+===== PAGE 39 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 25 : (continued)
+Velocity and Pressure Profiles in the Pipe - 3/4 Wave Impedance (194 Hz)
+500
+400
+300
+( )
+Re u 200
+q
+100
+−3
+10
+0
+( ) 100
+Im p
+q
+200
+300
+400
+500
+0 10 20 30 40 50 60 70 80 90 100
+q
+Velocity and Pressure Profiles in the Pipe - 5/4 Wave Impedance (328 Hz)
+500
+400
+300
+( )
+Re u 200
+q
+100
+−3
+10
+0
+( ) 100
+Im p
+q
+200
+300
+400
+500
+0 10 20 30 40 50 60 70 80 90 100
+q
+Page 38 of 46
+
+===== PAGE 40 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 26 : Tapered Transmission Line System Simulation Results
+(Stuffing Density = 0.5 lb/ft3)
+Page 39 of 46
+
+===== PAGE 41 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 27 : Expanding Transmission Line Acoustic Impedance
+Impedance Boundary Condition at x = L
+Page 40 of 46
+
+===== PAGE 42 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 28 : Expanding Transmission Line System Simulation Results
+(Stuffing Density = 0.0 lb/ft3)
+Page 41 of 46
+
+===== PAGE 43 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 29 : Pressure and Velocity Profiles at Selected Frequencies of the Electrical
+Impedance Curve for an Expanding Transmission Line (Stuffing Density = 0.0 lb/ft3)
+Velocity and Pressure Profiles in the Pipe - First Impedance Peak (33 Hz)
+500
+400
+300
+( )
+Re u 200
+q
+100
+−3
+10
+0
+( ) 100
+Im p
+q
+200
+300
+400
+500
+0 10 20 30 40 50 60 70 80 90 100
+q
+Velocity and Pressure Profiles in the Pipe - Impedance Null (49 Hz)
+500
+400
+300
+( )
+Re u 200
+q
+100
+−3
+10
+0
+( ) 100
+Im p
+q
+200
+300
+400
+500
+0 10 20 30 40 50 60 70 80 90 100
+q
+Velocity and Pressure Profiles in the Pipe - Second Impedance Peak (62 Hz)
+500
+400
+300
+( )
+Re u 200
+q
+100
+−3
+10
+0
+( ) 100
+Im p
+q
+200
+300
+400
+500
+0 10 20 30 40 50 60 70 80 90 100
+q
+(continued)
+Page 42 of 46
+
+===== PAGE 44 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 28 : (continued)
+Velocity and Pressure Profiles in the Pipe - 3/4 Wave Impedance (123 Hz)
+500
+400
+300
+( )
+Re u 200
+q
+100
+−3
+10
+0
+( ) 100
+Im p
+q
+200
+300
+400
+500
+0 10 20 30 40 50 60 70 80 90 100
+q
+Velocity and Pressure Profiles in the Pipe - 5/4 Wave Impedance (192 Hz)
+500
+400
+300
+( )
+Re u 200
+q
+100
+−3
+10
+0
+( ) 100
+Im p
+q
+200
+300
+400
+500
+0 10 20 30 40 50 60 70 80 90 100
+q
+Page 43 of 46
+
+===== PAGE 45 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Figure 30 : Expanding Transmission Line System Simulation Results
+(Stuffing Density = 0.5 lb/ft3)
+Page 44 of 46
+
+===== PAGE 46 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+Conclusions :
+Probably the most important point to remember is that the lengths of tapered,
+straight, and expanding transmission line enclosure are not the same for a give tuning
+frequency. The tapered transmission line will be the shortest while the expanding line will
+be the longest. If somebody is using the well known equation :
+L = c / (4 f )
+n
+where
+L = length in meters
+c = speed of sound, typically assume to be 343 m/sec
+f = tuning frequency in Hz
+n
+to determine the length of a tapered or expanding geometry, their design is in trouble
+right out of the gate. Consulting Table 1 of my Classic Transmission Line Enclosure
+Alignment Tables(7) article will provide a better estimate for the required length of tapered
+or expanding transmission line geometries.
+The double humped impedance curve is an inherent property of the transmission
+line speaker system. Combining a driver with a transmission line enclosure, when both
+have approximately the same fundamental resonant frequencies, results in two new
+system resonances. There will be one resonance below and one above the original
+independent resonant frequencies. This is the source of the double humped electrical
+impedance curve. To answer the question posed earlier, the same phenomenon occurs
+in a bass reflex speaker system.
+At the minimum between the two electrical impedance peaks, the enclosure will
+produce most of the sound while the driver’s motion is a minimum. By definition this is
+not a system resonance. It is the linear combination of the system resonances that exist
+and produce the double humped impedance curve. The quarter wavelength standing
+wave at the enclosure tuning frequency still exists but it is not defined as a system
+resonant condition. This concept is probably not commonly recognized by the DIY
+speaker builder and will most likely raise a few eyebrows.
+Hopefully, the reader will come away from this article understanding a couple of
+significant properties of transmission line speaker systems a little better. I have tried to
+include a little math, some analogies as explanation, and a lot of pictures so that the
+widest possible audience can find the information in this article useful. As always, I am
+open to comments and suggestions that would improve the article. Any questions would
+also be welcomed and help me determine where my attempts at explaining how a
+transmission line speaker system works need additional details and discussion.
+Page 45 of 46
+
+===== PAGE 47 =====
+Anatomy of a Transmission Line Loudspeaker
+By Martin J. King, 5/17/06 (revised 10/18/06)
+Copyright © 2006 by Martin J. King. All Rights Reserved.
+References :
+1) MathCad Computer Program Versions 2000, 11, and 12 by Mathsoft Inc.,
+www.mathsoft.com.
+2) Theory of Vibration and Applications, 3rd Edition by William T. Thomson, Prentice
+Hall.
+3) Modal Testing : Theory and Practice by D. J. Lyons, Research Studies Press.
+4) Formulas for Natural Frequency and Mode Shape by Robert D. Blevins Ph.D., Van
+Nostrand Reinhold Company, pg 48.
+5) Acoustics by L. L. Beranak, published by the American Institute of Physics for the
+Acoustical Society of America.
+6) Fundamentals of Acoustics 3rd Edition by L. E. Kinsler and A. R. Frey, John Wiley
+and Sons.
+7) Classic Transmission Line Enclosure Alignment Tables by Martin J. King dated
+10/16/03, www.quarter-wave.com
+Page 46 of 46

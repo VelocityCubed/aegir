@@ -1,0 +1,302 @@
+[
+  {
+    "job": "c2563169-aa95-44c5-bab0-645a2364014d",
+    "archive": "C:\\dev\\speakerDesigner\\test-results\\convergence\\fitted-0.aegir-field.zip",
+    "sha256": "227e9f8db3d9e6bd81db784b489e066c075067e85d9c46d02347abffd6feaa46",
+    "cellMm": 20,
+    "paddingMm": 180,
+    "shift": [
+      0,
+      0,
+      0
+    ],
+    "geometry": "conservative-cut-cell",
+    "volumeError": 0,
+    "pistonCoverage": [
+      0.9999999999999997,
+      0.9999999999999997
+    ],
+    "drivers": [
+      {
+        "id": "primary",
+        "impedance": [
+          9.595389428206971,
+          -12.57435278828526
+        ]
+      }
+    ],
+    "probes": [
+      {
+        "name": "Primary rear air",
+        "positionMm": [
+          118,
+          1682.5,
+          118
+        ],
+        "sampling": "fixed-trilinear",
+        "pressure": [
+          -4.186027609852091,
+          -3.6856079514796183
+        ]
+      },
+      {
+        "name": "Mouth nearfield",
+        "positionMm": [
+          118,
+          -50,
+          118
+        ],
+        "sampling": "fixed-trilinear",
+        "pressure": [
+          3.371792912416383,
+          4.217199206508951
+        ]
+      }
+    ],
+    "settling": 0.0011813162722536456,
+    "settled": true,
+    "dt": 0.000014943710955749206,
+    "cells": 95400,
+    "seconds": 41.862
+  },
+  {
+    "job": "00178666-5bdc-47f6-be5a-ce8e24ea0baa",
+    "archive": "C:\\dev\\speakerDesigner\\test-results\\convergence\\fitted-1.aegir-field.zip",
+    "sha256": "1508993444832d9c8410675d8efee57571be85bd63b1ffcd95e634d207ea8740",
+    "cellMm": 16,
+    "paddingMm": 180,
+    "shift": [
+      0,
+      0,
+      0
+    ],
+    "geometry": "conservative-cut-cell",
+    "volumeError": 0,
+    "pistonCoverage": [
+      1.0000000000000004,
+      1.0000000000000004
+    ],
+    "drivers": [
+      {
+        "id": "primary",
+        "impedance": [
+          9.582913856615331,
+          -12.5434828273262
+        ]
+      }
+    ],
+    "probes": [
+      {
+        "name": "Primary rear air",
+        "positionMm": [
+          118,
+          1682.5,
+          118
+        ],
+        "sampling": "fixed-trilinear",
+        "pressure": [
+          -3.9182283913733804,
+          -3.268504275989555
+        ]
+      },
+      {
+        "name": "Mouth nearfield",
+        "positionMm": [
+          118,
+          -50,
+          118
+        ],
+        "sampling": "fixed-trilinear",
+        "pressure": [
+          3.2269527269256466,
+          4.14404601087686
+        ]
+      }
+    ],
+    "settling": 0.001344484023422064,
+    "settled": true,
+    "dt": 0.000019825072886297374,
+    "cells": 190608,
+    "seconds": 44.18889999997616
+  },
+  {
+    "job": "0dcd614a-8dc3-42f6-a171-36cb5b6bce98",
+    "archive": "C:\\dev\\speakerDesigner\\test-results\\convergence\\fitted-2.aegir-field.zip",
+    "sha256": "21e1b4baf1bd34f1ea982697c6a370d13e0b183c450bf1205aad9609f44c8caa",
+    "cellMm": 12,
+    "paddingMm": 180,
+    "shift": [
+      0,
+      0,
+      0
+    ],
+    "geometry": "conservative-cut-cell",
+    "volumeError": 0,
+    "pistonCoverage": [
+      1,
+      1
+    ],
+    "drivers": [
+      {
+        "id": "primary",
+        "impedance": [
+          9.551513276618897,
+          -12.460643343136438
+        ]
+      }
+    ],
+    "probes": [
+      {
+        "name": "Primary rear air",
+        "positionMm": [
+          118,
+          1682.5,
+          118
+        ],
+        "sampling": "fixed-trilinear",
+        "pressure": [
+          -3.998855867306637,
+          -3.4935116502894634
+        ]
+      },
+      {
+        "name": "Mouth nearfield",
+        "positionMm": [
+          118,
+          -50,
+          118
+        ],
+        "sampling": "fixed-trilinear",
+        "pressure": [
+          3.1710072939471026,
+          4.172378127922269
+        ]
+      }
+    ],
+    "settling": 0.001368526856576677,
+    "settled": true,
+    "dt": 0.000010981340011567294,
+    "cells": 440000,
+    "seconds": 147.78460000002383
+  },
+  {
+    "job": "fe2bfd0c-49cb-442b-b671-b531781b753c",
+    "archive": "C:\\dev\\speakerDesigner\\test-results\\convergence\\fitted-3.aegir-field.zip",
+    "sha256": "72a0ea120ad5babf80877bf6e681ca65188cf9855243667a54b14e8327dd9e06",
+    "cellMm": 12,
+    "paddingMm": 180,
+    "shift": [
+      3.24,
+      2.28,
+      3.72
+    ],
+    "geometry": "conservative-cut-cell",
+    "volumeError": 9.281464485866309e-14,
+    "pistonCoverage": [
+      0.9999999999999998,
+      0.9999999999999998
+    ],
+    "drivers": [
+      {
+        "id": "primary",
+        "impedance": [
+          9.5520463105388,
+          -12.46440548718547
+        ]
+      }
+    ],
+    "probes": [
+      {
+        "name": "Primary rear air",
+        "positionMm": [
+          118,
+          1682.5,
+          118
+        ],
+        "sampling": "fixed-trilinear",
+        "pressure": [
+          -3.9736840702256373,
+          -3.451024882682567
+        ]
+      },
+      {
+        "name": "Mouth nearfield",
+        "positionMm": [
+          118,
+          -50,
+          118
+        ],
+        "sampling": "fixed-trilinear",
+        "pressure": [
+          3.156875238918224,
+          4.145589524158108
+        ]
+      }
+    ],
+    "settling": 0.0013941823158480527,
+    "settled": true,
+    "dt": 0.00001371299411443044,
+    "cells": 440000,
+    "seconds": 124.91779999995232
+  },
+  {
+    "job": "54fd5230-cd0a-4d89-8ca7-2a15a30ffdac",
+    "archive": "C:\\dev\\speakerDesigner\\test-results\\convergence\\fitted-4.aegir-field.zip",
+    "sha256": "4f352c1d53eb68b1d26001b07508dfd34b1b38e960a71034c0bc29446fd29ac9",
+    "cellMm": 12,
+    "paddingMm": 240,
+    "shift": [
+      0,
+      0,
+      0
+    ],
+    "geometry": "conservative-cut-cell",
+    "volumeError": 0,
+    "pistonCoverage": [
+      1,
+      1
+    ],
+    "drivers": [
+      {
+        "id": "primary",
+        "impedance": [
+          9.543981554465244,
+          -12.465420008515295
+        ]
+      }
+    ],
+    "probes": [
+      {
+        "name": "Primary rear air",
+        "positionMm": [
+          118,
+          1682.5,
+          118
+        ],
+        "sampling": "fixed-trilinear",
+        "pressure": [
+          -3.952003937043805,
+          -3.50762573458163
+        ]
+      },
+      {
+        "name": "Mouth nearfield",
+        "positionMm": [
+          118,
+          -50,
+          118
+        ],
+        "sampling": "fixed-trilinear",
+        "pressure": [
+          3.1118644110699027,
+          4.182207276256681
+        ]
+      }
+    ],
+    "settling": 0.0014110481171556615,
+    "settled": true,
+    "dt": 0.000010981340011567294,
+    "cells": 669600,
+    "seconds": 200.355
+  }
+]

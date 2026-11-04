@@ -1,0 +1,21 @@
+{
+  "profile": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-stuffing-dJsJFf",
+  "persistence": true,
+  "sourceSpecificPresets": true,
+  "nonOverlappingRegions": true,
+  "lining": true,
+  "responseJob": "1ccec7c1-f737-49a3-8ae5-a871c81b0a06",
+  "fieldJob": "2317010f-09a6-46f0-941c-33d596718cf5",
+  "fieldBackend": "webgpu-float32",
+  "field": {
+    "frequency": 300,
+    "materialCells": 8600,
+    "regionCells": [
+      3096
+    ],
+    "placement": "nearest-route-guide",
+    "scope": "Frequency-local equivalent fluid, steady tone only. Startup and broadband material response are not predicted. Lining uses channel-wall distance, with a resolved air core; refine layer thickness and route assignment. Local wide-duct loss is an approximation, not resolved thermoviscous flow."
+  },
+  "sourceSave": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-stuffing-dJsJFf\\agent\\files\\lining.aegir.json",
+  "errors": []
+}

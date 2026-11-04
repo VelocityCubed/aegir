@@ -1,3 +1,7 @@
+import { fieldMedia, mediumCoefficients } from "./media";
+import { cutCellGrid, fittedTimeStep, circleRectangleArea } from "./cut-cells";
+import { materialWarnings } from "../core/porous-materials";
+import { compileCircuitStep } from "./circuit";
 import { buildGeometry, editableLayout } from "../core/geometry";
 import { driverModel } from "../core/acoustics";
 import { validateProject } from "../core/validation";
@@ -15,7 +19,7 @@ type V = [number, number, number];
 type Solid = { planes: [number, number, number, number][]; min: V; max: V };
 const dot = (a: number[], b: number[]) =>
   a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-function solid(panel: Panel): Solid {
+export function solid(panel: Panel): Solid {
   if (panel.footprint) {
     const { polygon, z, depth } = panel.footprint,
       sign = Math.sign(
@@ -71,7 +75,7 @@ function solid(panel: Panel): Solid {
     max: panel.position.map((v, i) => v + extent[i]) as V,
   };
 }
-function contains(s: Solid, p: V) {
+export function contains(s: Solid, p: V) {
   return (
     p.every((v, i) => v >= s.min[i] - 1e-6 && v <= s.max[i] + 1e-6) &&
     s.planes.every(
@@ -79,7 +83,7 @@ function contains(s: Solid, p: V) {
     )
   );
 }
-function intersects(s: Solid, p: V, q: V) {
+export function intersects(s: Solid, p: V, q: V) {
   if (
     p.some(
       (v, i) =>
@@ -143,7 +147,8 @@ export function fieldSolidContours(
   const point = (a: number, b: number): V =>
     o.map((x, k) => x + u[k] * a * pitch + v[k] * b * pitch) as V;
   return buildGeometry(project)
-    .panels.flatMap(wallPieces).map((panel) => {
+    .panels.flatMap(wallPieces)
+    .map((panel) => {
       let polygon: V[] = [
         point(-0.5, -0.5),
         point(plane.width - 0.5, -0.5),
@@ -199,8 +204,24 @@ export function prepareField(
   const settings = validateFieldSettings(input),
     p = editableLayout(project),
     g = buildGeometry(p);
+  const frequencyDependent =
+    (!!project.system?.physics &&
+      (project.system.physics.ductLoss !== "none" ||
+        !!project.system.physics.stuffing?.length)) ||
+    project.design.damping > 0;
+  if (frequencyDependent && settings.signal !== "steady")
+    throw Error(
+      "Frequency-dependent materials require a steady-tone study. Choose Steady tone to keep the complete model.",
+    );
   // Route intent is not a spatial boundary: shortcuts must emerge in the solved field.
-  const fatal = g.physicalErrors ?? g.errors.filter(e => !/^(Wave route|Closed end|The intended route|Cavity routing|The route has)/.test(e));
+  const fatal =
+    g.physicalErrors ??
+    g.errors.filter(
+      (e) =>
+        !/^(Wave route|Closed end|The intended route|Cavity routing|The route has)/.test(
+          e,
+        ),
+    );
   if (fatal.length) throw Error("Field geometry: " + fatal.join(" "));
   const h = settings.cellMm / 1000,
     pml = Math.max(6, Math.ceil(120 / settings.cellMm));
@@ -219,30 +240,28 @@ export function prepareField(
     );
   const { c, rho } = driverModel(project),
     bulk = rho * c * c,
-    dt = (0.85 * h) / (c * Math.sqrt(3)),
+    regularDt = (0.85 * h) / (c * Math.sqrt(3));
+  let dt = regularDt,
     steps = Math.ceil(settings.durationMs / 1000 / dt);
-  if (cpuBudget && (n > 300000 || n * steps > 300e6))
-    throw Error(
-      "CPU work budget exceeded. Use WebGPU, a coarser grid, or a shorter study.",
-    );
-  if (steps > 20000 || n * steps > 15e9)
-    throw Error(
-      "Field study exceeds the step/work budget. Shorten duration or use a coarser grid.",
-    );
   const pointsPerWavelength =
     c / (settings.frequency * h * (settings.signal === "burst" ? 2 : 1));
   if (pointsPerWavelength < 8)
     throw Error(
       "Wave bandwidth has fewer than 8 grid cells per wavelength. Reduce frequency or refine the grid.",
     );
-  if (p.layout!.mouth.width < 2 * settings.cellMm || ((p.layout!.mouth.side === "front" || p.layout!.mouth.side === "back") && (p.layout!.mouth.height ?? Math.min(60,g.innerHeight/4)) < 2*settings.cellMm))
+  if (
+    p.layout!.mouth.width < 2 * settings.cellMm ||
+    ((p.layout!.mouth.side === "front" || p.layout!.mouth.side === "back") &&
+      (p.layout!.mouth.height ?? Math.min(60, g.innerHeight / 4)) <
+        2 * settings.cellMm)
+  )
     throw Error(
       "The mouth needs at least two grid cells across its width. Refine the spatial grid.",
     );
   const origin: V = [
-    -settings.paddingMm / 1000,
-    -settings.paddingMm / 1000,
-    -settings.paddingMm / 1000,
+    (-settings.paddingMm + (settings.gridShiftMm?.[0] ?? 0)) / 1000,
+    (-settings.paddingMm + (settings.gridShiftMm?.[1] ?? 0)) / 1000,
+    (-settings.paddingMm + (settings.gridShiftMm?.[2] ?? 0)) / 1000,
   ];
   const point = (i: number): V => [
     origin[0] + ((i % nx) + 0.5) * h,
@@ -251,32 +270,67 @@ export function prepareField(
   ];
   const solids = g.panels.flatMap(wallPieces).map(solid),
     flags = new Uint32Array(n);
-  for (let k = 0; k < nz; k++) {
-    for (let j = 0; j < ny; j++)
-      for (let i = 0; i < nx; i++) {
-        const index = i + nx * (j + ny * k),
-          pt = point(index).map((v) => v * 1000) as V;
-        if (!solids.some((s) => contains(s, pt))) flags[index] = 1;
+  const cut =
+    settings.geometry !== "staircase"
+      ? cutCellGrid(
+          dims,
+          origin.map((v) => v * 1000) as V,
+          [settings.cellMm, settings.cellMm, settings.cellMm],
+          solids,
+          [
+            [p.design.thickness, p.design.thickness, p.design.thickness],
+            [
+              g.width - p.design.thickness,
+              g.height - p.design.thickness,
+              g.depth - p.design.thickness,
+            ],
+          ],
+          (v) => progress(0.18 * v),
+        )
+      : undefined;
+  if (cut?.disconnectedCells)
+    throw Error(
+      `The chosen grid puts disconnected air regions across a thin panel into ${cut.disconnectedCells} cells. Refine the calculation grid; these regions are not joined artificially.`,
+    );
+  const fitted = cut?.fractions;
+  const airPoint = (i: number): V =>
+    cut?.centres.get(i) ?? (point(i).map((v) => v * 1000) as V);
+  if (fitted) {
+    for (let i = 0; i < n; i++)
+      if (fitted[4 * i] > 0) {
+        flags[i] = 1;
+        for (let a = 0; a < 3; a++)
+          if (fitted[4 * i + a + 1] > 1e-12) flags[i] |= 2 << a;
       }
-    if (k % 4 === 0) progress((0.09 * k) / nz);
-  }
-  for (let k = 0; k < nz; k++) {
-    for (let j = 0; j < ny; j++)
-      for (let i = 0; i < nx; i++) {
-        const index = i + nx * (j + ny * k);
-        if (!flags[index]) continue;
-        const a = point(index).map((v) => v * 1000) as V;
-        for (const [offset, bit, valid] of [
-          [1, 2, i < nx - 1],
-          [nx, 4, j < ny - 1],
-          [nx * ny, 8, k < nz - 1],
-        ] as const)
-          if (valid && flags[index + offset]) {
-            const b = point(index + offset).map((v) => v * 1000) as V;
-            if (!solids.some((s) => intersects(s, a, b))) flags[index] |= bit;
-          }
-      }
-    if (k % 4 === 0) progress(0.09 + (0.09 * k) / nz);
+    dt = Math.min(regularDt, fittedTimeStep(fitted, dims, h, rho, bulk));
+  } else {
+    for (let k = 0; k < nz; k++) {
+      for (let j = 0; j < ny; j++)
+        for (let i = 0; i < nx; i++) {
+          const index = i + nx * (j + ny * k),
+            pt = point(index).map((v) => v * 1000) as V;
+          if (!solids.some((s) => contains(s, pt))) flags[index] = 1;
+        }
+      if (k % 4 === 0) progress((0.09 * k) / nz);
+    }
+    for (let k = 0; k < nz; k++) {
+      for (let j = 0; j < ny; j++)
+        for (let i = 0; i < nx; i++) {
+          const index = i + nx * (j + ny * k);
+          if (!flags[index]) continue;
+          const a = point(index).map((v) => v * 1000) as V;
+          for (const [offset, bit, valid] of [
+            [1, 2, i < nx - 1],
+            [nx, 4, j < ny - 1],
+            [nx * ny, 8, k < nz - 1],
+          ] as const)
+            if (valid && flags[index + offset]) {
+              const b = point(index + offset).map((v) => v * 1000) as V;
+              if (!solids.some((s) => intersects(s, a, b))) flags[index] |= bit;
+            }
+        }
+      if (k % 4 === 0) progress(0.09 + (0.09 * k) / nz);
+    }
   }
   let interiorCells = 0;
   for (let i = 0; i < n; i++)
@@ -292,26 +346,81 @@ export function prepareField(
       )
         interiorCells++;
     }
-  const voxelCavityLitres = interiorCells * h * h * h * 1000,
+  const voxelCavityLitres =
+      cut?.interiorLitres ?? interiorCells * h * h * h * 1000,
     volumeError = Math.abs(voxelCavityLitres / g.airVolume - 1);
   const coeffOffsets: V = [0, 4 * nx, 4 * (nx + ny)],
     coeff = new Float64Array(4 * (nx + ny + nz));
-  dims.forEach((size, axis) => {
-    const sigma = (i: number) =>
-      settings.attenuation * c +
-      ((-4 * c * Math.log(1e-5)) / (2 * pml * h)) *
-        Math.max(0, 1 - Math.min(i + 0.5, size - i - 0.5) / pml) ** 3;
-    for (let i = 0; i < size; i++) {
-      const sp = sigma(i),
-        sv = (sigma(i) + sigma(Math.min(size - 1, i + 1))) / 2,
-        at = coeffOffsets[axis] + i * 4;
-      coeff[at] = (1 - 0.5 * dt * sp) / (1 + 0.5 * dt * sp);
-      coeff[at + 1] = dt / (1 + 0.5 * dt * sp);
-      coeff[at + 2] = (1 - 0.5 * dt * sv) / (1 + 0.5 * dt * sv);
-      coeff[at + 3] = dt / (1 + 0.5 * dt * sv);
+  const fillCoefficients = () =>
+    dims.forEach((size, axis) => {
+      const sigma = (i: number) =>
+        settings.attenuation * c +
+        ((-4 * c * Math.log(1e-5)) / (2 * pml * h)) *
+          Math.max(0, 1 - Math.min(i + 0.5, size - i - 0.5) / pml) ** 3;
+      for (let i = 0; i < size; i++) {
+        const sp = sigma(i),
+          sv = (sigma(i) + sigma(Math.min(size - 1, i + 1))) / 2,
+          at = coeffOffsets[axis] + i * 4;
+        coeff[at] = (1 - 0.5 * dt * sp) / (1 + 0.5 * dt * sp);
+        coeff[at + 1] = dt / (1 + 0.5 * dt * sp);
+        coeff[at + 2] = (1 - 0.5 * dt * sv) / (1 + 0.5 * dt * sv);
+        coeff[at + 3] = dt / (1 + 0.5 * dt * sv);
+      }
+    });
+  fillCoefficients();
+  if (frequencyDependent && n > 2_000_000)
+    throw Error(
+      "The frequency-dependent field exceeds the two-million-cell material memory budget.",
+    );
+  const media =
+    settings.signal === "steady"
+      ? fieldMedia(
+          project,
+          g,
+          flags,
+          origin,
+          h,
+          dt,
+          coeff,
+          coeffOffsets,
+          solids,
+          settings.frequency,
+          dims,
+          progress,
+          fitted ? airPoint : undefined,
+          !!fitted,
+        )
+      : undefined;
+  let medium = media?.coefficients;
+  if (fitted && media) {
+    const corrected = Math.min(
+      dt,
+      fittedTimeStep(fitted, dims, h, rho, bulk, media.properties),
+    );
+    if (corrected < dt * (1 - 1e-12)) {
+      dt = corrected;
+      fillCoefficients();
+      medium = mediumCoefficients(
+        media.properties,
+        flags,
+        dims,
+        coeffOffsets,
+        coeff,
+        dt,
+      );
     }
-  });
-  const nd = g.mounts.length,
+  }
+  steps = Math.ceil(settings.durationMs / 1000 / dt);
+  if (cpuBudget && (n > 300000 || n * steps > 300e6))
+    throw Error(
+      "CPU work budget exceeded after the geometry/material stability check. Use WebGPU, a shorter recording or another resolution.",
+    );
+  if (steps > 100000 || n * steps > 15e9)
+    throw Error(
+      "Fitted geometry/material stability requires too much work at these settings. Shorten duration, refine/shift a poorly resolved boundary or reduce exterior padding within its PML limit.",
+    );
+  const pistonCoverage: number[] = [],
+    nd = g.mounts.length,
     sourceMap = new Map<number, Float64Array>();
   const sources = g.mounts.map((m) => ({
     id: m.id,
@@ -321,7 +430,10 @@ export function prepareField(
   }));
   const models = new Float64Array(nd * 9);
   g.mounts.forEach((mount, d) => {
-    const model = driverModel({ ...project, driver: mount.driver });
+    const model = driverModel(
+      { ...project, driver: mount.driver },
+      mount.rearLoading,
+    );
     models.set(
       [
         model.mmd,
@@ -341,31 +453,81 @@ export function prepareField(
         mount.driver.cutout / 2000,
       ),
       pairs: { index: number; weight: number }[][] = [[], []];
-    const frame = faceFrame(mount.face), normal = frame.axis, [u,v] = frame.uv,
-      extent = [g.width,g.height,g.depth], t=project.design.thickness;
-    for(let j=0;j<dims[v];j++) for(let i=0;i<dims[u];i++) {
-      const pu=(origin[u]+(i+.5)*h)*1000,pv=(origin[v]+(j+.5)*h)*1000;
-      const w=Math.max(0,Math.min(1,(radius*1000-Math.hypot(pu-mount.center[u],pv-mount.center[v]))/settings.cellMm+.5));
-      if(!w) continue;
-      const xyz=[0,0,0];xyz[u]=i;xyz[v]=j;
-      const outside:number[]=[],inside:number[]=[];
-      for(let k=0;k<dims[normal];k++) {
-        xyz[normal]=k;const index=xyz[0]+nx*(xyz[1]+ny*xyz[2]);
-        const q=(origin[normal]+(k+.5)*h)*1000;
-        // Only the immediately adjacent layer is a piston port. Never tunnel through
-        // a nearby board into another room when the chosen grid cannot resolve air.
-        const outsideDistance=frame.sign<0?-q:q-extent[normal];
-        const insideDistance=frame.sign<0?q-t:extent[normal]-t-q;
-        if(flags[index]&1) {
-          if(outsideDistance>0&&outsideDistance<=settings.cellMm*1.51) outside.push(index);
-          if(insideDistance>0&&insideDistance<=settings.cellMm*1.51) inside.push(index);
+    const frame = faceFrame(mount.face),
+      normal = frame.axis,
+      [u, v] = frame.uv,
+      extent = [g.width, g.height, g.depth],
+      t = project.design.thickness;
+    for (let j = 0; j < dims[v]; j++)
+      for (let i = 0; i < dims[u]; i++) {
+        const pu = (origin[u] + (i + 0.5) * h) * 1000,
+          pv = (origin[v] + (j + 0.5) * h) * 1000;
+        const w = fitted
+          ? circleRectangleArea(
+              radius * 1000,
+              pu - settings.cellMm / 2 - mount.center[u],
+              pu + settings.cellMm / 2 - mount.center[u],
+              pv - settings.cellMm / 2 - mount.center[v],
+              pv + settings.cellMm / 2 - mount.center[v],
+            ) /
+            settings.cellMm ** 2
+          : Math.max(
+              0,
+              Math.min(
+                1,
+                (radius * 1000 -
+                  Math.hypot(pu - mount.center[u], pv - mount.center[v])) /
+                  settings.cellMm +
+                  0.5,
+              ),
+            );
+        if (!w) continue;
+        const xyz = [0, 0, 0];
+        xyz[u] = i;
+        xyz[v] = j;
+        const outside: number[] = [],
+          inside: number[] = [];
+        for (let k = 0; k < dims[normal]; k++) {
+          xyz[normal] = k;
+          const index = xyz[0] + nx * (xyz[1] + ny * xyz[2]);
+          const q = fitted
+            ? airPoint(index)[normal]
+            : (origin[normal] + (k + 0.5) * h) * 1000;
+          // Only the immediately adjacent layer is a piston port. Never tunnel through
+          // a nearby board into another room when the chosen grid cannot resolve air.
+          const outsideDistance = frame.sign < 0 ? -q : q - extent[normal];
+          const insideDistance =
+            frame.sign < 0 ? q - t : extent[normal] - t - q;
+          if (flags[index] & 1) {
+            if (
+              outsideDistance > 0 &&
+              outsideDistance <= settings.cellMm * 1.51
+            )
+              outside.push(index);
+            if (insideDistance > 0 && insideDistance <= settings.cellMm * 1.51)
+              inside.push(index);
+          }
+        }
+        const ext = frame.sign < 0 ? outside.at(-1) : outside[0],
+          int = frame.sign < 0 ? inside[0] : inside.at(-1);
+        if (
+          ext !== undefined &&
+          (int !== undefined || mount.rearLoading === "sealed-back")
+        ) {
+          pairs[0].push({ index: ext, weight: w });
+          if (mount.rearLoading !== "sealed-back" && int !== undefined)
+            pairs[1].push({ index: int, weight: w });
         }
       }
-      const ext=frame.sign<0?outside.at(-1):outside[0],int=frame.sign<0?inside[0]:inside.at(-1);
-      if(ext!==undefined&&int!==undefined){pairs[0].push({index:ext,weight:w});pairs[1].push({index:int,weight:w});}
-    }
-    for (let side = 0; side < 2; side++) {
+    for (
+      let side = 0;
+      side < (mount.rearLoading === "sealed-back" ? 1 : 2);
+      side++
+    ) {
       const sum = pairs[side].reduce((a, b) => a + b.weight, 0);
+      pistonCoverage.push(
+        (sum * settings.cellMm ** 2) / (Math.PI * (radius * 1000) ** 2),
+      );
       if (sum < 2)
         throw Error(
           `Driver ${mount.id} has too few resolved piston cells. Refine the grid or check placement.`,
@@ -385,17 +547,26 @@ export function prepareField(
   [...sourceMap.values()].forEach((row, i) => weights.set(row, i * nd));
   // Eliminate electrical midpoint current and the pressure response to piston flux.
   // The resulting SPD velocity matrix includes K*dt/(2*cellVolume) times port overlap.
-  const matrix = new Float64Array(nd * nd);
+  const matrix = new Float64Array(nd * nd),
+    portMatrix = new Float64Array(nd * nd);
   for (let i = 0; i < nd; i++)
     for (let j = 0; j < nd; j++) {
       let sum = 0;
-      for (let k = 0; k < sourceCells.length; k++)
-        sum += weights[k * nd + i] * weights[k * nd + j];
+      for (let k = 0; k < sourceCells.length; k++) {
+        const cell = sourceCells[k],
+          beta = medium
+            ? (medium[cell * 12 + 1] +
+                medium[cell * 12 + 3] +
+                medium[cell * 12 + 5]) /
+              3
+            : bulk * dt;
+        sum +=
+          (beta * weights[k * nd + i] * weights[k * nd + j]) /
+          (fitted?.[4 * cell] ?? 1);
+      }
       matrix[i * nd + j] =
-        ((0.5 * bulk * dt) / (h * h * h)) *
-        models[i * 9 + 6] *
-        models[j * 9 + 6] *
-        sum;
+        (0.5 / (h * h * h)) * models[i * 9 + 6] * models[j * 9 + 6] * sum;
+      portMatrix[i * nd + j] = matrix[i * nd + j];
       if (i === j) {
         const m = i * 9;
         matrix[i * nd + i] +=
@@ -405,6 +576,21 @@ export function prepareField(
           models[m + 3] ** 2 / (models[m + 4] + (2 * models[m + 5]) / dt);
       }
     }
+  const electrical =
+    project.circuit ||
+    g.mounts.some(
+      (m) =>
+        m.driver.lossyInductance ||
+        m.crossover?.passive?.length ||
+        m.crossover?.active?.length,
+    )
+      ? compileCircuitStep(
+          { ...project, mounts: g.mounts },
+          models,
+          portMatrix,
+          dt,
+        )
+      : undefined;
   const chol = cholesky(matrix, nd),
     axis = settings.axis,
     uv = axis === "xy" ? [0, 1, 2] : axis === "xz" ? [0, 2, 1] : [1, 2, 0],
@@ -459,18 +645,31 @@ export function prepareField(
   v[uv[1]] = 1;
   const recordSteps = new Uint32Array(steps).fill(0xffffffff),
     times: number[] = [];
+  const recordStart =
+    settings.signal === "steady"
+      ? Math.max(0, steps - 1 - Math.round(4 / (settings.frequency * dt)))
+      : 0;
   for (let f = 0; f < Math.min(settings.frames, steps); f++) {
-    const s = Math.round(
-      (f * (steps - 1)) / (Math.min(settings.frames, steps) - 1),
-    );
+    const s =
+      recordStart +
+      Math.round(
+        (f * (steps - 1 - recordStart)) /
+          (Math.min(settings.frames, steps) - 1),
+      );
     recordSteps[s] = times.length;
     times.push((s + 1) * dt);
   }
-  const mouth = p.layout!.mouth, t=project.design.thickness,
-    at: [number,number] = mouth.side==='front'||mouth.side==='back'
-      ? (mouth.center??[(g.width-2*t)/2,mouth.offset]).map(x=>x+t) as [number,number]
-      : mouth.side==='left'||mouth.side==='right' ? [g.depth/2,t+mouth.offset] : [t+mouth.offset,g.depth/2],
-    mouthPos:V=facePoint(mouth.side,at,[g.width,g.height,g.depth]);
+  const mouth = p.layout!.mouth,
+    t = project.design.thickness,
+    at: [number, number] =
+      mouth.side === "front" || mouth.side === "back"
+        ? ((mouth.center ?? [(g.width - 2 * t) / 2, mouth.offset]).map(
+            (x) => x + t,
+          ) as [number, number])
+        : mouth.side === "left" || mouth.side === "right"
+          ? [g.depth / 2, t + mouth.offset]
+          : [t + mouth.offset, g.depth / 2],
+    mouthPos: V = facePoint(mouth.side, at, [g.width, g.height, g.depth]);
   const near = (pt: V) => {
     let best = -1,
       cost = Infinity;
@@ -495,7 +694,10 @@ export function prepareField(
     if (best < 0) throw Error("No resolved air cell near a probe.");
     return best;
   };
-  const rearIndex = [...sourceCells].find((_, k) => weights[k * nd] < 0)!;
+  const rearIndex =
+    [...sourceCells].find((_, k) =>
+      weights.subarray(k * nd, (k + 1) * nd).some((w) => w < 0),
+    ) ?? sourceCells[0];
   const seen = new Uint8Array(n),
     queue = new Uint32Array(n);
   let head = 0,
@@ -532,11 +734,53 @@ export function prepareField(
       }
     }
   }
-  const probeCells = Uint32Array.from([rearIndex, near(mouthPos)]),
-    probes = Array.from(probeCells, (i, k) => ({
-      name: k ? "Mouth" : "Primary rear air",
-      positionMm: point(i).map((v) => v * 1000) as V,
-    }));
+  // Probe coordinates must remain physical constants when h or the mesh origin changes.
+  // Only interpolate across full air cells, never across walls or a cut-cell centroid.
+  const firstMount = g.mounts[0],
+    rearFrame = faceFrame(firstMount.face),
+    mouthFrame = faceFrame(mouth.side),
+    rearPosition = [...firstMount.center] as V,
+    mouthPosition = [...mouthPos] as V;
+  rearPosition[rearFrame.axis] -=
+    rearFrame.sign * (project.design.thickness + 50);
+  mouthPosition[mouthFrame.axis] += mouthFrame.sign * 50;
+  const targets = [rearPosition, mouthPosition],
+    probeNodes = new Uint32Array(16),
+    probeWeights = new Float64Array(16),
+    probeCells = Uint32Array.from(targets.map(near));
+  const probes: FieldMeta["probes"] = targets.map((target, k) => {
+    const coordinate = target.map((v, a) => (v / 1000 - origin[a]) / h - 0.5),
+      low = coordinate.map(Math.floor),
+      fraction = coordinate.map((v, a) => v - low[a]);
+    let valid = true;
+    for (let q = 0; q < 8; q++) {
+      const xyz = low.map((v, a) => v + ((q >> a) & 1)),
+        i = xyz[0] + nx * (xyz[1] + ny * xyz[2]);
+      if (
+        xyz.some((v, a) => v < 0 || v >= dims[a]) ||
+        !(flags[i] & 1) ||
+        (fitted && fitted[4 * i] < 1 - 1e-9)
+      )
+        valid = false;
+      probeNodes[8 * k + q] = i;
+      probeWeights[8 * k + q] = fraction.reduce(
+        (w, v, a) => w * ((q >> a) & 1 ? v : 1 - v),
+        1,
+      );
+    }
+    if (!valid) {
+      probeNodes.fill(probeCells[k], 8 * k, 8 * k + 8);
+      probeWeights.fill(0, 8 * k, 8 * k + 8);
+      probeWeights[8 * k] = 1;
+    }
+    return {
+      name: k ? "Mouth nearfield" : "Primary rear air",
+      positionMm: valid
+        ? target
+        : (point(probeCells[k]).map((v) => v * 1000) as V),
+      sampling: valid ? "fixed-trilinear" : "nearest-cell",
+    };
+  });
   const volumeOffset = times.length * recordCells.length * 4,
     particleOffset = volumeOffset + times.length * recording.volumeCells.length,
     driverOffset =
@@ -547,9 +791,15 @@ export function prepareField(
     throw Error("Recording exceeds 15 MiB. Reduce frame count or duration.");
   const warnings = [
     "Experimental linear 3D FDTD: rigid cabinet, rigid-piston T/S sources, no panel vibration, cone breakup or nonlinear port flow.",
-    "Driver basket/magnet and bracing displacement are not included unless represented by cabinet solids. No calibrated porous stuffing model; the 1D damping value is not used. Uniform attenuation is an optional phenomenological loss.",
-    "Exterior PML and staircase geometry require padding/grid convergence and physical validation.",
+    "Driver basket/magnet and bracing displacement are not included unless represented by cabinet solids. Material parameters require independent characterization; steady-tone media do not predict broadband filling transients.",
+    "Exterior PML, wall fluxes and piston loading require padding/grid convergence and physical validation.",
+    ...materialWarnings(project, [settings.frequency, settings.frequency]),
   ];
+  for (const [i, r] of (project.system?.physics?.stuffing ?? []).entries())
+    if (r.placement && r.placement.thicknessMm < 2 * settings.cellMm)
+      warnings.push(
+        `Lining region ${i + 1} is less than two calculation cells thick; refine the grid across the material before quantitative use.`,
+      );
   if (settings.volume && recording.stride > 1)
     warnings.push(
       `3D pressure recording sampled every ${recording.stride} grid cells (${recording.stride * settings.cellMm} mm); the full-resolution solver is unchanged. Interpolated rendering cannot recover unresolved recorded detail.`,
@@ -566,7 +816,7 @@ export function prepareField(
       "Playback has fewer than four samples per shortest estimated source-band cycle; interpolation smooths drawing but cannot reconstruct missing temporal detail. Increase recorded frames or shorten duration.",
     );
   const minStock = Math.min(...g.panels.map((p) => p.thickness));
-  if (settings.cellMm > minStock / 2)
+  if (!fitted && settings.cellMm > minStock / 2)
     warnings.push(
       `Preview grid: thinnest stock spans ${(minStock / settings.cellMm).toFixed(1)} cells. Exact face barriers prevent wall leakage, but volume/angle errors require refinement.`,
     );
@@ -651,16 +901,54 @@ export function prepareField(
       cadCavityLitres: g.airVolume,
       voxelCavityLitres,
       volumeError,
+      geometry: fitted ? "conservative-cut-cell" : "staircase",
+      partialCells: cut?.partialCells,
+      minimumAirFraction: cut?.minimumFraction,
+      timeStepRatio: dt / regularDt,
+      pistonCoverage,
+      scope: fitted
+        ? "Cell-integrated fluid volumes and open faces; conservative orthogonal fluxes. Convergence is a separate check."
+        : "Whole-cell staircase preview; exact barriers do not correct cell volumes.",
       pointsPerWavelength,
       pmlCells: pml,
       rearAirReachesExterior,
     },
+    ...(electrical
+      ? {
+          electrical: {
+            scheme: "implicit-midpoint-MNA" as const,
+            states: electrical.stateCount,
+            inputs: electrical.driveCount,
+            parts:
+              project.circuit?.parts.length ??
+              g.mounts.reduce(
+                (s, m) => s + (m.crossover?.passive?.length ?? 0),
+                0,
+              ),
+          },
+        }
+      : {}),
+    ...(media
+      ? {
+          medium: {
+            frequency: settings.frequency,
+            materialCells: media.materialCells,
+            regionCells: media.regionCells,
+            placement: "nearest-route-guide" as const,
+            scope:
+              "Frequency-local equivalent fluid, steady tone only. Startup and broadband material response are not predicted. Lining uses channel-wall distance, with a resolved air core; refine layer thickness and route assignment. Local wide-duct loss is an approximation, not resolved thermoviscous flow.",
+          },
+        }
+      : {}),
     pressurePeak: 0,
     pressureScale: 1,
   };
   progress(0.2);
   return {
+    fitted,
     meta,
+    medium,
+    electrical,
     flags,
     aux: coeff,
     sourceCells,
@@ -671,6 +959,8 @@ export function prepareField(
     recordMask,
     recordSteps,
     probeCells,
+    probeNodes,
+    probeWeights,
     coeffOffsets,
     volumeCells: recording.volumeCells,
     volumeMask: recording.volumeMask,

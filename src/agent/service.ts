@@ -1,5 +1,7 @@
+export { modalConvergence } from '../core/convergence';
 import { encodeField, decodeField } from "../field/archive";
 import type { FieldResult, FieldSettings } from "../field/types";
+import {compareFields} from '../field/convergence';
 import fs from "node:fs/promises";
 import path from "node:path";
 import { Worker } from "node:worker_threads";
@@ -27,8 +29,12 @@ import {
   safeName,
 } from "../core/exports";
 import type { Project, Simulation } from "../core/types";
+import { designInput, basicWaveInput } from '../core/design-input';
 import { sourceHeadroom } from "../core/metrics";
+import { analysisGeometry, referenceReport, systemLimitations } from '../core/system';
 export { buildGeometry };
+export {circuitFromProject} from '../core/circuit';
+export { cavityModalGrid } from '../core/cavity-modal';
 
 export class DomainError extends Error {
   constructor(
@@ -61,6 +67,7 @@ export interface AnalysisJob {
   result?: any;
 }
 export interface ServiceOptions {
+  runModal?: (project:Project,settings:{cellMm:number[];count:number},progress:(v:number)=>void,signal:AbortSignal)=>Promise<unknown>;
   directory: string;
   workerPath: string;
   capture?: (region: string, revision: number) => Promise<Uint8Array>;
@@ -346,13 +353,13 @@ export class DesignService extends EventEmitter {
     await this.persist("artifacts.json", [...this.artifacts.values()]);
     return artifact;
   }
-  private requireValid(analysis = false) {
-    const g = buildGeometry(this.state.project);
+  private requireValid(analysis = false, reference = false) {
+    const g = analysis ? analysisGeometry(reference ? this.state.project : designInput(this.state.project)) : buildGeometry(this.state.project);
     if ((analysis ? g.errors : (g.physicalErrors ?? g.errors)).length)
       throw new DomainError(
         "INVALID_GEOMETRY",
         analysis
-          ? "A valid single route is required for 1D analysis. Use a 3D wave study for spatial layouts."
+          ? reference ? "A valid acoustic route or explicit validation profile is required for this developer comparison." : "This geometry needs a 3D study. The fast response requires a valid continuous acoustic route from the actual cabinet."
           : "Resolve physical geometry before manufacturing.",
         g.errors,
       );
@@ -398,7 +405,7 @@ export class DesignService extends EventEmitter {
       });
     });
   }
-  private async startJob(kind: string, args: any) {
+  private async startJob(kind: string, args: any, options:{basicWaveModel?:boolean}={}) {
     if (this.workers.size >= 3)
       throw new DomainError(
         "JOB_LIMIT",
@@ -414,13 +421,14 @@ export class DesignService extends EventEmitter {
         "JOB_LIMIT",
         "One spatial study may run at a time. Cancel the existing study first.",
       );
-    if (!["sweep", "optimisation", "field"].includes(kind))
-      this.requireValid(true);
+    if (!["sweep", "optimisation", "field", "modal", "measured"].includes(kind))
+      this.requireValid(true, ["reference", "sensitivity"].includes(kind));
     if (kind === "field" && args.backend === "webgpu" && !this.options.runField)
       throw new DomainError(
         "NO_GPU_DESKTOP",
         "WebGPU requires the live desktop.",
       );
+    if(kind==='modal'&&!this.options.runModal)throw new DomainError('NO_MODAL_RUNTIME','Cavity modes require the desktop Python/SciPy runtime.');
     const job: AnalysisJob = {
       id: randomUUID(),
       kind,
@@ -430,10 +438,10 @@ export class DesignService extends EventEmitter {
       createdAt: new Date().toISOString(),
     };
     this.jobs.set(job.id, job);
-    const project = structuredClone(this.state.project),
+    const project = kind === 'field' && options.basicWaveModel ? basicWaveInput(this.state.project) : ['reference','sensitivity'].includes(kind) ? structuredClone(this.state.project) : designInput(this.state.project),
       controller = new AbortController();
     const external =
-      kind === "field" && this.options.runField && args.backend !== "cpu";
+      (kind === "field" && this.options.runField && args.backend !== "cpu")||kind==='modal';
     const worker = external
       ? null
       : new Worker(this.options.workerPath, {
@@ -448,6 +456,7 @@ export class DesignService extends EventEmitter {
     ) => {
       if (job.status !== "running") return;
       if (status === "completed" && kind === "field") {
+        if(options.basicWaveModel){result.meta.studyModel="basic-wave";result.meta.warnings.unshift("User-selected basic wave model: no crossover, no frequency-dependent duct/filling model, and basic Re/Le coils. The saved project is unchanged. This recording is not the complete filtered speaker response.");}
         const artifact = await this.artifact(
           "fields/" + job.id + ".aegir-field.zip",
           encodeField(result),
@@ -510,6 +519,8 @@ export class DesignService extends EventEmitter {
             "Worker exited before returning a result (code " + code + ").",
           );
       });
+    } else if(kind==='modal'){
+      void this.options.runModal!(project,args,progress,controller.signal).then(result=>complete('completed',undefined,result)).catch(error=>complete('failed',error.message));
     } else
       void this.options.runField!(
         job.id,
@@ -633,7 +644,7 @@ export class DesignService extends EventEmitter {
             ? await this.options.cadStatus()
             : false,
           model:
-            "Fast geometry-derived 1D line model plus experimental 3D linear FDTD field studies with coupled T/S pistons and exterior PML. Up to 8 drivers. No calibrated stuffing, nonlinear or structural prediction.",
+            "Segmented 1D line/equivalent-profile model, up to 8 drivers with factory sealed-back loading and loaded passive RLC or active Butterworth branches. Frequency-dependent duct losses, regional MJK2003, Miki, JCA/JCAL and source-defined empirical media; full fill or thickness-defined wall lining, source/microphone coordinates, full circular-piston loads and optional Rayleigh near-field evaluation. Imported measured acoustic/impedance crossover path, unfitted sensitivity and3D pressure-release cavity meshes. Source-labelled reference curves and axial-mode comparisons. Experimental 3D FDTD couples T/S pistons, arbitrary drawn RLC circuits, active filters and Rp/Lp coil branches with exterior PML. Steady-tone studies evaluate frequency-dependent equivalent fluids at the chosen frequency; broadband filling transients are not predicted. No automatic material/batch calibration, finite-baffle diffraction, nonlinear or structural prediction.",
           runningJobs: this.workers.size,
         };
       case "workspace.get":
@@ -674,7 +685,7 @@ export class DesignService extends EventEmitter {
         if (args.name !== undefined) p.name = args.name;
         for (const key of ["driver", "design", "targets"] as const)
           if (args[key]) Object.assign(p[key], args[key]);
-        for (const key of ["layout", "mounts"] as const)
+        for (const key of ["layout", "mounts", "system", "circuit"] as const)
           if (args[key] !== undefined) {
             if (args[key] === null) delete p[key];
             else (p as any)[key] = args[key];
@@ -683,10 +694,10 @@ export class DesignService extends EventEmitter {
       case "project.inspect":
         return this.summary();
       case "project.validate": {
-        const g = buildGeometry(p);
+        const effective = designInput(p), g = analysisGeometry(effective);
         let result: Simulation | undefined, error: string | undefined;
         try {
-          if (!g.errors.length) result = await this.compute(p, 80);
+          if (!g.errors.length) result = await this.compute(effective, 80);
         } catch (e) {
           error = (e as Error).message;
         }
@@ -695,6 +706,7 @@ export class DesignService extends EventEmitter {
           valid: g.errors.length === 0 && !error,
           physicalValid: (g.physicalErrors ?? g.errors).length === 0,
           analysisAvailable: g.errors.length === 0,
+          referenceAnalysisAvailable: analysisGeometry(p).errors.length === 0,
           physicalErrors: g.physicalErrors ?? g.errors,
           analysisErrors: g.analysisErrors ?? [],
           errors: [...g.errors, ...(error ? [error] : [])],
@@ -967,12 +979,12 @@ export class DesignService extends EventEmitter {
           cpuMaxCellUpdates: 300000000,
           gpuMaxCellUpdates: 15000000000,
           model:
-            "Experimental 3D linear FDTD, rigid solids and two-way T/S piston coupling, exterior split-field PML. No calibrated stuffing, structural/nonlinear model or physical validation.",
+            "Experimental 3D linear FDTD with rigid solids, two-way T/S piston and RLC/RpLp circuit coupling, exterior PML. Frequency-dependent media use single-frequency steady-tone relaxation, not broadband startup. No independent material calibration, structural/nonlinear model or physical validation.",
         };
       case "field.run": {
-        const job = await this.startJob("field", args.settings ?? {});
+        const job = await this.startJob("field", args.settings ?? {}, {basicWaveModel:args.basicWaveModel===true});
         if (args.show !== false) {
-          next.view.tab = "field";
+          next.view.tab = "field"; next.view.study = "waves";
           next.view.field = {
             ...next.view.field,
             jobId: job.id,
@@ -986,7 +998,7 @@ export class DesignService extends EventEmitter {
       }
       case "field.open": {
         await this.fieldResult(args.id);
-        next.view.tab = "field";
+        next.view.tab = "field"; next.view.study = "waves";
         next.view.field = {
           ...next.view.field,
           jobId: args.id,
@@ -996,6 +1008,13 @@ export class DesignService extends EventEmitter {
         };
         await this.commit(next, false);
         return structuredClone(this.state);
+      }
+      case "field.compare": {
+        const ids=args.ids as string[],runs=[];
+        for(const id of ids)runs.push(await this.fieldResult(id));
+        const comparison={...compareFields(runs.map(r=>r.result)),jobs:runs.map(r=>({id:r.job.id,projectRevision:r.job.projectRevision,artifact:r.job.result.artifact})),stale:runs.some(r=>r.job.projectRevision!==this.state.projectRevision)};
+        const artifact=await this.artifact(`field-check-${randomUUID()}.json`,JSON.stringify(comparison,null,2),'application/json');
+        return {...comparison,artifact};
       }
       case "field.result": {
         const { job, result } = await this.fieldResult(args.id),
@@ -1035,7 +1054,8 @@ export class DesignService extends EventEmitter {
           };
         }
         if (args.traces) {
-          const stride = Math.max(1, Math.ceil(meta.steps / 1000)),
+          const start = meta.settings.signal === 'steady' ? Math.max(0, Math.floor(meta.times[0] / meta.dt) - 1) : 0,
+            stride = Math.max(1, Math.ceil((meta.steps - start) / 1000)),
             times: number[] = [],
             sources = meta.sources.map((s) => ({
               id: s.id,
@@ -1048,7 +1068,7 @@ export class DesignService extends EventEmitter {
               name: s.name,
               pressure: [] as number[],
             }));
-          for (let i = 0; i < meta.steps; i += stride) {
+          for (let i = start; i < meta.steps; i += stride) {
             times.push((i + 1) * meta.dt);
             sources.forEach((s, d) => {
               const a =
@@ -1068,6 +1088,7 @@ export class DesignService extends EventEmitter {
             times,
             electricalTimes: times.map((t: number) => t - meta.dt / 2),
             stride,
+            scope: meta.settings.signal === 'steady' ? 'Final steady-tone window; numerical relaxation startup omitted.' : 'Physical transient recording.',
             sources,
             probes,
           };
@@ -1076,6 +1097,11 @@ export class DesignService extends EventEmitter {
       }
       case "analysis.run":
         return this.startJob("simulation", args);
+      case "analysis.reference":
+        return this.startJob('reference',args);
+      case 'analysis.modal':return this.startJob('modal',args);
+      case 'analysis.sensitivity':return this.startJob('sensitivity',args);
+      case 'analysis.measured':return this.startJob('measured',args);
       case "analysis.sweep":
         return this.startJob("sweep", args);
       case "analysis.optimise":
@@ -1084,7 +1110,7 @@ export class DesignService extends EventEmitter {
         this.requireValid(true);
         return {
           frequency: args.frequency,
-          points: await this.compute(p, 0, "pressure", args),
+          points: await this.compute(designInput(p), 0, "pressure", args),
         };
       case "analysis.compare": {
         const projects = [
@@ -1214,7 +1240,7 @@ export class DesignService extends EventEmitter {
     return structuredClone(this.state);
   }
   async export(format: string, filename?: string) {
-    const p = this.state.project,
+    const p = format === 'project' ? this.state.project : designInput(this.state.project),
       name = safeName(p.name),
       g = format === "project" ? buildGeometry(p) : this.requireValid();
     const ext: Record<string, string> = {
@@ -1259,13 +1285,13 @@ export class DesignService extends EventEmitter {
         throw error;
       }
     }
-    if (format === "report" && g.errors.length)
+    if (format === "report" && analysisGeometry(p).errors.length)
       return this.artifact(
         output,
-        `# ÆGIR cabinet report: ${p.name}\n\nProject revision ${this.state.projectRevision}. Cabinet ${g.width} × ${g.height} × ${g.depth} mm; ${g.airVolume.toFixed(2)} L clear cavity; ${g.mounts.length} drivers.\n\nThe physical geometry is valid for CAD. A single-route 1D response is unavailable:\n${g.errors.map((e) => "- " + e).join("\n")}\n\nRun a 3D wave study using the actual solids. Sources remain linear rigid pistons; no crossover, cone breakup, structural vibration or calibrated stuffing.\n\n## Stock schedule\n\n\`\`\`csv\n${cutList(p)}\`\`\`\n`,
+        `# ÆGIR cabinet report: ${p.name}\n\nProject revision ${this.state.projectRevision}. Cabinet ${g.width} × ${g.height} × ${g.depth} mm; ${g.airVolume.toFixed(2)} L clear cavity; ${g.mounts.length} drivers.\n\nThe physical geometry is valid for CAD. A single-route 1D response is unavailable:\n${g.errors.map((e) => "- " + e).join("\n")}\n\nRun a 3D wave study using the actual solids. Sources remain linear rigid pistons with loaded circuit coupling. Frequency-dependent media require steady tone; no cone breakup, structural vibration or independent material calibration.\n\n## Stock schedule\n\n\`\`\`csv\n${cutList(p)}\`\`\`\n`,
         "text/markdown",
       );
-    if (format === "bundle" && g.errors.length)
+    if (format === "bundle" && analysisGeometry(p).errors.length)
       return this.artifact(output, makeBundle(p), "application/zip");
     const result = await this.compute(p);
     if (format === "response")
@@ -1285,7 +1311,7 @@ export class DesignService extends EventEmitter {
           )
           .join(
             "\n",
-          )}\n\nImpedance convention: ${result.impedanceConvention ?? "common-parallel-input"}.\n\n## Panel stock schedule\n\n\`\`\`csv\n${cutList(p)}\`\`\`\n\n## Model and machining limits\n\n${g.warnings.map((v) => "- " + v).join("\n")}\n\n${g.panels.flatMap((v) => (v.notes ?? []).map((n) => "- " + v.id + ": " + n)).join("\n")}\n\nLinear geometry-derived 1D model, ideal co-located half-space radiation at 1 m; not physical validation, room prediction, nonlinear distortion or a CNC toolpath. Use prototype measurements before committing a final design.\n`,
+          )}\n\nImpedance convention: ${result.impedanceConvention ?? "common-parallel-input"}.\n\n## Panel stock schedule\n\n\`\`\`csv\n${cutList(p)}\`\`\`\n\n## Model and machining limits\n\n${g.warnings.map((v) => "- " + v).join("\n")}\n\n${g.panels.flatMap((v) => (v.notes ?? []).map((n) => "- " + v.id + ": " + n)).join("\n")}\n\nLinear equivalent 1D model. Observation: ${JSON.stringify(p.system?.observation ?? {distanceM:p.system?.distanceM??1,space:"half-space",sources:"co-located"})}.\n\n${systemLimitations(p).map(v=>"- "+v).join("\n")}\n\nNot physical validation, room prediction, nonlinear distortion or a CNC toolpath. Use prototype measurements before committing a final design.\n\n${p.system?"## Published-reference comparisons\n\n```json\n"+JSON.stringify(referenceReport(p,result),null,2)+"\n```\n":""}`,
         "text/markdown",
       );
     throw new DomainError("UNKNOWN_FORMAT", "Unsupported export format.");

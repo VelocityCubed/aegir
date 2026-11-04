@@ -1,0 +1,35 @@
+{
+  "appVersion": "0.8.0",
+  "status": {
+    "name": "\u00c6ONFORGE \u00c6GIR",
+    "revision": 285,
+    "projectRevision": 10,
+    "filesDirectory": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files",
+    "liveDesktop": true,
+    "cadAvailable": true,
+    "model": "Segmented 1D line/equivalent-profile model, up to 8 drivers with factory sealed-back loading and loaded passive RLC or active Butterworth branches. Frequency-dependent duct losses, regional MJK2003/JCAL media, source/microphone coordinates, full circular-piston loads and optional Rayleigh near-field evaluation. Imported measured acoustic/impedance crossover path, unfitted sensitivity and3D pressure-release cavity meshes. Source-labelled reference curves and axial-mode comparisons. Experimental 3D FDTD supports unfiltered T/S pistons, including sealed-back units, with exterior PML; circuits and lossy-inductance fits are rejected there. No calibrated stuffing, finite-baffle diffraction, nonlinear or structural prediction.",
+    "runningJobs": 0
+  },
+  "projectName": "MJK Satori TL \u00b7 loss, stuffing and observation study",
+  "driverCount": 2,
+  "preserved": {
+    "project": true,
+    "checkpoints": true,
+    "driverLibrary": true
+  },
+  "analysisAvailable": false,
+  "referenceAnalysisAvailable": true,
+  "normalWorkflow": "Shape / Simulate / Export; no reference document required",
+  "tests": {
+    "typescript": 90,
+    "pythonCavity": 3,
+    "sourceStudio": "passed",
+    "packagedStudio": "passed",
+    "packagedPhysics": "passed",
+    "editorPointerCAD": "passed",
+    "fieldCPUGPUPlayback": "passed",
+    "stdioMCP": "passed"
+  },
+  "capture": "C:\\dev\\speakerDesigner\\test-results\\studio-live\\desktop.png",
+  "backup": "backups/studio-redesign-2026-11-01/"
+}

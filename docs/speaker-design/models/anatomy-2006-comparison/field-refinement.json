@@ -1,0 +1,127 @@
+{
+  "scope": "100Hz driven-field mesh sensitivity, not comparison to published 3D data. Distinct finite cabinet/exterior radiation from the reference infinite-baffle1D model. No global discretization error bound.",
+  "frequencyHz": 100,
+  "studies": [
+    {
+      "cellMm": 20,
+      "cells": 95400,
+      "dt": 2.8615027919019357e-05,
+      "steps": 10485,
+      "archive": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\fields\\dee97121-497b-45a6-a508-376aca98192c.aegir-field.zip",
+      "sha256": "8a2c72767a8c74c0142b4c038a82f69166eef23773929ef79a60fb2a35595532",
+      "cavityLitres": 68.8,
+      "cadCavityLitres": 68.58,
+      "volumeErrorPercent": 0.320793234179062,
+      "settling": {
+        "relativeChange": 1.5764220887981985e-05,
+        "settled": true,
+        "cycles": 30
+      },
+      "impedanceRe": 9.631028761087299,
+      "impedanceIm": -12.692722935193686,
+      "impedanceMagnitude": 15.93304523644123,
+      "impedancePhaseDeg": -52.809373071932654,
+      "displacementPeakMm": 0.411570150772251,
+      "currentPeakA": 0.25105058985223544,
+      "drivePeakV": 4.00000040475092,
+      "phasorFitResiduals": {
+        "current": 3.064315123466506e-05,
+        "voltage": 7.719922797822146e-06,
+        "displacement": 1.210356432094062e-05
+      },
+      "warnings": [
+        "Experimental linear 3D FDTD: rigid cabinet, rigid-piston T/S sources, no panel vibration, cone breakup or nonlinear port flow.",
+        "Driver basket/magnet and bracing displacement are not included unless represented by cabinet solids. No calibrated porous stuffing model; the 1D damping value is not used. Uniform attenuation is an optional phenomenological loss.",
+        "Exterior PML and staircase geometry require padding/grid convergence and physical validation.",
+        "3D pressure recording sampled every 2 grid cells (40 mm); the full-resolution solver is unchanged. Interpolated rendering cannot recover unresolved recorded detail.",
+        "Preview grid: thinnest stock spans 0.9 cells. Exact face barriers prevent wall leakage, but volume/angle errors require refinement.",
+        "Recording downsampled by 2 in each plane direction to bound memory; the solver uses the full 3D grid."
+      ]
+    },
+    {
+      "cellMm": 16,
+      "cells": 190608,
+      "dt": 2.289202233521548e-05,
+      "steps": 13106,
+      "archive": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\fields\\b36c2e2c-976e-430b-a8bb-e7e494482721.aegir-field.zip",
+      "sha256": "71720c34d32556b8a22d437435ac8f7aad26cb974f82886bf6524b07cfe56d09",
+      "cavityLitres": 74.760192,
+      "cadCavityLitres": 68.58,
+      "volumeErrorPercent": 9.011653543307085,
+      "settling": {
+        "relativeChange": 2.7383231723445677e-05,
+        "settled": true,
+        "cycles": 30
+      },
+      "impedanceRe": 9.603608714933204,
+      "impedanceIm": -12.634635990798753,
+      "impedanceMagnitude": 15.870202486721086,
+      "impedancePhaseDeg": -52.76147142079395,
+      "displacementPeakMm": 0.4112247641148548,
+      "currentPeakA": 0.2520446923262887,
+      "drivePeakV": 4.000000302921518,
+      "phasorFitResiduals": {
+        "current": 4.236272704283352e-05,
+        "voltage": 7.722488537782146e-06,
+        "displacement": 1.6905258334427873e-05
+      },
+      "warnings": [
+        "Experimental linear 3D FDTD: rigid cabinet, rigid-piston T/S sources, no panel vibration, cone breakup or nonlinear port flow.",
+        "Driver basket/magnet and bracing displacement are not included unless represented by cabinet solids. No calibrated porous stuffing model; the 1D damping value is not used. Uniform attenuation is an optional phenomenological loss.",
+        "Exterior PML and staircase geometry require padding/grid convergence and physical validation.",
+        "3D pressure recording sampled every 3 grid cells (48 mm); the full-resolution solver is unchanged. Interpolated rendering cannot recover unresolved recorded detail.",
+        "Preview grid: thinnest stock spans 1.1 cells. Exact face barriers prevent wall leakage, but volume/angle errors require refinement.",
+        "Recording downsampled by 2 in each plane direction to bound memory; the solver uses the full 3D grid.",
+        "Voxel cavity volume differs from CAD by 9.0%. Refine the grid before quantitative comparisons."
+      ]
+    },
+    {
+      "cellMm": 12,
+      "cells": 440000,
+      "dt": 1.7169016751411613e-05,
+      "steps": 17474,
+      "archive": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\fields\\5dfb3f09-2cb2-4c95-948e-eb1eab6ed1d6.aegir-field.zip",
+      "sha256": "89f1d7bfa6e838ccead342e9059bf451444762903415362419362fd1134f5e77",
+      "cavityLitres": 63.258624,
+      "cadCavityLitres": 68.58,
+      "volumeErrorPercent": 7.759370078740158,
+      "settling": {
+        "relativeChange": 1.2386942952535776e-05,
+        "settled": true,
+        "cycles": 30
+      },
+      "impedanceRe": 9.617814485015183,
+      "impedanceIm": -12.700437494713887,
+      "impedanceMagnitude": 15.931210500941296,
+      "impedancePhaseDeg": -52.864003435027655,
+      "displacementPeakMm": 0.4118056395982405,
+      "currentPeakA": 0.251079500090174,
+      "drivePeakV": 4.0000003684076715,
+      "phasorFitResiduals": {
+        "current": 2.7100858476431433e-05,
+        "voltage": 7.768955627882191e-06,
+        "displacement": 9.351634573334562e-06
+      },
+      "warnings": [
+        "Experimental linear 3D FDTD: rigid cabinet, rigid-piston T/S sources, no panel vibration, cone breakup or nonlinear port flow.",
+        "Driver basket/magnet and bracing displacement are not included unless represented by cabinet solids. No calibrated porous stuffing model; the 1D damping value is not used. Uniform attenuation is an optional phenomenological loss.",
+        "Exterior PML and staircase geometry require padding/grid convergence and physical validation.",
+        "3D pressure recording sampled every 3 grid cells (36 mm); the full-resolution solver is unchanged. Interpolated rendering cannot recover unresolved recorded detail.",
+        "Preview grid: thinnest stock spans 1.5 cells. Exact face barriers prevent wall leakage, but volume/angle errors require refinement.",
+        "Recording downsampled by 3 in each plane direction to bound memory; the solver uses the full 3D grid.",
+        "Voxel cavity volume differs from CAD by 7.8%. Refine the grid before quantitative comparisons."
+      ]
+    }
+  ],
+  "meshConvergence": "unresolved",
+  "reason": "Voxel cavity volume is non-monotonic with refinement and departs from CAD by up to about9%; three settled runs do not establish convergence.",
+  "relativeComplexImpedanceChanges": [
+    0.004047432548049358,
+    0.00422550881469255
+  ],
+  "native1DAt100Hz": {
+    "impedance": 15.84032940482222,
+    "phaseDeg": -52.42030254625019,
+    "excursionPeakMm": 0.40963191501893215
+  }
+}

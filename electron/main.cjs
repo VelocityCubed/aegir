@@ -18,18 +18,19 @@ if(!workspaceLock)app.quit();
 app.on('second-instance',()=>{if(win){if(win.isMinimized())win.restore();win.show();win.focus();}});
 const cadRoot=()=>app.isPackaged?path.join(process.resourcesPath,'cad'):path.join(root,'cad');
 function senderCheck(event){if(!win || event.sender!==win.webContents || event.senderFrame!==win.webContents.mainFrame) throw Error('Untrusted sender');}
-async function pythonPath(){
+async function pythonPath(moduleName='cadquery'){
+  if(!['cadquery','scipy'].includes(moduleName))throw Error('Unsupported Python capability.');
   const py=process.platform==='win32'?'Scripts/python.exe':'bin/python';
   const launchDir=process.env.PORTABLE_EXECUTABLE_DIR||path.dirname(app.getPath('exe'));
   const candidates=[process.env.AEGIR_PYTHON,process.env.WAVELAB_PYTHON,path.join(root,'.venv',py),path.join(launchDir,'cad-runtime',py),path.join(launchDir,'..','.venv',py),path.join(launchDir,'..','..','.venv',py),path.join(app.getPath('userData'),'cad-runtime',py),'python'];
   for(const candidate of candidates.filter(Boolean)) {
-    try {await run(candidate,['-c','import cadquery; print(cadquery.__version__)'],{windowsHide:true,timeout:20000,maxBuffer:4096});return candidate;}catch{}
+    try {await run(candidate,['-c','import '+moduleName+'; print('+moduleName+'.__version__)'],{windowsHide:true,timeout:20000,maxBuffer:4096});return candidate;}catch{}
   }
   return null;
 }
 app.whenReady().then(async()=>{
   if(!workspaceLock)return;
-  session.defaultSession.setPermissionRequestHandler((_wc,_permission,cb)=>cb(false));
+  session.defaultSession.setPermissionRequestHandler((wc,permission,cb,details)=>cb(wc===win?.webContents&&permission==='fullscreen'&&details.isMainFrame));
   win=new BrowserWindow({width:1600,height:1050,minWidth:1120,minHeight:760,backgroundColor:'#0b0f13',title:'ÆONFORGE ÆGIR · Acoustic Engineering',icon:path.join(__dirname,'icon.png'),show:false,webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true}});
   win.setMenuBarVisibility(false);
   win.webContents.setWindowOpenHandler(()=>({action:'deny'}));

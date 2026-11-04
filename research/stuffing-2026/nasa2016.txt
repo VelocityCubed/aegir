@@ -1,0 +1,629 @@
+PDF PAGE 1
+Providence,RI
+NOISE-CON 2016
+2016June13–15
+Experimental evaluation of equivalent-fluid models for melamine
+foam
+AlbertR.Allen a)
+NoahH.Schiller b)
+NASALangleyResearchCenter
+Hampton,VA23681,USA
+ABSTRACT
+Melamine foam is a soft porous material commonly used in noise control applications. Many
+modelsexisttorepresentporousmaterialsatvariouslevelsoffidelity. Thisworkfocusesonrigid
+frameequivalentfluidmodels,whichrepresentthefoamasafluidwithacomplexspeedofsound
+anddensity. Thereareseveralempiricalmodelsavailabletodeterminethesefrequencydependent
+parametersbasedonanestimateofthematerialflowresistivity. Alternatively,thesepropertiescan
+beexperimentallyeducedusinganimpedancetubesetup. Sincevibroacousticmodelsaregenerally
+sensitivetotheseproperties,thispaperassessestheaccuracyofseveralempiricalmodelsrelative
+to impedance tube measurements collected with melamine foam samples. Diffuse field sound
+absorptionmeasurementscollectedusinglargetestarticlesinalaboratoryarealsocomparedwith
+absorption predictions determined using model-based and measured foam properties. Melamine
+foamslabsofvariousthicknessesareconsidered.
+1 INTRODUCTION
+Porous foams such as melamine have seen wide spread use in noise control applications. For
+example,inaerospaceapplicationsitisappliedtotheinteriorsideofafuselageorfairingtoincrease
+interiorabsorptionandreduceexteriortointeriornoisetransmission. Oneparticularapplicationof
+recentinterestistheacoustictreatmentofNASA’snewSpaceLaunchSystem(SLS).1 TheSLSwill
+generateunprecedentedthrustatliftoff. Thiswillenablethevehicletoliftlargerpayloadsthanother
+rockets, however the extra thrust will also generate high acoustic environments. Excessive noise
+in the payload fairing could damage critical payload equipment. Consequently, a risk mitigation
+effort has been undertaken to develop new noise treatment strategies, such as hybrid systems
+involvingstructurallyintegratedresonantabsorberstargetinglowfrequencies,alongwithbroadband
+performingmelaminefoam slabs. Thedevelopmentofthistype ofhybridnoisetreatmentrequires
+accuratemodelsofbothacousticresonatorsandfoam. Whilemodelsoftheresonantabsorbershave
+beenthefocusofpreviouswork2–4,thispaperfocusesonidentifyinganacceptablemodelforthe
+melaminefoam.
+There are numerous empiricaland theoretical models available to model foam with different
+levels of fidelity5. This work focuses on relatively simple rigid-frame equivalent-fluid models,
+a)email: albert.r.allen@nasa.gov
+b)email: noah.h.schiller@nasa.gov
+
+PDF PAGE 2
+Melaminefoamevaluation Allen&Schiller
+whichrepresentthefoamasafluidwithacomplex-valuedspeedofsoundanddensity. Accurate
+knowledgeofequivalent-fluidpropertiesisimportantwhenpredictingsystemperformanceofthe
+noisecontrolpackage. Thereareseveralempiricalmodelsthatprovideestimatesoftheseparameters
+basedonmeasurementsoftheflowresistivityofthematerial. Theprimarygoal ofthisworkisto
+determine which of the empirical models, if any, accurately represent the melamine foam being
+consideredfortheSLSpayloadfairingapplication.
+Foam material properties are ultimately used as inputs to other models, therefore an additional
+aspectofthisworkistodemonstrateandassesstheaccuracyofpredictingacousticmetricssuch
+as the diffuse field absorption coefficient using a wave-based technique. However, there is some
+ambiguityregardingthecorrectimplementationofwave-basedtechniqueswhendeterminingthe
+absorptioncoefficientoffinitetestarticles. Asaresult,asecondarygoalofthisworkistocompare
+twofinitecorrectionswithrecentASTMC423-09adiffusefieldabsorptionmeasurementsinvolving
+finitefoamslabsofvariousthicknessesrecentlycollectedbyHughesetal.6.
+Thispaperbeginswithadescriptionofthemelaminefoamunderconsideration. Raylometer
+flow resistivity measurements are then discussed, and the procedure used to determine the bulk
+propertiesofthefoamusinganormalincidenceplanewavetubeisdescribed. Acomparisonbetween
+somerelevantempiricalmodelsandmeasurementeducedpropertiesisthenprovided. Finally,wave-
+basedrandomincidenceabsorptioncoefficientpredictionsusingtwofinitecorrectionmethodsare
+compared with ASTM C423-09a absorption coefficient measurements of finite melamine foam
+slabswithvariousthicknessesandtheresultingtrendsarediscussed.
+2 MELAMINEFOAM
+Themelaminefoam usedinthisstudywas Soundcoat’s SoundfoamMLULbfoam,alightweight
+(6.0 kg/m3) foam formulated for reduced formaldehyde emissions. An image of the material is
+shown in Figure 1. Cuboid samples with 50.8 mm by 50.8 mm square cross sections and depths
+of 25.4 mm, 50.8 mm, 76.2 mm, 101.6 mm, and 203.2 mm were cut for testing in the NASA
+LangleyResearchCenter(LaRC)LinerTechnologyFacilitynormalincidencetubeandraylometer
+apparatuses for bulk property characterization7. Larger 2.743 m by 2.438 m MLULb slab test
+articlesofvariousthicknesseswerealsosubjectedtodiffusefieldabsorptiontestingatRiverbank
+AcousticalLaboratoriesduringapreviousstudyasdescribedbyHughes,etal.6.
+Figure1: SampleofMLULbfoam.
+Noise-Con2016,Providence,RhodeIsland,13–15June,2016
+
+PDF PAGE 3
+Melaminefoamevaluation Allen&Schiller
+3 EMPIRICALMODELS
+Therearenumerousempiricalandtheoreticalmodelsthatmaybeusedtodeterminethecomplex-
+valuedeffectivepropertiesofaporousmaterial. Arecentevaluationofanumberofthesemodels
+hasbeenprovidedbyOlivaandHongisto8. Mostempiricalmodelsexpressthepropagationconstant
+Γandcharacteristicimpedancez inthematerialascomplexexponentialfunctionsexpressedas
+c
+z c = z 0(1 + C 1 XC2 − jC 3 XC4) (1)
+and
+Γ = k 0(C 5 XC6 + j(1 + C 7 XC8)), (2)
+wherez 0 = ρ 0 c 0 isthespecificimpedanceinair,k 0 = 2πf / c 0 ,X = ρ 0 f / σ,andσ isthespecificflow
+resistivity in units of mks-rayl/m (Pa⋅s/m2), and C
+1
+–C
+8
+are empirically derived constants. These
+modelsarerelativelyeasytoimplementandonlyrelyontheflowresistivityσ ofthematerial,which
+isoftenprovidedbythemanufacturer. Othermoreinvolvedtheoreticalmodelsrequireadditional
+knowledgeoflesseasilyobtainablepropertiessuchasporosity,tortuosity,andviscouscharacteristic
+length. Consequently, onlythe singleparameter empiricalmodels following equations1 and2 will
+beconsideredhere,andtheywillbefurtherreducedtofocusonlyontheMiki,Qunli,andDunn&
+Davern models9–11. The Miki model was chosen because it is an improved version (reduced low
+frequencylimitations)ofthemostwellknownDelaney&Bazleymodel. Themodelsproposedby
+QunliandDunn&Davernweredevelopedusingpolymerfoammaterials,sotheywereconsidered
+relativelymoreapplicableformodelingMLULb. Coefficientsforeachoftheconsideredmodelsare
+providedinTable1.
+Table1: Empiricalmodelcoefficientsandcoefficientsdeterminedfromrecentmeasurements.
+Model C C C C C C C C
+1 2 3 4 5 6 7 8
+Miki 0.0700 -0.6320 0.1070 -0.6320 0.1600 -0.6180 0.1090 -0.6180
+Qunli 0.2090 -0.5480 0.1050 -0.6070 0.1630 -0.5920 0.1880 -0.5540
+Dunn&Davern 0.1140 -0.3690 0.0985 -0.7580 0.1680 -0.7150 0.1360 -0.4310
+MLULb2016 0.0325 -0.8541 0.1804 -0.5630 0.2671 -0.5566 0.0401 -0.9238
+4 EXPERIMENTALDETERMINATIONOFFOAMPROPERTIES
+Theflowresistivity ofthefoamwas measuredinthe NASA LaRCraylometer. Theraylometeris a
+testrigwitha50.8mmsquarecrosssectionthatisusedtoevaluatetheDCflowresistanceofporous
+samples. Airisforcedthroughthesamplewithaspecifiedflowvelocityv andthestaticpressure
+drop∆pacrossthe materialismeasured. DC flow resistanceisthen estimatedasR f = ∆p / v. Flow
+resistivitycanthenbe calculatedasσ = R f/ d,wheredisthesample thickness. Typically, testsare
+repeatedatprogressivelylowerflowvelocitiesuntiltheDCflowresistivityconverges,asshownin
+Figure2. TheflowresistivityoftheMLULbsampleswasdeterminedtobe9400mks-rayl/m.
+Variousmethodsexisttomeasurethecomplex-valuedbulkpropertiesofporousmedia. Smith
+andParrot12 usedaplanewavetubetocomparethetwo-cavityandtwo-thicknessmethodsoverthree
+decadesago. Bothmethodsinvolvedthemeasurementoftwodistinct,geometry-dependentsurface
+impedancesofabulkabsorberinaplanewaveimpedancetube. Thetwo-thicknessmethodwasfound
+tobemoreefficient. Consequently,thismethodwasusedtoderivethecharacteristicimpedanceand
+propagationconstantofMLULbbasedonnormalincidenceimpedancemeasurementscollectedin
+Noise-Con2016,Providence,RhodeIsland,13–15June,2016
+
+PDF PAGE 4
+Melaminefoamevaluation Allen&Schiller
+14
+)013
+0
+0
+1
+#
+m12
+/ly
+a
+r-s
+k11
+m
+(
+y
+tiv
+its 10
+is
+e
+r
+w
+o 9
+lf
+8
+10-3 10-2 10-1 100 101
+flow velocity (m/s)
+Figure2: Measuredflowresistivityofa25.4mmcubeMLULbsample(◽)andpolynomialregression( )
+vs. flowvelocity.
+thenormalincidencetubeatNASALaRC.Thecharacteristicspecificacousticimpedancez and
+c
+propagationconstantΓinthefoam arerelatedtothethe specificacousticimpedancesatthesurface
+oftwofoamsamplesofthicknessesd andd givenby
+1 2
+z s1 = z c coth ( Γd 1) and z s2 = z c coth ( Γd 2) (3)
+Ifd 2 = 2d 1 ,thecharacteristicspecificacousticimpedanceandpropagationconstantcanbeexpressed
+as
+√
+z c = z s1( 2z s2− z s1) (4)
+and
+1 1 a
++
+Γ = ln ( ) , (5)
+2d 1 a
+1 −
+√
+wherea = ( 2z s2− z s1)/ z s1 . Thecomplexvaluedwavenumber,speedofsound,density,andbulk
+modulusinthesamplearerespectivelygivenas
+Γ ω z
+k = , c = , ρ = c, and K = z c c, (6)
+j k c
+whereω = 2πf andf isthefrequencyinHz. Thenormalincidencesurfaceimpedanceofasample
+ofthicknessdcanberewrittenintermsofthecomplexwavenumberk as
+z s =− jz c cot ( kd ) , (7)
+and the normal incidence absorption coefficient of the sample in terms of the surface impedance
+canbewrittenas
+4Re( zs)
+α norm = ∣ zs + 1 z0 ∣ 2 . (8)
+z0
+Thecomplexbulkmaterialpropertiesweredeterminedthiswayusingsampleswiththicknesses
+of 25.4 mm, 50.8 mm, 76.2 mm, 101.6 mm, and 203.2 mm. Upon reviewing the results, it was
+Noise-Con2016,Providence,RhodeIsland,13–15June,2016
+
+PDF PAGE 5
+Melaminefoamevaluation Allen&Schiller
+foundthatthelongertwo-thicknesssamples(101.6mmand203.2mm)providedbetterresultsat
+lowfrequencies. Contrarily,theshortersamples(25.4mmand50.8mm)providedresultsathigher
+frequenciesthatwerelessinfluencedbyapparentframedynamics. Resultsobtainedfromthetwo
+longestsamplesbelow500Hzandtwoshortestsamplesabove500Hzwereconsequentlycombined
+forfurtheranalysis. Regressionswerethenperformedseparatelyontherealandimaginarypartsof
+thecharacteristicimpedanceandpropagationconstantwhileadheringtotheformatofequations1
+and2resultingincoefficientsC1-C8asshowninTable1underMLULb2016.
+30 5
+4
+20 )
+) z03
+! =
+( zc
+e R 10 ( e R 2
+1
+0 0
+150 0
+-1
+100 )
+) z0-2
+! =
+( zc
+m (-3
+I 50 m
+I
+-4
+0 -5
+102 103 104 102 103 104
+frequency (Hz) frequency (Hz)
+10
+300
+5
+; ) ) c200
+( 0 (
+e e
+R R
+100
+-5
+-10 0
+0 150
+-10
+100
+; ) ) c
+(-20 (
+m m
+I I 50
+-30
+-40 0
+102 103 104 102 103 104
+frequency (Hz) frequency (Hz)
+Figure3: Measuredcomplexproperties(◽)comparedwithmodelsusingcoefficientsfromMiki( ),Qunli
+( ),Dunn&Davern( ),andMLULb2016( ).
+Comparisonofthethreeconsideredempiricalmodels,theMLULb2016model,andthemea-
+suredresultsareshowninFigure3. Becausethemeasuredresultswereinfluencedbythegeometry
+dependent frame dynamics at higher frequencies (particularly around 1 kHz), the measurement
+Noise-Con2016,Providence,RhodeIsland,13–15June,2016
+
+PDF PAGE 6
+Melaminefoamevaluation Allen&Schiller
+regressionswereheavilyweightedtowardthelowfrequencies. Thisisparticularlyevidentwhen
+viewingRe ( Γ )andRe ( c ). Asaconsequenceofthis,theMLULb2016modelislessaccurateabove
+1 kHz. In the context of absorption coefficients, however, it will be shown that these differences
+are notvery influentialat higher frequencies. It shouldbe notedthat the measurementregressions
+leadingtotheMLULb2016modelwereprimarilyusedforfurtherimplementationintheabsorption
+modelingproceduresdescribedherein. Creationofastatisticallyrobustempiricalmodeltailored
+towardmelaminefoamsshouldbesupportedwithfurthermeasurements.
+5 NORMALINCIDENCEABSORPTIONCOEFFICIENT
+An assessment of the aforementioned complex equivalent fluid properties was then made by
+comparing measured and modeled normal incidence absorption. Normal incidence absorption
+coefficient spectra determined using equation (8) and the empirical models defined in equations
+(1)and(2)andTable1arecomparedwithmeasurementresultsinFigure4. Themeasuredresults
+in this case were obtained from an independent 76.2 mm thick sample of MLULb that was not
+used when performing the measurement regression. As previously noticed when curve fitting
+the complex material properties, frame dynamic effects were found in the measured absorption
+coefficientnear1kHz. Consequently, noneoftheequivalentfluid models areinparticularlygood
+agreementin thisfrequencyregion. TheMLULb2016 modelisin quitegoodagreement withthe
+independentmeasurementbelow1kHz,whichshouldbeexpectedsinceallthenormalincidence
+tubetest sampleswereprocured fromthesame foamslab andthecurve fitswereheavilyweighted
+towardlowfrequencies. However,thethreeexistingempiricalmodelswereconsideredsufficiently
+accurateformostpracticalengineeringpurposes. Ifany,Qunli’smodelwastheleastrepresentative
+ofMLULb outofthe modelsconsidered. Atfrequenciesabove1 kHzwherethe normalincidence
+absorption coefficient converges to 1, the Miki and Dunn & Davern models provided relatively
+betteragreementwithmeasurement.
+1
+0.8
+tn
+e
+ic
+iffe 0.6
+o
+c
+n
+o
+itp0.4
+ro
+s
+b
+a
+0.2
+0
+102 103 104
+frequency (Hz)
+Figure4: Measurednormalincidenceabsorptioncoefficientofa76.2mmthickMLULbsample(◽)compared
+withpredictionsdeterminedusingcoefficientsfromMiki( ),Qunli( ),Dunn&Davern( ),and
+MLULb2016( )models.
+Noise-Con2016,Providence,RhodeIsland,13–15June,2016
+
+PDF PAGE 7
+axb plate schematic
+Melaminefoamevaluation Allen&Schiller
+tmm schematic
+θ
+z
+air foam
+(k , z ) (k, z )
+0 0 c φ
+b
+x
+x
+d
+θ
+p p'
+a
+y
+v v'=0
+z z
+Figure5: Diagramofanincidentwaveimpinginguponasingleequivalentfluidfoamlayer(left)andafinite
+surfaceofdimensionsa×b(right).
+6 RANDOMINCIDENCEABSORPTIONCOEFFICIENT
+Forobliqueincidencewavesincidentuponafoamslabofthicknessdplacedagainstahardwallas
+showninFigure5,thesurfaceimpedancez s = p / v z isnowdependentonincidenceanglesuchthat
+ωρ
+z s =− j cot ( k z d ) , (9)
+k
+z
+√
+where k z = k2 − k 0 2sin ( θ ) 2 is the z component of the wavenumber in the foam. The complex-
+valuedwavenumberk anddensityρintheequivalentfluidfoamaredeterminedfromequations1,2,
+and6aspreviouslydescribed.
+Additionally, a finite foam layer is considered as a half-space baffled surface with specific
+surfaceimpedancez s andfiniterectangulardimensionsa × basalsoshowninFigure5. Theoblique
+incidenceabsorptioncoefficientistheratioofsoundpowerabsorbedbythesurfacetothesound
+power incident on the surface given as α ( θ,φ ) = W abs/ W inc . As detailed further in section 12.3
+ofAllard&Atalla5,theincidentandabsorbedpowerscanbeexpressedasafunctionofthefinite
+surface radiation impedance z in order to account for the scattering and diffraction or “edge”
+rad
+effectsoftenseeninabsorptionmeasurementsandaregivenby
+W inc,fin = ∣ pˆ in 2 c z ∣ 2 0 ab⎛ ⎝∣1 + 4 z r c a o d s c ( o θ s ) ( θ )∣ 2 ⎞ ⎠ (10)
+z0
+and
+W abs,fin = ∣ pˆ in 2 c z ∣ 2 0 ab⎛ ⎝∣ 4 zs R + e( z r z z a 0 s d ) ∣ 2 ⎞ ⎠ , (11)
+z0 z0
+where ∣ pˆ inc∣ is the incident plane wave amplitude. Here, W inc,fin accounts for the geometric
+impedanceseenbytheincidentwaveandisequivalenttothepowerabsorbed(transmitted)through
+an openwindow of similar geometry. To demonstrate this, theexpression forW can befound
+inc,fin
+byreplacingthe surfaceimpedancez s withthe“wall impedance”ofanopen windowz 0/ cos ( θ )in
+equation(11).
+Brunskog13 providedameansofcalculatingz thatisgivenby*
+rad
+√
+z z ra 0 d = 2 j π k a 0 b∫ 0 a ∫ 0 b 4cos ( k 0 µ x κ ) cos ( k 0 µ y τ ) e √ −jk κ 0 2 + κ2 τ +τ 2 2 ( a − κ )( b − τ ) dκdτ, (12)
+*Typographicalerrorspertainingtothisequationwerefoundinthereference.
+Noise-Con2016,Providence,RhodeIsland,13–15June,2016
+
+PDF PAGE 8
+Melaminefoamevaluation Allen&Schiller
+where µ x = sin ( θ ) cos ( φ ), µ y = sin ( θ ) sin ( φ ), and k 0 = 2πf / c 0 . Equation (12) was found to be
+amenabletonumerical integration, butitwasstill computationally expensiveto adequatelyresolve
+z overθ,φ,andk . Tospeedupcalculationtimes,theintegralsinequation(12)wereevaluated
+rad 0
+numericallyforarangeofk andoverincidentandazimuthalanglescomprisingonlyonequarterof
+0
+the hemispherewhile making use ofthe quarter-symmetry oftypical rectangular treatmentsurfaces.
+Results for a given rectangular aspect ratio were then saved to a database for quick recall and
+interpolationwhencalculatingW andW .
+inc,fin abs,fin
+On the other hand, z rad = z 0/ cos ( θ ) when considering a surface of infinite extent and the
+incidentandabsorbedpowerssimplifyto
+pˆ 2ab
+W inc,inf =
+∣ inc∣
+cos ( θ ) (13)
+2z
+0
+and
+W abs,inf = ∣
+pˆ
+in 2 c z ∣
+2ab ⎛
+⎜ ⎜
+4Re(
+z
+z
+0
+s)
+2
+⎞
+⎟ ⎟ . (14)
+0 ⎝∣ z z 0 s + cos 1 (θ) ∣ ⎠
+If onlyconsidering the normalincidence plane wave case, which isthe situation ina plane wave
+tube,useofequations(13)and(14)leadstoequation(8).
+Because there is some ambiguityabout how the finite size correction should be applied when
+determiningtherandomincidenceabsorptioncoefficientofafiniteabsorber,i.e. tobothabsorbed
+andincidentpowersortoonlyabsorbedpower,threevariationsareconsideredhere. Bydividingout
+∣ pˆ inc∣ 2ab / 2z 0 andintegratingoverincidentandazimuthalangles,therandomincidenceabsorption
+coefficientsconsideredcanbeexpressedas
+2π π/2
+W sin θ dθdφ
+α inf = ∫0 ∫0 abs,inf ( ) , (15)
+2π π/2
+W sin θ dθdφ
+∫0 ∫0 inc,inf ( )
+2π π/2
+W sin θ dθdφ
+α fin1 = ∫0 ∫0 abs,fin ( ) , (16)
+2π π/2
+W sin θ dθdφ
+∫0 ∫0 inc,inf ( )
+2π π/2
+W sin θ dθdφ
+α fin2 = ∫0 ∫0 abs,fin ( ) . (17)
+2π π/2
+W sin θ dθdφ
+∫0 ∫0 inc,fin ( )
+ThemeasuredSabineabsorptioncoefficientsobtainedfromfoamslabsofdifferentthicknesses
+asdescribedinHughesetal.6 arecomparedwithmodeledrandomincidenceabsorptioncoefficients
+using equations (15)–(17) in Figure 6. Only the MLULb2016 and Miki models were considered in
+this case. As thefoam layer thickness increases, both the measurements and models showtrends of
+increasingabsorptionatlowerfrequencies. Thisisawellknownaspectthatoftenprecludestheuse
+ofcompact(thin)foamnoisetreatmentsforlowfrequencynoisereductionpurposes. Theeffectof
+the finite geometry was also found to be significant in all cases. For example, use of the infinite
+surfaceabsorptioncoefficientα producedresultsthatwereconsiderablylowerthanmeasurement,
+inf
+especiallyatlower frequencies wheretheacousticwavelengthbecomes large inrelationtothe size
+ofthetestarticle. Outofthethreeabsorptioncoefficientsconsidered,thedoublycorrectedα was
+fin2
+foundtobeinbetteragreementwhenviewingfrequenciesnearandbelowthethickness-dependent
+performanceroll-off,e.g. near250Hzforthe101.6mmcase. However,thisassessmentwasless
+obviousforthethickestslabstestedduetoapossibleroommodeinteractionatthe125Hz1/3octave
+Noise-Con2016,Providence,RhodeIsland,13–15June,2016
+
+PDF PAGE 9
+Melaminefoamevaluation Allen&Schiller
+band.† Ingeneral,theerrorattributedtochoosingamongthetwoempiricalmodelsconsideredwas
+arguablysmallinrelationtootherbiasingeffectsandmeasurementuncertainties.
+Ofparticularinterestisthebiasinthemodeledresultsatfrequenciesabovetheperformance
+roll-off. Allmodelvariationsconvergeto1atfrequencieswellabovetheperformanceroll-off,but
+thecorrespondingmeasuredvaluesexceed1andaretypically10%to20%higherthanthemodels
+forallbutthethreethinnestfoamslabs. Tworeasonsforthisphenomenonareproposed:
+1. Theradiationimpedancez usedwhenaccountingforthefiniteabsorbingsurfaceassumes
+rad
+a2Dfinitesurfacewhiletheactualtestarticlesgiverisetoa3Dgeometrywhenplacedonto
+aflat hardsurface. The 3Dgeometrymaybe promotingadditionalscatteringand diffraction
+effectsthatareonlypartiallyaccountedforinthe2Dz .
+rad
+2. At high frequencies, the larger thicknesses provide additional vertical or edge-facing surface
+areas(inageometricacousticsense). Astheybecomeacousticallylargeathighfrequencies,
+these additional absorbing surface areas may be biasing the measurements toward higher
+valuesrelativetothemodelingassumptionthatonlyconsidersthehorizontalortop-facing
+surfaceareaofthetestarticle.
+To shed light on this subject, further numerical simulations of the ASTM C423-09a procedure
+involvingthickbulkreactingfoamslabsisofinterest.
+7 CONCLUDINGREMARKS
+ComplexbulkpropertiesofMLULb,amelaminefoamvarietyofrecentinterest,weremeasured
+usingaraylometerandanormalincidenceplanewavetube. Themeasurementeducedequivalent
+fluidmodel(MLULb2016)wascomparedwiththreeexistingempiricalmodelsdevelopedbyMiki,
+Qunli,andDunn&Davern. Itwasdeterminedthatuseofanyoftheempiricalmodelswouldsuffice
+for practical engineering purposes, but selection of the MLULb2016 and Miki models may be
+preferreddependingonthefrequencyrangeofinterest. Diffusefieldabsorptioncoefficients(ASTM
+C423-09a) measured from finite MLULb slabs of various thicknesses were then compared with
+wave-basedmodelpredictionsincludingtwovariantsofthefinitecorrection. Trendsnoticedinthe
+resultswerediscussedandfurtherstudyregardingadiscrepancybetweenmeasurementandmodel
+wasmotivated.
+8 ACKNOWLEDGEMENTS
+Experimental foam characterization was made possible through collaboration with Mike Jones,
+CarolHarrison,andBrianHowertonandutilizationoftheNASALaRCLinerTechnologyFacility.
+ManythanksisalsogiventoWilliamHughes,AnneMcNelis,ChrisNotolli,andEricWolframfor
+providingfoamslababsorptionmeasurementresultstakenatRiverbankAcousticalLaboratories.
+†Thelimitationsofroomacousticmethodsatlowfrequenciesarewidelyknownandwelldocumented.
+Noise-Con2016,Providence,RhodeIsland,13–15June,2016
+
+PDF PAGE 10
+Melaminefoamevaluation Allen&Schiller
+2 2
+12.7 mm 25.4 mm
+tn tn
+e e
+ic1.5 ic1.5
+iffe iffe
+o o
+c
+n
+1 c
+n
+1
+o o
+itp itp
+ro0.5 ro0.5
+s s
+b b
+a a
+0 0
+2 102 103 104 2 102 103 104
+tn frequency (Hz) 38.1 mm tn frequency (Hz) 50.8 mm
+e e
+ic1.5 ic1.5
+iffe iffe
+o o
+c
+n
+1 c
+n
+1
+o o
+itp itp
+ro0.5 ro0.5
+s s
+b b
+a a
+0 0
+2 102 103 104 2 102 103 104
+tn frequency (Hz) 76.2 mm tn frequency (Hz) 101.6 mm
+e e
+ic1.5 ic1.5
+iffe iffe
+o o
+c
+n
+1 c
+n
+1
+o o
+itp itp
+ro0.5 ro0.5
+s s
+b b
+a a
+0 0
+2 102 103 104 2 102 103 104
+tn frequency (Hz) 127 mm tn frequency (Hz) 152.4 mm
+e e
+ic1.5 ic1.5
+iffe iffe
+o o
+c
+n
+1 c
+n
+1
+o o
+itp itp
+ro0.5 ro0.5
+s s
+b b
+a a
+0 0
+2 102 103 104 2 102 103 104
+tn frequency (Hz) 177.8 mm tn frequency (Hz) 203.2 mm
+e e
+ic1.5 ic1.5
+iffe iffe
+o o
+c
+n
+1 c
+n
+1
+o o
+itp itp
+ro0.5 ro0.5
+s s
+b b
+a a
+0 0
+2 102 103 104 2 102 103 104
+tn frequency (Hz) 254 mm tn frequency (Hz) 304.8 mm
+e e
+ic1.5 ic1.5
+iffe iffe
+o o
+c
+n
+1 c
+n
+1
+o o
+itp itp
+ro0.5 ro0.5
+s s
+b b
+a a
+0 0
+102 103 104 102 103 104
+frequency (Hz) frequency (Hz)
+Figure6: MeasuredSabineabsorptioncoefficients(◽)of2.743mby2.438mMLULbfoamslabsofvarious
+thicknesses compared with modelled random incidence absorption coefficients α ( ), α ( ),
+inf fin1
+andα ( )determinedusingmaterialpropertycoefficientsfromMiki(green)andMLULb2016(red)
+fin2
+models.
+Noise-Con2016,Providence,RhodeIsland,13–15June,2016
+
+PDF PAGE 11
+Melaminefoamevaluation Allen&Schiller
+9 REFERENCES
+1. W.O.Hughes,A.M.McNelis,andM.E.McNelis,“Acoustictestcharacterizationofmelamine
+foamforusageinnasa’spayloadfairingacousticattenuationsystems,”Tech.Rep.TM2014-
+218127,NASAGlennResearchCenter,2014.
+2. N.H.Schiller,A.R.Allen,B.F.Zalewski,andB.S.Beck,“Soundtransmissionlossthrough
+acorrugated-coresandwichpanelwithintegratedacousticresonators,”inProceedingsofthe
+ASME2014InternationalMechanicalEngineeringCongress&Exposition,(Montreal,Quebec,
+Canada),Nov.2014.
+3. A.R.Allen,N.H.Schiller,B.F.Zalewski,andB.Rosenthal,“Transmissionlossandabsorption
+of corrugated core sandwich panels with embedded resonators,” inProceedings of NoiseCon
+2014,(Ft.Lauderdale,FL),Sept.2014.
+4. N. H. Schiller, A. R. Allen, J. W. Herlan, and B. N. Rosenthal, “Experimental evaluation
+of tuned chamber core panels for payload fairing noise control,” in Proceedings of the 29th
+AerospaceTestingSeminar,(LosAngeles,California),Oct.2015.
+5. J.F.AllardandN.Atalla,Propagationofsoundinporousmedia. Wiley,2ed.,2009.
+6. W.O.Hughes,A.M.McNelis,C.Nottoli,andE.Wolfram,“Examinationofthemeasurement
+of absorption using the reverberant room method for highly absorptive acoustic foam,” in
+Proceedingsofthe29thAerospaceTestingSeminar,(LosAngeles,California),Oct.2015.
+7. M.G. JonesandW.R.Watson,“Onthe useofexperimentalmethodstoimproveconfidence
+in educed impedance,” in Proceedings of the 17th AIAA/CEAS Aeroacoustics Conference,
+(Portalnd,Oregon),June2011.
+8. D. Oliva and V. Hongisto, “Sound absorption of porous materials – accuracy of prediction
+methods,”Appl.Acoust.,vol.74,pp.1473–1479,2013.
+9. Y. Miki, “Acousticalpropertiesof porousmaterials– modificationsofDelany–Bazleymodels,”
+J.Acoust.Soc.Jpn.,vol.11,pp.19–24,1990.
+10. W. Qunli, “Empirical relations between acoustical properties and flow resistivity of porous
+plasticopen–cellfoam,”Appl.Acoust.,vol.25,pp.141–148,1988.
+11. I. P. Dunn and W. A. Davern, “Calculation of acoustic impedance of multi–layer absorbers,”
+Appl.Acoust.,vol.19,pp.321–334,1986.
+12. C.D.SmithandT.L.Parrott,“Comparisonofthreemethodsformeasuringacousticproperties
+ofbulkmaterials,”J.Acoust.Soc.Am.,vol.74,pp.1577–1582,Nov.1983.
+13. J. Brunskog, “The forced sound transmission of finite single leaf walls using a variational
+technique,”J.Acoust.Soc.Am.,vol.132,pp.1482–1493,Sept.2012.
+Noise-Con2016,Providence,RhodeIsland,13–15June,2016

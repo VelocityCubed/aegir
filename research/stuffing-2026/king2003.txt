@@ -1,0 +1,713 @@
+PDF PAGE 1
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+In the equations derived in the preceding sections, the only variables that still
+need to be defined are the viscous damping coefficient λ and c the speed of sound. I
+tried a number of different expressions for λ, and numerical values for c, in an attempt to
+correlate the calculations with the test data, repeated from Section 2.0 in Figures 5.1,
+5.2, 5.3, and 5.4, for the stuffed test transmission line. I found that the best correlation
+was achieved by expressing c and λ as functions of the stuffing density. The following
+relationships between the speed of sound, the damping coefficient, the stuffing density,
+and frequency are empirical. There was no closed form equation used to determine
+these characteristics of the stuffed test transmission line.
+The values used for the speed of sound are 342 m/sec, 335 m/sec, 325 m/sec,
+and 320 m/sec for stuffing densities of 0.0 lb/ft3, 0.191 lb/ft3, 0.382 lb/ft3, and 0.573 lb/ft3
+respectively. These values were arrived at after starting with the measured and
+calculated speeds of sound shown in Table 2.4.
+The mathematical expression for the viscous damping coefficient λ(ω) is shown
+below.
+newton⋅sec
+λtube:=10⋅
+4
+m
+3
+ft newton⋅sec
+λfiber:=D⋅ ⋅1570⋅
+lb 4
+m
+ 3   3   3   3 
+1 ft ft 1 ft ft
+order:=2− ⋅D⋅ −0.2 ⋅ΦD⋅ −0.2 + ⋅D⋅ −0.4 ⋅ΦD⋅ −0.4
+0.2  lb   lb  0.2  lb   lb 
+−1
+order order
+ r⋅dω   r⋅dω 
+λr:=λtube + λfiber⋅ ⋅  1+  
+50⋅Hz  50⋅Hz 
+The expression for λ(ω) was arrived at by iterating the calculation with different
+constant values of viscous damping. The first term λ represents a small loss that is
+tube
+applied to the empty tube. This keeps the empty tube calculations from growing to
+infinity at the quarter wavelength frequencies. The second term λ represents the
+fiber
+viscous damping coefficient for the fiber filled tube. Notice that this expression is linear
+with the stuffing density D. With only these two terms, I achieved good correlation at the
+frequencies above 200 Hz. At the lower frequencies, the calculated response was over
+damped so I experimented with different high pass filter functions. The final expression
+for λ(ω) is modified by a high pass filter. The high pass filter starts as a second order
+filter and transitions to a first order filter as the stuffing density increases. Again, the
+expression for λ(ω) and the values for c were arrived at empirically to recreate the test
+data shown in Figures 5.1, 5.2, 5.3, and 5.4.
+In Figure 5.5 the expressions for the speed of sound and the damping coefficient
+have been plotted. The speed of sound plot, at the top of the page, shows that the
+minimum speed of sound for stuffing densities less than 1.0 lb/ft3 is approximately 319
+m/sec. This corresponds to a process approximately midway between adiabatic and
+Page 1 of 16
+
+PDF PAGE 2
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+isothermal. The figure just below shows the frequency dependent damping coefficient
+curves for 1.00 lb/ft3, 0.75 lb/ft3, 0.50 lb/ft3, 0.25 lb/ft3, and 0.00 lb/ft3 as seen from top to
+bottom in the plot. From this second plot it can be seen that as the stuffing density and
+frequency increase, so does the magnitude of the damping coefficient.
+The MathCad computer program was used to perform all of the calculations
+using the “TL Open End.MCD” worksheet. When you look at MathCad worksheets keep
+in mind that all of the calculations are performed on column vectors with each position in
+the vector corresponding to a specific frequency. Also recognize that MathCad accepts
+whatever units are entered and converts them to a consistent set of default units for all
+of the calculations. Therefore, I tend to work with the length L expressed in inches and
+the Thiele / Small parameters expressed in metric units. Plots showing the calculated
+impedance and the SPL magnitude and phase response, for the woofer and the
+terminus, are shown in Figures 5.6, 5.7, 5.8, and 5.9 for the empty test line and the test
+line with 100 gm, 200 gm, and 300 gm of Dacron Hollofil II stuffing. These plots also
+contain the measured impedance and SPL overlaid as dashed lines to show the
+accuracy of the computer model relative to the test data.
+Again the terminus SPL phase plots were used to identify the calculated resonant
+frequency for each mode. At the quarter wavelength frequencies, the phase angle
+passes through +90 degrees or -90 degrees. The impedance curves were used to
+identify the calculated shifted driver resonant frequency. Table 5.1 shows these results.
+Table 5.1 : Calculated Resonant Frequencies for the Unstuffed and Stuffed Test Line
+Mode Unstuffed 100 gm of 200 gm of 300 gm of
+Line (Hz) Hollofil Hollofil Hollofil
+Stuffing (Hz) Stuffing (Hz) Stuffing (Hz)
+Driver 22 22 24 26
+1/4 Wavelength 93 96 96 95
+3/4 Wavelength 212 210 205 200
+5/4 Wavelength 340 332 320 315
+7/4 Wavelength 471 457 440 432
+9/4 Wavelength 603 583 561 551
+11/4 Wavelength 735 710 683 670
+After comparing the measured and calculated results shown in Figures 5.6
+through 5.9, and the measured and calculated resonant frequencies presented in Tables
+2.3 and 5.1, I concluded that the MathCad computer model was in excellent agreement
+with the test data. Getting test data and calculated results to agree to this degree
+indicated that the computer model was technically sound and could be used as a design
+tool for transmission line enclosures.
+The same sets of measurements were also performed using long fiber wool. The
+wool was a much courser fibrous tangle with a larger fiber diameter than the Dacron
+Hollofil II. The number of wool fibers in a given volume, for the same packing density,
+was probably significantly less than the number of Dacron fibers. The measured results
+were similar in appearance to those shown in Figures 5.2, 5.3, and 5.4. Based on this
+second set of plots, it appeared that the wool might provide a little less viscous damping
+for the same packing density. If there are fewer wool fibers per unit volume, then it
+makes sense that the amount of viscous damping is lower. I concluded that there is no
+magic associated with a wool stuffed transmission line. From these results, and the
+Page 2 of 16
+
+PDF PAGE 3
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+inherent problems of smell and insects associated with wool, I decided that the Dacron
+Hollofil II was the best choice for all of my transmission line designs.
+Summary :
+The speed of sound and the damping coefficient for a fiber filled transmission line
+have been derived empirically from the measured test line data. These relationships
+have been included in the “TL Open End.MCD” MathCad worksheets and the test line
+modeled with the Focal 8V 4412 driver in one end. The calculated results and the
+measured data have been plotted in the same graphs and show excellent correlation.
+Page 3 of 16
+
+PDF PAGE 4
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.1 : Unstuffed Test Line
+Page 4 of 16
+
+PDF PAGE 5
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.2 : Test Line Stuffed With 100 gm of Dacron Hollofil II
+Page 5 of 16
+
+PDF PAGE 6
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.3 : Test Line Stuffed With 200 gm of Dacron Hollofil II
+Page 6 of 16
+
+PDF PAGE 7
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.4 : Test Line Stuffed With 300 gm of Dacron Hollofil II
+Page 7 of 16
+
+PDF PAGE 8
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.5 : Speed of Sound and Damping Coefficient as Functions of Stuffing Density
+for Dacron Hollofil II Fiber
+Speed of Sound in Stuffed TL
+345
+335
+325
+315
+305
+0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
+Stuffing Density
+Page 8 of 16
+)ces/m(
+dnuoS
+fo
+deepS
+c
+fiber
+q
+q⋅∆D
+lb
+3
+ft
+Damping Coefficient and Stuffing Density
+2000
+1500
+1000
+500
+0 10 100 1.10 3
+Frequency (Hz)
+)4^m/ces-N(
+tneiciffeoC
+gnipmaD
+λ
+1.00 r
+λ
+0.75
+r
+λ 0.50
+r
+λ
+0.25
+r
+λ
+0.00
+r
+r⋅dω
+Hz
+
+PDF PAGE 9
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.6a : Calculated Results for an Unstuffed Test Line
+Impedance Calculation
+(Calculated = solid line, Measured = dashed line)
+90
+45
+0
+45
+90 10 100 1.10 3
+Page 9 of 16
+)ged(
+esahP
+( )
+argZinput
+r
+deg
+( )
+argZW
+r
+deg
+r⋅dω
+Hz
+60
+50
+40
+30
+20
+10
+0 10 100 1.10 3
+Frequency (Hz)
+)smho(
+ecnadepmI
+Zinput
+r
+ZW
+r
+r⋅dω
+Hz
+
+PDF PAGE 10
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.6b : Calculated Results for an Unstuffed Test Line
+SPL Calculation
+(Calculated = solid line, Measured = dashed line)
+Woofer Calculated and Measured Near Field Sound Pressure Level Response
+180
+135
+90
+45
+0
+45
+90
+135
+180 10 100 1.10 3
+Page 10 of 16
+)ged(
+esahP
+( )
+argpd
+r
+deg
+arg(Wr )
+deg
+r⋅dω
+10
+Hz
+5
+0
+5
+10
+15
+20
+25
+30 10 100 1.10 3
+Frequency (Hz)
+)Bd(
+LPS
+SPLd
+r
+SPLw
+r
+r⋅dω
+Hz
+Terminus Calculated and Measured Near Field Sound Pressure Level Response
+180
+135
+90
+45
+0
+45
+90
+135
+180 10 100 1.10 3
+)ged(
+esahP
+( )
+argpL
+r
+deg
+arg(Tr )
+deg
+r⋅dω
+20
+Hz
+10
+0
+10
+20
+30
+40
+50 10 100 1.10 3
+Frequency (Hz)
+)Bd(
+LPS
+SPLL
+r
+SPLt
+r
+r⋅dω
+Hz
+
+PDF PAGE 11
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.7a : Calculated Results for the Test Line Stuffed With 100 gm
+of Dacron Hollofil II
+Impedance Calculation
+(Calculated = solid line, Measured = dashed line)
+90
+45
+0
+45
+90 10 100 1.10 3
+Page 11 of 16
+)ged(
+esahP
+( )
+argZinput
+r
+deg
+( )
+argZW
+r
+deg
+r⋅dω
+Hz
+60
+50
+40
+30
+20
+10
+0 10 100 1.10 3
+Frequency (Hz)
+)smho(
+ecnadepmI
+Zinput
+r
+ZW
+r
+r⋅dω
+Hz
+
+PDF PAGE 12
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.7b : Calculated Results for the Test Line Stuffed With 100 gm
+of Dacron Hollofil II
+SPL Calculation
+(Calculated = solid line, Measured = dashed line)
+Woofer Calculated and Measured Near Field Sound Pressure Level Response
+180
+135
+90
+45
+0
+45
+90
+135
+180 10 100 1.10 3
+Page 12 of 16
+)ged(
+esahP
+( )
+argpd
+r
+deg
+arg(Wr )
+deg
+r⋅dω
+10
+Hz
+5
+0
+5
+10
+15
+20
+25
+30 10 100 1.10 3
+Frequency (Hz)
+)Bd(
+LPS
+SPLd
+r
+SPLw
+r
+r⋅dω
+Hz
+Terminus Calculated and Measured Near Field Sound Pressure Level Response
+180
+135
+90
+45
+0
+45
+90
+135
+180 10 100 1.10 3
+)ged(
+esahP
+( )
+argpL
+r
+deg
+arg(Tr )
+deg
+r⋅dω
+20
+Hz
+10
+0
+10
+20
+30
+40
+50 10 100 1.10 3
+Frequency (Hz)
+)Bd(
+LPS
+SPLL
+r
+SPLt
+r
+r⋅dω
+Hz
+
+PDF PAGE 13
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.8a : Calculated Results for the Test Line Stuffed With 200 gm
+of Dacron Hollofil II
+Impedance Calculation
+(Calculated = solid line, Measured = dashed line)
+90
+45
+0
+45
+90 10 100 1.10 3
+Page 13 of 16
+)ged(
+esahP
+( )
+argZinput
+r
+deg
+( )
+argZW
+r
+deg
+r⋅dω
+Hz
+60
+50
+40
+30
+20
+10
+0 10 100 1.10 3
+Frequency (Hz)
+)smho(
+ecnadepmI
+Zinput
+r
+ZW
+r
+r⋅dω
+Hz
+
+PDF PAGE 14
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.8b : Calculated Results for the Test Line Stuffed With 200 gm
+of Dacron Hollofil II
+SPL Calculation
+(Calculated = solid line, Measured = dashed line)
+Woofer Calculated and Measured Near Field Sound Pressure Level Response
+180
+135
+90
+45
+0
+45
+90
+135
+180 10 100 1.10 3
+Page 14 of 16
+)ged(
+esahP
+( )
+argpd
+r
+deg
+arg(Wr )
+deg
+r⋅dω
+10
+Hz
+5
+0
+5
+10
+15
+20
+25
+30 10 100 1.10 3
+Frequency (Hz)
+)Bd(
+LPS
+SPLd
+r
+SPLw
+r
+r⋅dω
+Hz
+Terminus Calculated and Measured Near Field Sound Pressure Level Response
+180
+135
+90
+45
+0
+45
+90
+135
+180 10 100 1.10 3
+)ged(
+esahP
+( )
+argpL
+r
+deg
+arg(Tr )
+deg
+r⋅dω
+20
+Hz
+10
+0
+10
+20
+30
+40
+50 10 100 1.10 3
+Frequency (Hz)
+)Bd(
+LPS
+SPLL
+r
+SPLt
+r
+r⋅dω
+Hz
+
+PDF PAGE 15
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.9a : Calculated Results for the Test Line Stuffed With 300 gm
+of Dacron Hollofil II
+Impedance Calculation
+(Calculated = solid line, Measured = dashed line)
+90
+45
+0
+45
+90 10 100 1.10 3
+Page 15 of 16
+)ged(
+esahP
+( )
+argZinput
+r
+deg
+( )
+argZW
+r
+deg
+r⋅dω
+Hz
+60
+50
+40
+30
+20
+10
+0 10 100 1.10 3
+Frequency (Hz)
+)smho(
+ecnadepmI
+Zinput
+r
+ZW
+r
+r⋅dω
+Hz
+
+PDF PAGE 16
+Section 5.0 : Derivation and Correlation of the Viscous Damping Coefficient
+By Martin J. King, 07/05/02 (Revised 08/22/03)
+Copyright  2002, 2003 by Martin J. King. All Rights Reserved.
+Figure 5.9b : Calculated Results for the Test Line Stuffed With 300 gm
+of Dacron Hollofil II
+SPL Calculation
+(Calculated = solid line, Measured = dashed line)
+Woofer Calculated and Measured Near Field Sound Pressure Level Response
+180
+135
+90
+45
+0
+45
+90
+135
+180 10 100 1.10 3
+Page 16 of 16
+)ged(
+esahP
+( )
+argpd
+r
+deg
+arg(Wr )
+deg
+r⋅dω
+10
+Hz
+5
+0
+5
+10
+15
+20
+25
+30 10 100 1.10 3
+Frequency (Hz)
+)Bd(
+LPS
+SPLd
+r
+SPLw
+r
+r⋅dω
+Hz
+Terminus Calculated and Measured Near Field Sound Pressure Level Response
+180
+135
+90
+45
+0
+45
+90
+135
+180 10 100 1.10 3
+)ged(
+esahP
+( )
+argpL
+r
+deg
+arg(Tr )
+deg
+r⋅dω
+20
+Hz
+10
+0
+10
+20
+30
+40
+50 10 100 1.10 3
+Frequency (Hz)
+)Bd(
+LPS
+SPLL
+r
+SPLt
+r
+r⋅dω
+Hz

@@ -2,18 +2,23 @@ import { abs,add,sub,mul,div,scale,sinh,cosh,type C } from './complex';
 import type { Project, Simulation, Point } from './types';
 import { buildGeometry } from './geometry';
 import { simulateNetwork, networkPressure } from './network-acoustics';
+import { coilImpedance } from './crossover';
+import { pistonRadiation } from './radiation';
+import { projectAir } from './medium';
 export const soundSpeed=(temperature:number)=>331.3+0.606*temperature;
-export function driverModel(p:Project) {
-  const c=soundSpeed(p.design.temperature),rho=1.2041*293.15/(273.15+p.design.temperature),v=p.driver;
+export function driverModel(p:Project, rearLoading:"cabinet"|"sealed-back"="cabinet") {
+  const {c,rho}=projectAir(p),v=p.driver;
   const sd=v.sd*1e-4,ws=2*Math.PI*v.fs,cms=v.vas*1e-3/(rho*c*c*sd*sd),mms=1/(ws*ws*cms);
-  const rms=ws*mms/v.qms,freeRadiation=radiation(v.fs,sd,c,rho);
+  const rms=ws*mms/v.qms,freeRadiation=radiation(v.fs,sd,c,rho,p.system?.physics?.radiation);
   // T/S Mms/Qms already include free-air loading on both cone faces.
   // Calibrate the suspension mass/resistance before replacing rear air with a line.
-  const mmd=mms-2*sd*sd*freeRadiation[1]/ws,rmd=rms-2*sd*sd*freeRadiation[0];
+  const faces=rearLoading==='sealed-back'?1:2;
+  const mmd=mms-faces*sd*sd*freeRadiation[1]/ws,rmd=rms-faces*sd*sd*freeRadiation[0];
   return {c,rho,sd,cms,mms,rms,mmd,rmd,bl:Math.sqrt(ws*mms*v.re/v.qes),qts:1/(1/v.qes+1/v.qms)};
 }
 // Low-ka baffled equivalent circular piston radiation impedance, Pa·s/m³.
-export function radiation(f:number,area:number,c:number,rho:number):C {
+export function radiation(f:number,area:number,c:number,rho:number,model:'low-ka'|'piston'='low-ka'):C {
+  if(model==='piston')return pistonRadiation(f,area,c,rho);
   const ka=2*Math.PI*f/c*Math.sqrt(area/Math.PI),z=rho*c/area;
   return [z*ka*ka/2,z*8*ka/(3*Math.PI)];
 }
@@ -23,7 +28,7 @@ export function lineMatrix(f:number,length:number,area:number,c:number,rho:numbe
   return {a,b:scale(s,z),c:scale(s,1/z),d:a};
 }
 export function simulate(p:Project,count=240):Simulation {
-  if(p.layout||p.mounts?.length)return simulateNetwork(p,count);
+  if(p.layout||p.mounts?.length||p.system||p.circuit)return simulateNetwork(p,count);
   const m=driverModel(p),{design:d,driver:v}=p,g=buildGeometry(p),area=g.area*1e-6,x=d.length*d.driverPosition;
   const points:Point[]=[];
   // Include target edges and midpoint so even a very narrow valid brief has band samples.
@@ -35,7 +40,7 @@ export function simulate(p:Project,count=240):Simulation {
     const zs=div(stub.a,stub.c),zd=div(add(mul(down.a,end),down.b),add(mul(down.c,end),down.d));
     const rear=div(mul(zs,zd),add(zs,zd));
     const zm=add([m.rmd,omega*m.mmd-1/(omega*m.cms)],scale(add(rear,front),m.sd*m.sd));
-    const ze:C=[v.re,omega*v.le*1e-3];
+    const ze:C=coilImpedance(v,f);
     const velocity=div([m.bl*d.voltage,0],add(mul(ze,zm),[m.bl*m.bl,0]));
     const current=div(sub([d.voltage,0],scale(velocity,m.bl)),ze);
     const z=div([d.voltage,0],current),u=scale(velocity,m.sd);

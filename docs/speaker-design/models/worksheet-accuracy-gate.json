@@ -1,0 +1,14 @@
+{
+  "validated": false,
+  "numericalChecksPassed": true,
+  "blockers": [
+    "Independent FEM cavity mesh not converged",
+    "Application voxel cavity mesh not converged",
+    "Cable resistance placement in passive worksheet is not exposed by collapsed calculation blocks. All three placements retained without selecting a winner.",
+    "Voltage derived from1W/8Ω reference; actual reference conversion not exposed.",
+    "2003 fibre law is an assumed transfer to2023 filling.",
+    "Sphere-transition baffle and rear radiation are approximations; no rectangular diffraction/shadowing.",
+    "No matched physical prototype measurements"
+  ],
+  "note": "This gate deliberately rejects a complete-speaker accuracy claim while material, boundary, mesh or measurement conditions remain unresolved. It does not block exploratory use."
+}

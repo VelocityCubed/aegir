@@ -1,0 +1,64 @@
+{
+  "profile": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-convergence-vSP39f",
+  "cutCellCpuGpuRelativeL2": 2.6664629309424743e-06,
+  "circuitStates": 5,
+  "materialCells": 10406,
+  "projectUnchanged": true,
+  "jobs": [
+    "c2563169-aa95-44c5-bab0-645a2364014d",
+    "00178666-5bdc-47f6-be5a-ce8e24ea0baa",
+    "0dcd614a-8dc3-42f6-a171-36cb5b6bce98",
+    "fe2bfd0c-49cb-442b-b671-b531781b753c",
+    "54fd5230-cd0a-4d89-8ca7-2a15a30ffdac"
+  ],
+  "errors": [],
+  "testSummary": {
+    "typescript": {
+      "passed": 136,
+      "failed": 0,
+      "command": "npx vitest run --maxWorkers=1"
+    },
+    "pythonCavity": {
+      "passed": 3,
+      "failed": 0,
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests -p test_cavity_modes.py"
+    }
+  },
+  "sourceHashes": {
+    "src\\core\\medium.ts": "6e6fd2b2f4bbd2aa92d442e7d3fd4bac564f708c996fcf0c3e95f152975c4669",
+    "src\\field\\cut-cells.ts": "eae3bb0250af5a8ba1c0be1ddc16bd28b78fe08b571abfae9dc1dc09b9af6a14",
+    "src\\field\\grid.ts": "087cf4e52fd1b14dcd1ce50693aa9d015e77bc28c2a3a945a6bde8aedc158d98",
+    "src\\field\\cpu.ts": "0b82b4ec12190f8130c7359de8f93a2e197b77e41c2b304e3c2a49f270d11b2f",
+    "src\\field\\gpu.ts": "752c93ba801f45a7fa3d4c824807f005e2f8c0109cfec021d294db5756daaba5",
+    "src\\field\\convergence.ts": "e12ff97eaab97f42686748a8bac5cf50d0a284cc6826a8dc4644740ac852da51",
+    "src\\core\\cavity-modal.ts": "a867cc4a4ccde27e3cd19ebf05b68cc707d1bb713f21bcf019da135ecb78f887",
+    "scripts\\king-reference.py": "2cac2029da4b84b48642ddf5a1e92a5113f5ff29515193cb310e820058fe5d76"
+  },
+  "independentKingFixture": "tests/fixtures/king-independent.json",
+  "nativeUiFlow": "ui-flow-verification.json",
+  "geometryAcceptance": "refine-further",
+  "physicalValidation": false,
+  "package": {
+    "version": "0.9.5",
+    "portable": "C:\\dev\\speakerDesigner\\release\\AEONFORGE-Aegir-0.9.5-x64.exe",
+    "bytes": 468454120,
+    "sha256": "a3838670351b99207b99284eaa4b5f11e7d69566d510d8ae509593dad16218d0",
+    "integrity": "package-integrity.json"
+  },
+  "liveWorkspace": {
+    "projectRevision": 16,
+    "revision": 1134,
+    "name": "King 2006 \u00b7 straight TL \u00b7 empty \u00b7 published generic driver",
+    "snapshots": 12,
+    "projectPreserved": true,
+    "snapshotContentsPreserved": true,
+    "libraryPreserved": true,
+    "backup": "backups/convergence-upgrade-2026-11-03",
+    "reopened": true
+  },
+  "packagedUiVerification": "package-ui-verification.json",
+  "packagingRebuild": "Initial archive assembled while a bundled document changed; rejected by byte/hash checks. Final archive rebuilt with immutable inputs and verified before delivery.",
+  "packagedParityVerification": "package-parity-verification.json",
+  "packagedParityRelativeL2": 2.6664629309424743e-06,
+  "packagedChecksPassed": true
+}

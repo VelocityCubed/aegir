@@ -9,6 +9,25 @@ import {DesignService} from '../src/agent/service';
 const setup=async()=>new DesignService({directory:await mkdtemp(path.join(tmpdir(),'aegir-service-')),workerPath:path.resolve('engine/worker.cjs')}).initialize();
 async function done(service:DesignService,id:string){for(let i=0;i<500;i++){const job=await service.dispatch({name:'job.get',args:{id,includeResult:true}});if(job.status!=='running')return job;await new Promise(r=>setTimeout(r,20));}throw Error('Job timeout');}
 describe('canonical agent workspace',()=>{
+  it('preserves the two-way reference project and runs source-labelled comparisons through the worker',async()=>{
+    const service=await setup();
+    try{
+      const p=JSON.parse(await readFile('examples/satori-reference.aegir.json','utf8'));
+      await service.dispatch({name:'project.replace',args:{project:p,requireValidGeometry:true}});
+      const diagnostic=await service.dispatch({name:'project.validate'});
+      expect(diagnostic.physicalValid).toBe(true);expect(diagnostic.analysisAvailable).toBe(false);expect(diagnostic.referenceAnalysisAvailable).toBe(true);
+      const run=await service.dispatch({name:'analysis.reference',args:{samples:120}}),job=await done(service,run.id);
+      expect(job.status).toBe('completed');expect(job.result.reference.drivers).toHaveLength(2);
+      expect(job.result.reference.modal.status).toBe('mismatch');expect(job.result.reference.curves[0].status).toBe('incompatible');
+      const report=await service.dispatch({name:'export.create',args:{format:'report'}});
+      expect(await readFile(report.path,'utf8')).toContain('1D response is unavailable');
+      expect(await readFile(report.path,'utf8')).not.toContain('Published-reference comparisons');
+      await service.dispatch({name:'project.patch',args:{system:null}});expect(service.state.project.system).toBeUndefined();
+      await service.dispatch({name:'history.undo'});expect(service.state.project.system).toEqual(p.system);
+      await service.close();const restored=await new DesignService(service.options).initialize();
+      try{expect(restored.state.project).toEqual(p);}finally{await restored.close();}
+    }finally{await service.close();}
+  },20000);
   it('persists free 3D boards, side drivers and front slots and exports CAD without inventing a 1D response',async()=>{
     const service=await setup(),p=foldedMultiway(service.state.project);
     p.layout!.baffles.push({id:'spatial',label:'3D brace',start:[1,1],end:[2,1],pose:{center:[365,300,180],size:[100,80],rotation:[0,Math.PI/2,0]}});
@@ -22,7 +41,7 @@ describe('canonical agent workspace',()=>{
     await service.close();const restored=await new DesignService(service.options).initialize();expect(restored.state.project).toEqual(p);await restored.close();
   },20000);
   it('preserves mode and display mapping across partial view edits and restart',async()=>{
-    const service=await setup();await service.dispatch({name:'view.set',args:{mode:'advanced',field:{opacity:.4,pressureCurve:'linear',frontShading:false}}});await service.dispatch({name:'view.set',args:{metric:'impedance',field:{particles:true}}});expect(service.state.view.mode).toBe('advanced');expect(service.state.view.field).toMatchObject({opacity:.4,pressureCurve:'linear',frontShading:false,particles:true});const reopened=await new DesignService(service.options).initialize();expect(reopened.state.view).toEqual(service.state.view);await reopened.close();await service.close();
+    const service=await setup();await service.dispatch({name:'view.set',args:{mode:'advanced',study:'resonances',field:{opacity:.4,pressureCurve:'linear',frontShading:false}}});await service.dispatch({name:'view.set',args:{metric:'impedance',field:{particles:true}}});expect(service.state.view.mode).toBe('advanced');expect(service.state.view.study).toBe('resonances');expect(service.state.view.field).toMatchObject({opacity:.4,pressureCurve:'linear',frontShading:false,particles:true});const reopened=await new DesignService(service.options).initialize();expect(reopened.state.view).toEqual(service.state.view);await reopened.close();await service.close();
   });
   it('migrates pre-field view state without changing the project',async()=>{
     const service=await setup(),legacy=structuredClone(service.state);delete (legacy.view as any).field;await writeFile(path.join(service.options.directory,'workspace.json'),JSON.stringify(legacy));
@@ -30,9 +49,9 @@ describe('canonical agent workspace',()=>{
     const oldFieldView=structuredClone(service.state);delete (oldFieldView.view.field as any).showDrivers;delete (oldFieldView.view.field as any).driverMotionScale;oldFieldView.view.field.fps=12;await writeFile(path.join(service.options.directory,'workspace.json'),JSON.stringify(oldFieldView));const migratedField=await new DesignService(service.options).initialize();expect(migratedField.state.view.field).toMatchObject({fps:12,showDrivers:true,driverMotionScale:50});await migratedField.close();await service.close();
   });
   it('persists spatial recordings with their source revision and merges field view patches',async()=>{
-    const service=await setup(),source=structuredClone(service.state.project),job=await service.dispatch({name:'field.run',args:{settings:{cellMm:30,paddingMm:300,durationMs:8,frames:12,backend:'cpu'}}});
+    const service=await setup(),source=structuredClone(service.state.project);source.design.damping=0;const job=await service.dispatch({name:'field.run',args:{basicWaveModel:true,settings:{geometry:'staircase' as const,cellMm:30,paddingMm:300,durationMs:8,frames:12,backend:'cpu'}}});
     await service.dispatch({name:'project.patch',args:{name:'Edited while solving'}});const result=await done(service,job.id);expect(result.status).toBe('completed');expect(result.result.artifact.projectRevision).toBe(0);
-    await service.dispatch({name:'field.open',args:{id:job.id}});await service.dispatch({name:'view.set',args:{field:{driverMotionScale:100,showDrivers:false}}});await service.dispatch({name:'view.set',args:{field:{frame:2}}});expect(service.state.view.field.jobId).toBe(job.id);expect(service.state.view.field.driverMotionScale).toBe(100);expect(service.state.view.field.showDrivers).toBe(false);await service.dispatch({name:'view.set',args:{field:{frame:2.5}}});expect(service.state.view.field.frame).toBe(2.5);await expect(service.dispatch({name:'view.set',args:{field:{frame:11.5}}})).rejects.toMatchObject({code:'FRAME_RANGE'});await service.dispatch({name:'view.set',args:{field:{frame:2}}});
+    await service.dispatch({name:'field.open',args:{id:job.id}});await service.dispatch({name:'view.set',args:{field:{driverMotionScale:100,showDrivers:false}}});await service.dispatch({name:'view.set',args:{field:{frame:2}}});expect(service.state.view.study).toBe('waves');expect(service.state.view.field.jobId).toBe(job.id);expect(service.state.view.field.driverMotionScale).toBe(100);expect(service.state.view.field.showDrivers).toBe(false);await service.dispatch({name:'view.set',args:{field:{frame:2.5}}});expect(service.state.view.field.frame).toBe(2.5);await expect(service.dispatch({name:'view.set',args:{field:{frame:11.5}}})).rejects.toMatchObject({code:'FRAME_RANGE'});await service.dispatch({name:'view.set',args:{field:{frame:2}}});
     const field=await service.dispatch({name:'field.result',args:{id:job.id,frame:2,traces:true}});expect(field.stale).toBe(true);expect(field.meta.project).toEqual(source);expect(field.frame.data.length).toBeGreaterThan(0);
     const chunks:Buffer[]=[];let offset:number|null=0;while(offset!==null){const chunk=await service.dispatch({name:'artifact.read',args:{id:field.artifact.id,offset,length:65536}});expect(chunk.offset).toBe(offset);chunks.push(Buffer.from(chunk.data,'base64'));offset=chunk.nextOffset;}expect(Buffer.concat(chunks)).toEqual(await readFile(field.artifact.path));
     await expect(service.dispatch({name:'artifact.read',args:{id:field.artifact.id,offset:field.artifact.size+1,length:10}})).rejects.toMatchObject({code:'ARTIFACT_RANGE'});await service.close();

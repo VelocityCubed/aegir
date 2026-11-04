@@ -8,6 +8,7 @@ export function Field({
   max,
   step = 0.1,
   hint,
+  disabled,
 }: {
   label: string;
   value: number;
@@ -17,6 +18,7 @@ export function Field({
   max?: number;
   step?: number;
   hint?: string;
+  disabled?:boolean;
 }) {
   const [text, setText] = useState(String(Number(value.toFixed(4))));
   const hintId = useId();
@@ -40,6 +42,7 @@ export function Field({
           aria-label={label}
           aria-describedby={hint ? hintId : undefined}
           type="number"
+          disabled={disabled}
           value={text}
           min={min}
           max={max}

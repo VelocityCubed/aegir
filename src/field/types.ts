@@ -5,13 +5,16 @@ export interface FieldSettings {
   paddingMm: number;
   durationMs: number;
   frequency: number;
-  signal: "burst" | "tone";
+  signal: "burst" | "tone" | "steady";
   frames: number;
   axis: Axis;
   slice: number;
   backend: "auto" | "cpu" | "webgpu";
   attenuation: number;
   volume: boolean;
+  geometry?: "fitted" | "staircase";
+  /** Developer mesh-phase audit; physical cabinet coordinates are unchanged. */
+  gridShiftMm?: [number, number, number];
 }
 export const fieldDefaults: FieldSettings = {
   cellMm: 20,
@@ -25,8 +28,24 @@ export const fieldDefaults: FieldSettings = {
   backend: "auto",
   attenuation: 0,
   volume: true,
+  geometry: "fitted",
 };
 export interface FieldMeta {
+  medium?: {
+    frequency: number;
+    materialCells: number;
+    regionCells: number[];
+    placement: "nearest-route-guide";
+    scope: string;
+  };
+  steadyState?: { relativeChange: number; settled: boolean; cycles: number };
+  electrical?: {
+    scheme: "implicit-midpoint-MNA";
+    states: number;
+    inputs: number;
+    parts: number;
+  };
+  studyModel?: "basic-wave";
   version: 1;
   project: Project;
   settings: FieldSettings;
@@ -60,7 +79,11 @@ export interface FieldMeta {
     peakExcursion?: number;
     peakCurrent?: number;
   }[];
-  probes: { name: string; positionMm: [number, number, number] }[];
+  probes: {
+    name: string;
+    positionMm: [number, number, number];
+    sampling?: "fixed-trilinear" | "nearest-cell";
+  }[];
   layout: { driverOffset: number; probeOffset: number; total: number };
   volume?: {
     dimensions: [number, number, number];
@@ -82,6 +105,12 @@ export interface FieldMeta {
     pointsPerWavelength: number;
     pmlCells: number;
     rearAirReachesExterior: boolean;
+    geometry?: "conservative-cut-cell" | "staircase";
+    partialCells?: number;
+    minimumAirFraction?: number;
+    timeStepRatio?: number;
+    pistonCoverage?: number[];
+    scope?: string;
   };
   pressurePeak: number;
   pressureScale: number;
@@ -93,6 +122,9 @@ export interface FieldResult {
   volumeMask?: Uint8Array;
 }
 export interface PreparedField {
+  fitted?: Float64Array;
+  medium?: Float64Array;
+  electrical?: import("./circuit").CircuitStep;
   meta: FieldMeta;
   flags: Uint32Array;
   aux: Float64Array;
@@ -104,6 +136,8 @@ export interface PreparedField {
   recordMask: Uint8Array;
   recordSteps: Uint32Array;
   probeCells: Uint32Array;
+  probeNodes?: Uint32Array;
+  probeWeights?: Float64Array;
   coeffOffsets: [number, number, number];
   volumeCells?: Uint32Array;
   volumeMask?: Uint8Array;
@@ -130,8 +164,24 @@ export function validateFieldSettings(
     typeof s.volume !== "boolean" ||
     !["xy", "xz", "yz"].includes(s.axis) ||
     !["auto", "cpu", "webgpu"].includes(s.backend) ||
-    !["burst", "tone"].includes(s.signal)
+    !["burst", "tone", "steady"].includes(s.signal)
   )
     throw Error("Invalid field recording/backend settings.");
+  if (
+    !["fitted", "staircase"].includes(s.geometry ?? "fitted") ||
+    (s.gridShiftMm &&
+      (s.gridShiftMm.length !== 3 ||
+        s.gridShiftMm.some(
+          (v) => !Number.isFinite(v) || Math.abs(v) > s.cellMm * 0.5,
+        )))
+  )
+    throw Error("Invalid geometry scheme or mesh shift (maximum half a cell).");
+  if (
+    s.signal === "steady" &&
+    ((s.durationMs * s.frequency) / 1000 < 8 || s.frames < 64)
+  )
+    throw Error(
+      "A steady-tone study needs at least eight periods and 64 recording frames.",
+    );
   return s;
 }

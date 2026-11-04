@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { PressureSlice } from "../field/pressureSlice";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { RotateCcw, Layers, Move3D, Route, Maximize2 } from "lucide-react";
 import { panelGeometry } from "../core/meshes";
@@ -92,13 +93,27 @@ export function ModelView({
       controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.target.set(g.width / 2, g.height / 2, g.depth / 2);
+    const sliceAxis = fieldOverlay
+      ? new PressureSlice(
+          fieldOverlay.result,
+          fieldOverlay.displayMode !== "slice" &&
+            fieldOverlay.metric === "pressure"
+            ? "auto"
+            : fieldOverlay.metric === "pressure"
+              ? (fieldOverlay.slicePlane ?? "recorded")
+              : "recorded",
+          fieldOverlay.slicePosition ?? 0.5,
+        ).plane.axis
+      : null;
+    const cutSide =
+      sliceAxis === "yz" ? "left" : sliceAxis === "xz" ? "top" : null;
     const fit = () => {
       const size =
         Math.max(g.height, g.width, g.depth) * (fieldOverlay ? 1.1 : 1);
       camera.position.set(
-        g.width / 2 - size * 0.8,
-        g.height / 2 + size * 0.42,
-        -size * 1.8,
+        g.width / 2 - size * (sliceAxis === "yz" ? 1.65 : 0.8),
+        g.height / 2 + size * (fieldOverlay ? 0.24 : 0.42),
+        -size * (sliceAxis === "yz" ? 0.85 : 1.8),
       );
       controls.target.set(g.width / 2, g.height / 2, g.depth / 2);
       controls.update();
@@ -133,7 +148,7 @@ export function ModelView({
     scene.add(floor);
     const meshes: THREE.Mesh[] = [];
     for (const panel of g.panels) {
-      if (section && panel.id === "front") continue;
+      if (section && (panel.id === "front" || panel.id === cutSide)) continue;
       const geo = panelGeometry(panel),
         mat = new THREE.MeshStandardMaterial({
           color:
@@ -318,6 +333,9 @@ export function ModelView({
     JSON.stringify(view?.camera),
     view?.selectedPanel,
     fieldOverlay?.key,
+    fieldOverlay?.slicePlane,
+    fieldOverlay?.metric,
+    fieldOverlay?.displayMode,
   ]);
   useEffect(() => {
     if (fieldOverlay) fieldRenderer.current?.update(fieldOverlay);
@@ -337,11 +355,18 @@ export function ModelView({
     ],
   );
   return (
-    <div className="model-view">
+    <div className="model-view" data-field-display={fieldOverlay?.displayMode}>
       <div className="model-top">
         <span>
           <i className="live-dot" />{" "}
-          {fieldOverlay ? "3D FIELD CUTAWAY" : "PARAMETRIC MODEL"} <em>mm</em>
+          {fieldOverlay
+            ? fieldOverlay.displayMode === "volume"
+              ? "WHOLE 3D PRESSURE WAVE"
+              : fieldOverlay.displayMode === "fronts"
+                ? "3D PRESSURE SURFACES"
+                : "3D FIELD SECTION"
+            : "PARAMETRIC MODEL"}{" "}
+          <em>mm</em>
         </span>
         <div className="model-tools">
           <button
@@ -398,7 +423,7 @@ export function ModelView({
         <h3>
           {fieldOverlay
             ? "Calculated field in the cabinet and exterior air."
-            : `${g.panels.length} panels. One continuous path.`}
+            : `${g.panels.length} panels. ${g.errors.length ? "Custom enclosure." : "One continuous path."}`}
         </h3>
         <p>{selected || "Drag to orbit · scroll to zoom · click to inspect"}</p>
       </div>

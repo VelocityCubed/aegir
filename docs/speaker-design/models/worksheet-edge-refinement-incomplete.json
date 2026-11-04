@@ -1,0 +1,159 @@
+{
+  "FEM": [
+    {
+      "frequenciesHz": [
+        39.17276726991287,
+        145.3741510244588,
+        241.17054284990306,
+        339.0958758947808,
+        434.36300326820503,
+        525.0160265854964,
+        601.839336633472,
+        678.3838080161918
+      ],
+      "relativeResiduals": [
+        7.2706334453284725e-12,
+        5.869086143246117e-13,
+        2.0793152472750927e-13,
+        2.354689175857936e-13,
+        7.590117919547329e-14,
+        5.78400764588458e-14,
+        4.7843119986105567e-14,
+        2.333028362790058e-12
+      ],
+      "meta": {
+        "cellMm": 60,
+        "edgeRefinement": true,
+        "refinedEdges": 11,
+        "cells": 27009,
+        "nodes": 43376,
+        "cavityLitres": 72.93313651168758,
+        "cadCavityLitres": 72.93313651168756,
+        "mouthAreaMm2": 12903.199999999995,
+        "method": "Independent conforming tetrahedral P[0 1 2 3 4 5 6 7] FEM; exactly integrated consistent mass/stiffness",
+        "boundary": "Rigid walls and sealed drivers; pressure-zero physical mouth plane"
+      }
+    },
+    {
+      "frequenciesHz": [
+        39.01048014941527,
+        145.29446746814858,
+        241.14128848510364,
+        339.0369773809182,
+        434.3205238812027,
+        524.9510140091238,
+        601.7935434517166,
+        678.3199401471809
+      ],
+      "relativeResiduals": [
+        1.0287585813450729e-11,
+        1.538028399693325e-12,
+        2.7632193245248426e-13,
+        2.2006885933219786e-13,
+        2.1233559432909361e-13,
+        7.761677147121891e-14,
+        1.332769996431587e-13,
+        1.6971179635680398e-12
+      ],
+      "meta": {
+        "cellMm": 50,
+        "edgeRefinement": true,
+        "refinedEdges": 11,
+        "cells": 35725,
+        "nodes": 56699,
+        "cavityLitres": 72.93313651168756,
+        "cadCavityLitres": 72.93313651168756,
+        "mouthAreaMm2": 12903.199999999995,
+        "method": "Independent conforming tetrahedral P[0 1 2 3 4 5 6 7] FEM; exactly integrated consistent mass/stiffness",
+        "boundary": "Rigid walls and sealed drivers; pressure-zero physical mouth plane"
+      }
+    }
+  ],
+  "voxel": [
+    {
+      "meta": {
+        "cellMm": 60,
+        "dimensions": [
+          5,
+          16,
+          6
+        ],
+        "pitchMm": [
+          50.8,
+          58.340624999999996,
+          55.03333333333333
+        ],
+        "cells": 460,
+        "cavityLitres": 75.02714833249999,
+        "cadCavityLitres": 72.76926587168758,
+        "volumeScope": "Modal air includes the stock-depth mouth neck; CAD cavity volume is the inner cabinet body.",
+        "mouthAreaMm2": 12903.199999999997,
+        "boundary": "Rigid walls and driver apertures; p=0 on physical mouth plane, including stock-depth outlet neck.",
+        "method": "Cell-centred finite volume; staircase volume with exact solid-crossing face barriers. Refine mesh; this is not an exact curved-surface FEM."
+      },
+      "frequenciesHz": [
+        35.22475609945746,
+        137.45689172616292,
+        225.7588451009083,
+        318.0975944465809,
+        422.4593044743948,
+        505.0060432961862,
+        579.0001878152362,
+        660.6314345559189
+      ],
+      "relativeResiduals": [
+        3.3429089052698575e-13,
+        1.0417364412311762e-13,
+        6.04789763862322e-14,
+        6.020920249498097e-14,
+        5.2373841188421943e-14,
+        6.154269603272618e-14,
+        4.8603477645997035e-14,
+        2.2180023128639015e-12
+      ]
+    },
+    {
+      "meta": {
+        "cellMm": 50,
+        "dimensions": [
+          6,
+          19,
+          7
+        ],
+        "pitchMm": [
+          42.333333333333336,
+          49.12894736842105,
+          47.17142857142857
+        ],
+        "cells": 780,
+        "cavityLitres": 76.52327649473685,
+        "cadCavityLitres": 72.76926587168758,
+        "volumeScope": "Modal air includes the stock-depth mouth neck; CAD cavity volume is the inner cabinet body.",
+        "mouthAreaMm2": 12903.2,
+        "boundary": "Rigid walls and driver apertures; p=0 on physical mouth plane, including stock-depth outlet neck.",
+        "method": "Cell-centred finite volume; staircase volume with exact solid-crossing face barriers. Refine mesh; this is not an exact curved-surface FEM."
+      },
+      "frequenciesHz": [
+        36.386793034404086,
+        139.19817666385686,
+        236.00453869008652,
+        332.8388945598226,
+        405.6610569824909,
+        502.7091774797888,
+        576.8700485695099,
+        654.8956862460471
+      ],
+      "relativeResiduals": [
+        5.090194199794865e-13,
+        1.2137326393232824e-13,
+        5.9543747247448e-14,
+        2.6681057733422918e-14,
+        1.6361216693396292e-14,
+        1.3442553883217464e-14,
+        1.2557696534357641e-14,
+        8.131502566954895e-11
+      ]
+    }
+  ],
+  "incomplete": true
+}

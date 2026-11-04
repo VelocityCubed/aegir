@@ -1,0 +1,109 @@
+{
+  "projectRevision": 9,
+  "job": "479d91d3-3851-4571-8a86-3ece89eaf1cb",
+  "drivers": 2,
+  "modal": "mismatch",
+  "curves": [
+    {
+      "id": "fig18-total",
+      "status": "incompatible",
+      "rmse": 7.8308904935621815,
+      "issues": [
+        "Reference drive voltage is unknown; absolute SPL cannot be verified.",
+        "anechoic radiation/measurement is not the co-located half-space model.",
+        "Polyester density has no calibrated propagation model; generic attenuation is not equivalent.",
+        "Reference extends above the low-ka/plane-wave model limits."
+      ]
+    },
+    {
+      "id": "fig15-low-z",
+      "status": "incompatible",
+      "rmse": 6.27135420161177,
+      "issues": [
+        "Crossover conditions differ."
+      ]
+    }
+  ],
+  "cadAvailable": true,
+  "artifacts": [
+    {
+      "format": "project",
+      "id": "52bc3dcd-f3e3-4d9f-9fa3-d0715854354e",
+      "name": "Satori-two-way-reference-project.aegir.json",
+      "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-two-way-reference-project.aegir.json",
+      "mimeType": "application/json",
+      "size": 29302,
+      "projectRevision": 9,
+      "createdAt": "2026-10-31T22:56:35.217Z",
+      "local": "docs/speaker-design/models/Satori-two-way-reference-project.aegir.json",
+      "sha256": "0b222948d45764a4e0158b7333c3fe0397c5f134925ead6c5c9be4f6f980f045"
+    },
+    {
+      "format": "report",
+      "id": "8e3c2179-82a4-46a4-8546-2f8d510afec5",
+      "name": "Satori-two-way-reference-report.md",
+      "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-two-way-reference-report.md",
+      "mimeType": "text/markdown",
+      "size": 44879,
+      "projectRevision": 9,
+      "createdAt": "2026-10-31T22:56:35.403Z",
+      "local": "docs/speaker-design/models/Satori-two-way-reference-report.md",
+      "sha256": "77faa360fb3a9d1beb1df5cf8b3ee417d9770289cc19c7ea5cdb4074652f1751"
+    },
+    {
+      "format": "bundle",
+      "id": "50ee86a9-af18-4e2b-b27f-66a6f37ab31d",
+      "name": "Satori-two-way-reference-build.zip",
+      "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-two-way-reference-build.zip",
+      "mimeType": "application/zip",
+      "size": 56925,
+      "projectRevision": 9,
+      "createdAt": "2026-10-31T22:56:35.642Z",
+      "local": "docs/speaker-design/models/Satori-two-way-reference-build.zip",
+      "sha256": "e62c33ca360c1b2427b91c4af01cf3b0f474304381cb1b69be0e8913e2b5d33d"
+    },
+    {
+      "format": "manifest",
+      "id": "a0284920-ced4-42cf-8833-0eedb40924a0",
+      "name": "Satori-two-way-reference-manifest.json",
+      "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-two-way-reference-manifest.json",
+      "mimeType": "application/json",
+      "size": 34538,
+      "projectRevision": 9,
+      "createdAt": "2026-10-31T22:56:35.656Z",
+      "local": "docs/speaker-design/models/Satori-two-way-reference-manifest.json",
+      "sha256": "7dd76e23888c451e4dd872a655faa8c233f2f0dce3ee436e0e256ac3f1148a14"
+    },
+    {
+      "format": "step",
+      "id": "1d63feff-536b-49c0-a5d3-17d9e0db854b",
+      "name": "Satori-two-way-reference.step",
+      "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-two-way-reference.step",
+      "mimeType": "model/step",
+      "size": 147697,
+      "projectRevision": 9,
+      "createdAt": "2026-10-31T22:56:48.592Z",
+      "local": "docs/speaker-design/models/Satori-two-way-reference.step",
+      "sha256": "009e7fce4408bd39914c78dfcd8245f5ef636f89872e8a6f66bb2a392f8b762b"
+    }
+  ],
+  "checks": {
+    "build": "passed",
+    "unit_tests": {
+      "files": 9,
+      "tests": 75,
+      "status": "passed"
+    },
+    "desktop_system": "passed",
+    "cpu_gpu_field": "passed",
+    "relative_pressure_l2": 1.9441867148344217e-06,
+    "published_acceptance": "not-achieved"
+  },
+  "cad_checks": {
+    "solid_count": 7,
+    "front_holes": 2,
+    "front_volume_mm3": 2911258.99891435,
+    "expected_volume_mm3": 2911258.99891435,
+    "status": "passed"
+  }
+}

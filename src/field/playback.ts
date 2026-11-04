@@ -1,7 +1,7 @@
 import type { FieldResult } from "./types";
 import type { FieldMetric } from "./pixels";
 import { fieldScale } from "./pixels";
-import { pressureAlpha, negativePressure as cool, positivePressure as warm } from "./transfer";
+import { pressureAlpha, pressureColour } from "./transfer";
 export function frameBlend(
   result: FieldResult,
   frame: number,
@@ -55,9 +55,9 @@ export class PlanePlayback {
               ? speed
               : Math.abs(p) * speed,
         t = Math.min(1, Math.abs(value) / Math.max(1e-12, scale));
-      const colour = metric === "pressure" && value < 0 ? cool : warm;
+      const colour = pressureColour(value,scale,curve);
       for (let c = 0; c < 3; c++)
-        this.pixels[at + c] = Math.round(12 * (1 - t) + colour[c] * t);
+        this.pixels[at + c] = colour[c];
       this.pixels[at + 3] = Math.round(255 * pressureAlpha(t, opacity, curve));
     }
     return this;

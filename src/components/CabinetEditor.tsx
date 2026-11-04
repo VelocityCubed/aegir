@@ -689,6 +689,14 @@ export function CabinetEditor({
               </details>
               <details>
                 <summary>Source excitation</summary>
+                <label>Rear loading
+                  <select aria-label="Driver rear loading" value={mount.rearLoading??'cabinet'} onChange={e=>change(n=>{
+                    n.mounts!.find(m=>m.id===mount.id)!.rearLoading=e.target.value as 'cabinet'|'sealed-back';
+                  })}>
+                    <option value="cabinet">Open into cabinet</option>
+                    <option value="sealed-back">Factory sealed-back</option>
+                  </select>
+                </label>
                 <Field
                   label="Driver voltage scale"
                   value={mount.voltageScale}
@@ -714,8 +722,9 @@ export function CabinetEditor({
                   }
                 />
                 <p>
-                  All sources share the study signal with these scales and
-                  phases. No crossover filtering or cone breakup is modelled.
+                  Scales and phases apply before the frequency-domain crossover.
+                  Configure circuits and reference data in Published-reference checks.
+                  Transient field studies require explicit bypass circuits.
                 </p>
               </details>
             </>

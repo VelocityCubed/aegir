@@ -15,12 +15,14 @@ export function ResponseChart({
   comparisons = [],
   view,
   onViewChange,
+  showReferences = true,
 }: {
   simulation: Simulation & { error?: string };
   project: Project;
   comparisons?: { name: string; color: string; simulation: Simulation }[];
   view?: ViewState;
   onViewChange?: (patch: Partial<ViewState>) => void;
+  showReferences?: boolean;
 }) {
   const [localMetric, localSetMetric] = useState<Metric>("spl"),
     [localComponents, localSetComponents] = useState(false),
@@ -49,7 +51,16 @@ export function ResponseChart({
     bottom = 48,
     w = width - left - right,
     h = height - top - bottom;
-  const x = (f: number) => left + (Math.log(f / 15) / Math.log(800 / 15)) * w;
+  const [sweepLow, sweepHigh] = p.system?.sweep ?? [15, 800];
+  const x = (f: number) =>
+    left + (Math.log(f / sweepLow) / Math.log(sweepHigh / sweepLow)) * w;
+  const references = showReferences
+    ? (p.system?.references?.filter((r) => r.metric === metric) ?? [])
+    : [];
+  const modelLimit = Math.min(
+    s.planeWaveLimit,
+    p.system?.physics?.radiation === "piston" ? Infinity : s.radiationLimit,
+  );
   const multiple = p.mounts && p.mounts.length > 1 ? p.mounts : [],
     sourceColors = [
       "#8cbccb",
@@ -70,6 +81,11 @@ export function ResponseChart({
         ? p.targets.maxVelocity
         : null;
   const values = [
+    ...references.flatMap((r) =>
+      r.samples
+        .filter(([f]) => f >= sweepLow && f <= sweepHigh)
+        .map(([, v]) => v),
+    ),
     ...(metric === "excursion" ? multiple.map((m) => m.driver.xmax) : []),
     ...s.points.map((pt) => pt[metric]),
     ...comparisons.flatMap((c) => c.simulation.points.map((pt) => pt[metric])),
@@ -109,7 +125,12 @@ export function ResponseChart({
     <section className="response-card">
       <div className="response-head">
         <div>
-          <span className="eyebrow">SIMULATION / 1 M · HALF-SPACE</span>
+          <span className="eyebrow">
+            SIMULATION /{" "}
+            {p.system?.observation
+              ? "POSITIONED MICROPHONE"
+              : `${p.system?.distanceM ?? 1} M · IDEAL HALF-SPACE`}
+          </span>
           <h3>How will this design respond?</h3>
         </div>
         <select
@@ -150,6 +171,20 @@ export function ResponseChart({
             {c.name}
           </span>
         ))}
+        {references.map((r) => (
+          <span key={r.id} title={r.source}>
+            <i style={{ background: "#cf9989" }} />
+            {r.title} · reference points
+          </span>
+        ))}
+        {components &&
+          metric === "spl" &&
+          multiple.map((m, i) => (
+            <span key={m.id}>
+              <i style={{ background: sourceColors[i] }} />
+              {m.id}
+            </span>
+          ))}
         {metric === "spl" && (
           <label>
             <input
@@ -190,12 +225,23 @@ export function ResponseChart({
           </clipPath>
         </defs>
         <rect
+          clipPath="url(#plot)"
           x={x(p.targets.low)}
           y={top}
           width={x(p.targets.high) - x(p.targets.low)}
           height={h}
           fill="#1e333d"
         />
+        {!showReferences && modelLimit < sweepHigh && (
+          <rect
+            x={x(Math.max(sweepLow, modelLimit))}
+            y={top}
+            width={width - right - x(Math.max(sweepLow, modelLimit))}
+            height={h}
+            fill="#8b7451"
+            opacity=".16"
+          />
+        )}
         {Array.from({ length: 5 }, (_, i) => {
           const v = lo + ((hi - lo) * i) / 4;
           return (
@@ -214,26 +260,31 @@ export function ResponseChart({
             </g>
           );
         })}
-        {[20, 30, 50, 80, 100, 200, 300, 500, 800].map((f) => (
-          <g key={f}>
-            <line
-              x1={x(f)}
-              x2={x(f)}
-              y1={top}
-              y2={height - bottom}
-              stroke="#26343e"
-            />
-            <text x={x(f)} y={height - 22} textAnchor="middle">
-              {f}
-            </text>
-          </g>
-        ))}
+        {[
+          10, 20, 30, 50, 80, 100, 200, 300, 500, 800, 1000, 2000, 5000, 10000,
+          20000,
+        ]
+          .filter((f) => f >= sweepLow && f <= sweepHigh)
+          .map((f) => (
+            <g key={f}>
+              <line
+                x1={x(f)}
+                x2={x(f)}
+                y1={top}
+                y2={height - bottom}
+                stroke="#26343e"
+              />
+              <text x={x(f)} y={height - 22} textAnchor="middle">
+                {f >= 1000 ? `${f / 1000}k` : f}
+              </text>
+            </g>
+          ))}
         <text x={left + w / 2} y={height - 4} textAnchor="middle">
           Frequency (Hz)
         </text>
         <g clipPath="url(#plot)">
           <path
-            d={`${line(s, metric)} L${x(800)},${y(lo)} L${x(15)},${y(lo)} Z`}
+            d={`${line(s, metric)} L${x(sweepHigh)},${y(lo)} L${x(sweepLow)},${y(lo)} Z`}
             fill="url(#area)"
           />
           {threshold !== null && (
@@ -284,6 +335,39 @@ export function ResponseChart({
               strokeDasharray={["6 3", "2 4", "8 3 2 3", "12 5"][i % 4]}
             />
           ))}
+          {components &&
+            metric === "spl" &&
+            multiple.map((m, j) => (
+              <path
+                key={m.id}
+                d={s.points
+                  .map(
+                    (pt, i) =>
+                      `${i ? "L" : "M"}${x(pt.frequency)},${y(pt.drivers?.find((d) => d.id === m.id)?.spl ?? lo)}`,
+                  )
+                  .join(" ")}
+                fill="none"
+                stroke={sourceColors[j]}
+                strokeWidth="1.4"
+                strokeDasharray={j % 2 ? "3 4" : "7 4"}
+              />
+            ))}
+          {references.flatMap((r) =>
+            r.samples.map(([f, v], i) => (
+              <circle
+                key={r.id + "-" + i}
+                cx={x(f)}
+                cy={y(v)}
+                r="3"
+                fill="#cf9989"
+              >
+                <title>
+                  {r.title}: {f} Hz · {v}. {r.evidence}; graph uncertainty ±
+                  {r.uncertainty}
+                </title>
+              </circle>
+            )),
+          )}
           {metric === "excursion" &&
             multiple.map((m, j) => (
               <g key={m.id}>
@@ -363,8 +447,24 @@ export function ResponseChart({
         <span>
           Shaded region: {p.targets.low}–{p.targets.high} Hz target band
         </span>
-        <span>{p.design.voltage} V RMS · 15–800 Hz sweep</span>
+        <span>
+          {p.design.voltage} V RMS · {sweepLow}–{sweepHigh} Hz sweep
+        </span>
       </div>
+      {p.system && (
+        <p className="field-help">
+          {showReferences && references.length
+            ? "Reference points may have different test conditions. "
+            : ""}
+          {p.system.physics?.radiation === "piston"
+            ? "Full circular-piston radiation load."
+            : `Low-frequency radiation approximation; ka = 1 at ${s.radiationLimit.toFixed(0)} Hz.`}{" "}
+          Line model limit: {s.planeWaveLimit.toFixed(0)} Hz.
+          {!showReferences && modelLimit < sweepHigh
+            ? " Tinted upper frequencies extend beyond the model range."
+            : ""}
+        </p>
+      )}
       {metric === "impedance" && s.impedanceConvention && (
         <p className="field-help">
           {s.impedanceConvention === "first-driven-source"

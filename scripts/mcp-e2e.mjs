@@ -31,7 +31,7 @@ try{
   state=await call('route_trace',{cellSize:8});
   const validation=await call('project_validate');assert.equal(validation.valid,true,JSON.stringify(validation));
   await page.waitForFunction(()=>document.querySelector('input[aria-label="Project name"]')?.value==='Agent-designed tapered fold');
-  assert.ok(await page.locator('.layout-plan svg polyline').count());
+  assert.ok(await page.locator('.three-mount canvas').count());
   const geometry=await call('project_inspect');assert.ok(geometry.geometry.sections.length>100);assert.ok(Math.max(...geometry.geometry.sections.map(v=>v.area))-Math.min(...geometry.geometry.sections.map(v=>v.area))>100);
   const stale=await client.callTool({name:'aegir_project_patch',arguments:{name:'Stale overwrite',expectedRevision:0}});assert.equal(stale.isError,true);assert.equal(parse(stale).code,'REVISION_CONFLICT');
   const before=await call('workspace_get');
@@ -47,8 +47,11 @@ try{
   const swept=await done((await call('analysis_sweep',{path:'mounts.1.phase',values:[0,180],samples:40})).id);assert.equal(swept.status,'completed');assert.ok(Math.abs(swept.result[0].bandMean-swept.result[1].bandMean)>.1);
   await call('snapshot_create',{name:'Angled fold'});
   await call('view_set',{tab:'design',section:true,exploded:true,selectedPanel:baffle.id,metric:'impedance',probeFrequency:60,camera:{eye:[1000,700,-1600],target:[200,600,100]}});
+  assert.equal((await call('view_get')).probeFrequency,60);
+  await call('view_set',{tab:'field',study:'response'});
   await page.waitForFunction(()=>document.querySelector('select[aria-label="Chart metric"]')?.value==='impedance');
-  assert.equal(await page.getByLabel('Probe frequency',{exact:true}).inputValue(),'60');
+  const chart=await call('view_capture',{region:'chart'});assert.ok(chart.size>1000);
+  await call('view_set',{tab:'design'});
   const capture=await client.callTool({name:'aegir_view_capture',arguments:{region:'model'}});assert.equal(capture.isError,undefined);const image=capture.content.find(c=>c.type==='image');assert.ok(image.data.length>1000);await writeFile(join(out,'agent-model.png'),Buffer.from(image.data,'base64'));
   const report=await call('export_create',{format:'report',filename:'acceptance/report.md'});const bundle=await call('export_create',{format:'bundle',filename:'acceptance/build.zip'});const manifest=await call('export_create',{format:'manifest',filename:'acceptance/geometry.json'});const step=await call('export_create',{format:'step',filename:'acceptance/enclosure.step'});
   assert.ok((await stat(step.path)).size>5000);assert.ok((await stat(bundle.path)).size>5000);

@@ -1,0 +1,112 @@
+{
+  "status": {
+    "name": "\u00c6ONFORGE \u00c6GIR",
+    "revision": 271,
+    "projectRevision": 10,
+    "filesDirectory": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files",
+    "liveDesktop": true,
+    "cadAvailable": true,
+    "model": "Segmented 1D line/equivalent-profile model, up to 8 drivers with factory sealed-back loading and loaded passive RLC or active Butterworth branches. Frequency-dependent duct losses, regional MJK2003/JCAL media, source/microphone coordinates, full circular-piston loads and optional Rayleigh near-field evaluation. Imported measured acoustic/impedance crossover path, unfitted sensitivity and3D pressure-release cavity meshes. Source-labelled reference curves and axial-mode comparisons. Experimental 3D FDTD supports unfiltered T/S pistons, including sealed-back units, with exterior PML; circuits and lossy-inductance fits are rejected there. No calibrated stuffing, finite-baffle diffraction, nonlinear or structural prediction.",
+    "runningJobs": 0
+  },
+  "projectName": "MJK Satori TL \u00b7 loss, stuffing and observation study",
+  "drivers": 2,
+  "physics": {
+    "ductLoss": "mjk-2003",
+    "radiation": "piston",
+    "stuffing": [
+      {
+        "start": 0,
+        "end": 0.75,
+        "source": "King 2023 Satori:0.5lb/ft3 over first~3/4 length; King2003 damping correlation is an assumed transfer to this material/design, not a verified2023 fit.",
+        "calibration": "assumed",
+        "material": {
+          "model": "mjk-2003",
+          "densityKgM3": 8.0092317
+        }
+      }
+    ]
+  },
+  "observation": {
+    "positionMm": [
+      114.3,
+      850.9,
+      -3000
+    ],
+    "space": "half-space",
+    "baffle": "sphere-transition",
+    "baffleRadiusMm": 139.7
+  },
+  "referenceJob": "6de3dca2-7617-4784-9af6-10166e894bb6",
+  "artifacts": [
+    {
+      "format": "project",
+      "id": "ba2fd185-ea48-49ca-80e2-bf5e24a99bcf",
+      "name": "Satori-physics-upgraded.aegir.json",
+      "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-physics-upgraded.aegir.json",
+      "mimeType": "application/json",
+      "size": 61749,
+      "projectRevision": 10,
+      "createdAt": "2026-11-01T19:10:11.509Z",
+      "local": "docs\\speaker-design\\models\\Satori-physics-upgraded.aegir.json",
+      "sha256": "02c2105f9e9df65269cd5ce8ee62e628cca2d60e25c67bee719cd7ba6a8209a2"
+    },
+    {
+      "format": "report",
+      "id": "1ec90c14-b239-4db9-a2a9-6c7d56112912",
+      "name": "Satori-physics-upgraded-report.md",
+      "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-physics-upgraded-report.md",
+      "mimeType": "text/markdown",
+      "size": 160774,
+      "projectRevision": 10,
+      "createdAt": "2026-11-01T19:10:11.779Z",
+      "local": "docs\\speaker-design\\models\\Satori-physics-upgraded-report.md",
+      "sha256": "f7ca2a77585361e07aa1dbb3fb976fc71d7229d57492f8d3de59eee8c04f911c"
+    },
+    {
+      "format": "manifest",
+      "id": "c54dec2b-fbf7-42bc-b3ac-52b544b66f24",
+      "name": "Satori-physics-upgraded-geometry.json",
+      "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-physics-upgraded-geometry.json",
+      "mimeType": "application/json",
+      "size": 70759,
+      "projectRevision": 10,
+      "createdAt": "2026-11-01T19:10:11.813Z",
+      "local": "docs\\speaker-design\\models\\Satori-physics-upgraded-geometry.json",
+      "sha256": "532ae352553cac677f038a4a999f8143da8cc7041b17bc9bc301eba62e8f52ff"
+    },
+    {
+      "format": "bundle",
+      "id": "d1158776-5c4f-49f3-bf66-1f95ddafa89b",
+      "name": "Satori-physics-upgraded-build.zip",
+      "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-physics-upgraded-build.zip",
+      "mimeType": "application/zip",
+      "size": 92737,
+      "projectRevision": 10,
+      "createdAt": "2026-11-01T19:10:12.106Z",
+      "local": "docs\\speaker-design\\models\\Satori-physics-upgraded-build.zip",
+      "sha256": "b6d6902d9f6415ba9a0c6fd29dfbb96d72722ef4a822fefa1e23fcac92bd0dad"
+    },
+    {
+      "format": "step",
+      "id": "834c59d6-6628-4208-ad94-3bafd4d27a70",
+      "name": "Satori-physics-upgraded.step",
+      "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-physics-upgraded.step",
+      "mimeType": "model/step",
+      "size": 147697,
+      "projectRevision": 10,
+      "createdAt": "2026-11-01T19:10:18.704Z",
+      "local": "docs\\speaker-design\\models\\Satori-physics-upgraded.step",
+      "sha256": "664e86b3ccb3e28d2bc3bba3678e774a80c4aa8d76197f4aa7e6e1f8a170441c"
+    }
+  ],
+  "checks": {
+    "typescriptTests": 86,
+    "pythonTests": 3,
+    "productionBuild": "passed",
+    "legacySystemDesktop": "passed",
+    "physicsDesktopSource": "passed",
+    "physicsDesktopPackaged": "passed"
+  },
+  "acceptance": "Complete published reproduction not achieved; modal mesh/volume not stable; unknown reference voltage and assumed stuffing/baffle remain."
+}

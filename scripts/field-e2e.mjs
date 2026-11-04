@@ -81,6 +81,8 @@ try {
   );
   // Distinct physical drivers on opposite faces exercise size and orientation.
   project.mounts[1].face = "back";
+  // Exercise both acoustic port types through the actual CPU and GPU kernels.
+  project.mounts[1].rearLoading = "sealed-back";
   project.mounts[1].driver = {
     ...project.mounts[1].driver,
     name: "Synthetic 125 mm secondary",
@@ -94,7 +96,7 @@ try {
   await call("project_replace", { project, requireValidGeometry: true });
   await call("view_set", {mode:"advanced"});
   const cpuJob = await complete(
-    (await call("field_run", { settings: { ...settings, backend: "cpu" } })).id,
+    (await call("field_run", {basicWaveModel:true, settings: { ...settings, backend: "cpu" } })).id,
   );
   assert.equal(cpuJob.status, "completed");
   const cpu = await call("field_result", {
@@ -189,7 +191,7 @@ try {
     "Hardware acceptance requires WebGPU.",
   );
   const gpuJob = await complete(
-    (await call("field_run", { settings: { ...settings, backend: "webgpu" } }))
+    (await call("field_run", {basicWaveModel:true, settings: { ...settings, backend: "webgpu" } }))
       .id,
   );
   const gpu = await call("field_result", {
@@ -369,7 +371,7 @@ try {
   );
   await call("project_patch", { name: "Changed after wave study" });
   assert.equal((await call("field_result", { id: gpuJob.id })).stale, true);
-  const cancel = await call("field_run", {
+  const cancel = await call("field_run", {basicWaveModel:true,
     settings: {
       ...settings,
       cellMm: 12,
@@ -384,7 +386,7 @@ try {
   for (const axis of ["xz", "yz"]) {
     const job = await complete(
       (
-        await call("field_run", {
+        await call("field_run", {basicWaveModel:true,
           settings: { ...settings, axis, backend: "webgpu", durationMs: 8 },
         })
       ).id,
@@ -418,7 +420,7 @@ try {
   }
   const legacyJob = await complete(
     (
-      await call("field_run", {
+      await call("field_run", {basicWaveModel:true,
         settings: { ...settings, volume: false, backend: "cpu", durationMs: 8 },
       })
     ).id,
@@ -454,7 +456,7 @@ try {
   if (process.env.AEGIR_FIELD_DEMO === "1") {
     const job = await complete(
       (
-        await call("field_run", {
+        await call("field_run", {basicWaveModel:true,
           settings: {
             cellMm: 20,
             paddingMm: 180,

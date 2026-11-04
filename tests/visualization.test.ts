@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { defaultProject } from "../src/core/defaults";
+import { defaultProject as baseProject } from "../src/core/defaults";
+const defaultProject=structuredClone(baseProject);
+defaultProject.design.damping=0; // These fixtures explicitly model unfilled air.
 import { buildGeometry } from "../src/core/geometry";
 import { runFieldCpu, FieldKernel } from "../src/field/cpu";
 import { prepareField, visualMotionClipper } from "../src/field/grid";
@@ -42,7 +44,7 @@ describe("physical field visualization", () => {
   });
   it("records a 3D pressure volume and parcel displacements without changing the acoustic solution", async () => {
     const settings = {
-      cellMm: 30,
+      geometry: 'staircase' as const, cellMm: 30,
       paddingMm: 300,
       durationMs: 8,
       frequency: 700,
@@ -77,7 +79,7 @@ describe("physical field visualization", () => {
   }, 20000);
   it("observes instantaneous pressure at every recorded volume point and integrates the existing midpoint air velocity", () => {
     const g = prepareField(defaultProject, {
-        cellMm: 30,
+        geometry: 'staircase' as const, cellMm: 30,
         paddingMm: 300,
         durationMs: 5,
         frames: 12,
@@ -162,7 +164,7 @@ describe("physical field visualization", () => {
   });
   it("bounds 640-frame volume recording independently of the solver mesh", () => {
     const settings = {
-      cellMm: 30,
+      geometry: 'staircase' as const, cellMm: 30,
       paddingMm: 300,
       durationMs: 10,
       frequency: 400,

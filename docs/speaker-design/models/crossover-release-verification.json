@@ -1,0 +1,47 @@
+{
+  "projectUnchanged": true,
+  "projectRevision": 10,
+  "name": "MJK Satori TL · loss, stuffing and observation study",
+  "driverCount": 2,
+  "version": "0.9.0",
+  "installedExecutable": "C:\\dev\\speakerDesigner\\release\\win-unpacked\\AEONFORGE Aegir.exe",
+  "packagedCrossoverUI": {
+    "nativeDragDrop": true,
+    "actualComponentDragging": true,
+    "manualTerminalWiring": true,
+    "voltagePreview": true,
+    "arbitraryWiringEngine": true,
+    "SIUnits": true,
+    "draftIsolation": true,
+    "undo": true,
+    "saveImport": true,
+    "BOM": true,
+    "persistence": true,
+    "staleEditsRejected": true,
+    "responsive": true
+  },
+  "coupledField": {
+    "relativePressureError": 6.493498017975774e-06,
+    "steadyMediaPressureError": 0.0001733607744888646,
+    "steadyState": {
+      "relativeChange": 0.0008586148214503175,
+      "settled": true,
+      "cycles": 24
+    },
+    "circuitParts": 9,
+    "states": 12,
+    "sourceProjectUnchanged": true,
+    "CPU": "cpu-float64",
+    "GPU": "webgpu-float32",
+    "errors": []
+  },
+  "portable": {
+    "portableStarted": true,
+    "isolatedProfile": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-portable-09-bzkAFZ",
+    "pid": 54432,
+    "executable": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\3LWqe6DvcmWDSEQQ1UEcxUmf3of\\AEONFORGE Aegir.exe",
+    "payloadSha256": "f09f382dff7422c4f2c1552b24c0cdf4798b5d6fdbd309799d2701d20b475e77",
+    "identicalToTestedDesktop": true,
+    "projectRevision": 0
+  }
+}

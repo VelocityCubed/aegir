@@ -1,0 +1,208 @@
+{
+  "schema": "speaker-study-verification-v1",
+  "reviewed": "2026-10-31",
+  "application": "AEONFORGE Aegir 0.7.0",
+  "primaryProjectRevision": 8,
+  "geometry": {
+    "physicalValid": true,
+    "physicalErrors": [],
+    "singleRoute1DAnalysisAvailable": false,
+    "cadCavityLitres": 72.76926587168758
+  },
+  "studies": [
+    {
+      "jobId": "677450da-0a30-4760-9419-bf1f8ab28409",
+      "projectRevision": 6,
+      "settings": {
+        "cellMm": 12.7,
+        "paddingMm": 254,
+        "durationMs": 100,
+        "frequency": 50,
+        "signal": "burst",
+        "frames": 200,
+        "axis": "yz",
+        "slice": 0.5,
+        "backend": "webgpu",
+        "attenuation": 0,
+        "volume": true
+      },
+      "backend": "webgpu-float32",
+      "cells": 481864,
+      "steps": 5511,
+      "dt_seconds": 1.8148320295562313e-05,
+      "quality": {
+        "cadCavityLitres": 72.76926587168758,
+        "voxelCavityLitres": 72.22598457999999,
+        "volumeError": 0.007465806960943455,
+        "pointsPerWavelength": 270.40944881889766,
+        "pmlCells": 10,
+        "rearAirReachesExterior": true
+      },
+      "sourcePeaks": [
+        {
+          "id": "primary",
+          "name": "Satori WO24P-4 · King's measured set",
+          "xmax": 8.5,
+          "sd": 0.025500000000000002,
+          "peakExcursion": 0.4442933714017272,
+          "peakCurrent": 0.1356954127550125
+        }
+      ],
+      "warnings": [
+        "Experimental linear 3D FDTD: rigid cabinet, rigid-piston T/S sources, no panel vibration, cone breakup or nonlinear port flow.",
+        "Driver basket/magnet and bracing displacement are not included unless represented by cabinet solids. No calibrated porous stuffing model; the 1D damping value is not used. Uniform attenuation is an optional phenomenological loss.",
+        "Exterior PML and staircase geometry require padding/grid convergence and physical validation.",
+        "3D pressure recording sampled every 4 grid cells (50.8 mm); the full-resolution solver is unchanged. Interpolated rendering cannot recover unresolved recorded detail.",
+        "Preview grid: thinnest stock spans 1.0 cells. Exact face barriers prevent wall leakage, but volume/angle errors require refinement.",
+        "Short study: fewer than six carrier cycles; a settled bass response is not established.",
+        "Recording downsampled by 3 in each plane direction to bound memory; the solver uses the full 3D grid.",
+        "1D route-intent diagnostics are not spatial boundaries; actual air connectivity determines wave travel."
+      ],
+      "artifact": {
+        "id": "32d12464-b2c6-4397-8249-313147e84c78",
+        "name": "677450da-0a30-4760-9419-bf1f8ab28409.aegir-field.zip",
+        "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\fields\\677450da-0a30-4760-9419-bf1f8ab28409.aegir-field.zip",
+        "mimeType": "application/zip",
+        "size": 8020917,
+        "projectRevision": 6,
+        "createdAt": "2026-10-31T21:40:50.599Z"
+      }
+    },
+    {
+      "jobId": "7c14a38a-a327-4ecc-8f3b-7cd30c45c471",
+      "projectRevision": 8,
+      "settings": {
+        "cellMm": 10,
+        "paddingMm": 254,
+        "durationMs": 100,
+        "frequency": 50,
+        "signal": "burst",
+        "frames": 160,
+        "axis": "yz",
+        "slice": 0.5,
+        "backend": "webgpu",
+        "attenuation": 0,
+        "volume": true
+      },
+      "backend": "webgpu-float32",
+      "cells": 998718,
+      "steps": 6998,
+      "dt_seconds": 1.429001598075773e-05,
+      "quality": {
+        "cadCavityLitres": 72.76926587168758,
+        "voxelCavityLitres": 69.625,
+        "volumeError": 0.043208706780576756,
+        "pointsPerWavelength": 343.42,
+        "pmlCells": 12,
+        "rearAirReachesExterior": true
+      },
+      "sourcePeaks": [
+        {
+          "id": "primary",
+          "name": "Satori WO24P-4 · King's measured set",
+          "xmax": 8.5,
+          "sd": 0.025500000000000002,
+          "peakExcursion": 0.4418181488290429,
+          "peakCurrent": 0.13587629795074463
+        }
+      ],
+      "warnings": [
+        "Experimental linear 3D FDTD: rigid cabinet, rigid-piston T/S sources, no panel vibration, cone breakup or nonlinear port flow.",
+        "Driver basket/magnet and bracing displacement are not included unless represented by cabinet solids. No calibrated porous stuffing model; the 1D damping value is not used. Uniform attenuation is an optional phenomenological loss.",
+        "Exterior PML and staircase geometry require padding/grid convergence and physical validation.",
+        "3D pressure recording sampled every 4 grid cells (40 mm); the full-resolution solver is unchanged. Interpolated rendering cannot recover unresolved recorded detail.",
+        "Preview grid: thinnest stock spans 1.3 cells. Exact face barriers prevent wall leakage, but volume/angle errors require refinement.",
+        "Short study: fewer than six carrier cycles; a settled bass response is not established.",
+        "Recording downsampled by 3 in each plane direction to bound memory; the solver uses the full 3D grid.",
+        "1D route-intent diagnostics are not spatial boundaries; actual air connectivity determines wave travel."
+      ],
+      "artifact": {
+        "id": "8d4c2b4b-b3dd-4623-9a00-38795355577b",
+        "name": "7c14a38a-a327-4ecc-8f3b-7cd30c45c471.aegir-field.zip",
+        "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\fields\\7c14a38a-a327-4ecc-8f3b-7cd30c45c471.aegir-field.zip",
+        "mimeType": "application/zip",
+        "size": 11622241,
+        "projectRevision": 8,
+        "createdAt": "2026-10-31T21:44:50.307Z"
+      }
+    }
+  ],
+  "gridComparison": {
+    "commonInterpolatedSamples": 918,
+    "displacementRelativeL2": 0.01365000272735845,
+    "peakDisplacementRelativeDifference": 0.005571144500479686,
+    "interpretation": "Similar displacement in two preview grids; not mesh convergence. Voxel-volume error worsens with the 10 mm grid. No padding or time convergence established."
+  },
+  "rejected1D": {
+    "jobId": "bb6a26f5-9356-4c63-b211-9b7820f81c9b",
+    "projectRevision": 7,
+    "sectionAreaMax_mm2": 237096.3,
+    "terminusArea_mm2": 12903.2,
+    "status": "Rejected for performance inference; ray-derived sections inappropriate at bend/exit"
+  },
+  "acceptance": {
+    "projectAndJsonReadable": true,
+    "zipIntegrity": true,
+    "stepExported": true,
+    "visibleDesktopVerified": true,
+    "physicalPrototype": false,
+    "calibratedStuffing": false,
+    "fullCrossover": false,
+    "broadbandResponse": false,
+    "meshConverged": false,
+    "stepReimport": "7 valid positive-volume solids",
+    "jsonAndLocalMarkdownLinks": "passed"
+  },
+  "artifacts": [
+    {
+      "kind": "project",
+      "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-TL-bass-study-final.aegir.json",
+      "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-TL-bass-study-final.aegir.json"
+    },
+    {
+      "kind": "report",
+      "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-TL-bass-study-final.md",
+      "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-TL-bass-study-final.md"
+    },
+    {
+      "kind": "manifest",
+      "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-TL-bass-study-final.geometry.json",
+      "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-TL-bass-study-final.geometry.json"
+    },
+    {
+      "kind": "bundle",
+      "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-TL-bass-study-final.zip",
+      "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-TL-bass-study-final.zip"
+    },
+    {
+      "kind": "step",
+      "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-TL-bass-study-final.step",
+      "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-TL-bass-study-final.step"
+    },
+    {
+      "kind": "coarse-field",
+      "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\fields\\677450da-0a30-4760-9419-bf1f8ab28409.aegir-field.zip",
+      "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-12.7mm.aegir-field.zip"
+    },
+    {
+      "kind": "fine-field",
+      "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\fields\\7c14a38a-a327-4ecc-8f3b-7cd30c45c471.aegir-field.zip",
+      "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-10mm.aegir-field.zip"
+    }
+  ],
+  "priorProjectBackup": "Before-Satori-research-reference.aegir.json",
+  "priorProjectSnapshot": "5cb1368a-2f0e-45d6-82b6-376ac0ccb279",
+  "screenshots": [
+    "Satori-model.png",
+    "Satori-wave-study.png"
+  ],
+  "artifactHashes_sha256": {
+    "Satori-10mm.aegir-field.zip": "8b543ab7bd618f638be6991669d45c653badd630a2be19c0b1595c79e044c5b1",
+    "Satori-12.7mm.aegir-field.zip": "6e83ccf627d1e1cbd8ac4eb86db0224b7ac198b18606b668cab6fc6e86a1aac2",
+    "Satori-model.png": "daad2f097dfd01bf64d7bb4d64163cb83bd2e34cb1a020475ea9ed46003fcd7e",
+    "Satori-TL-bass-study-final.aegir.json": "c6419258072f53891b3bb18a2d6a54f1d3929597b4330233386f40c754570065",
+    "Satori-TL-bass-study-final.step": "77ecf1d0d3a4e29244f66765e95d38b49d7d785f5804b086cbda63ae13eb2daf",
+    "Satori-TL-bass-study-final.zip": "5449244a0b6a80ba2efdf7ebb498e28f83734ccf5f77e32a08306a3e914ad9bf",
+    "Satori-wave-study.png": "7bcf10a00770aa8d418ae662286a3291872ef641d12cd6b29a621c1b5283b831"
+  }
+}

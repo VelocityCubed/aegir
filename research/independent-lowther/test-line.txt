@@ -1,0 +1,301 @@
+
+===== PAGE 1 =====
+Section 2.0 : Construction and Measurement of a Simple Test Transmission Line
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Section 2.0 : Construction and Measurement of a Simple Test Transmission Line
+After deciding to use a Focal 8V 4412 mid-bass driver for my first transmission
+line design, I started looking for a simple enclosure in which to perform some testing to
+correlate my mathematical model. I came across a 48” long cardboard tube with a 7¼”
+inner diameter and ¼” wall thickness at my local hardware store. For five dollars I had a
+test transmission line enclosure. At one end of the tube I attached a nine inch square
+piece of ¾” thick plywood with a circular cutout that fit snuggly over the tube’s outer
+diameter. To secure this plywood flange, nails were driven outward through the tube into
+the plywood at eight locations. The seam was sealed on both sides with silicon caulk.
+The Focal 8V 4412 driver was mounted to the flange with a length of speaker cable
+threaded out through the open end of the tube. Figure 2.1 shows the test transmission
+line set-up.
+The first test I ran, after breaking in the drivers, was to determine the Thiele /
+Small parameters of the Focal 8V 4412 using Liberty Instrument’s Audiosuite
+measurement program LAUD. Table 2.1 shows the results of these measurements along
+with the manufacturer’s specifications.
+Table 2.1 : Measured Thiele / Small Parameters
+of the Focal 8V 4412
+Property Spec. Average Driver 1 Driver 2 Units
+f 27.4 33.7 33.0 34.3 Hz
+d
+V 105.9 66.9 67.8 65.9 liters
+ad
+Q 0.30 0.38 0.38 0.37
+td
+Q 0.33 0.44 0.44 0.44
+ed
+Q 2.90 2.57 2.66 2.47
+md
+R 7.7 7.7 7.7 7.7 ohm
+e
+S 221.7 cm2
+d
+C (10-7) 7.54 4.83 4.89 4.76 m5/N
+ad
+M 44.8 46.5 47.7 45.2 kg/m4
+ad
+R 2657 3829 3717 3941 N sec/m5
+ad
+C (10-3) 1.53 0.98 0.99 0.97 m/N
+md
+M 22.0 22.8 23.4 22.2 gm
+md
+R 1.306 1.882 1.827 1.937 gm/sec
+md
+C 248.4 270.2 274.7 265.6 µF
+med
+L 135.9 82.9 84.8 81.0 mH
+ced
+R 67.8 45.0 46.7 43.2 ohm
+ed
+Bl 9.4 9.2 9.2 9.1 N/amp
+After determining the Thiele / Small parameters for the Focal 8V 4412 drivers,
+Driver 2 was mounted in the test transmission line enclosure. At this point the tube was
+completely empty. Three separate measurements were made. The first measurement
+was of the impedance of the driver mounted in the tube. The second and third
+measurements were of the SPL directly in front of the driver and the SPL at the terminus
+of the tube. For the SPL measurements, the microphone was mounted as close to the
+driver and terminus as possible to eliminate any reflections that might be generated from
+the floor or the baffle. The microphone was placed ¼” in front of the center of the driver
+dust cap and then out ¼” axially, along the centerline, from the terminus end of the tube.
+Page 1 of 10
+
+===== PAGE 2 =====
+Section 2.0 : Construction and Measurement of a Simple Test Transmission Line
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+The results of these measurements are shown in Figure 2.2. The top plot is the
+magnitude and phase of the system impedance. The middle plot is the SPL and phase
+of the woofer response. The bottom plot is the SPL and phase of the terminus response.
+Each plot contains a title describing the measurement being presented. Each plot also
+contains the sampling rate and sample size used during the measurement. For all of the
+frequency response plots, ten measurements were averaged to get the final data.
+The measurements were repeated after stuffing the tube with 100 gm, 200 gm,
+and 300 gm of Dacron Hollofil II fiber. To stuff the tube, I made a 48” long cheese-cloth
+cylinder and tied the ends closed with string. To add or remove stuffing, the cheese-cloth
+cylinder was pulled out of the cardboard tube, untied, and unrolled flat. This technique
+made it easy to adjust the amount and type of stuffing in the test transmission line.
+Figures 2.3, 2.4, and 2.5 show the results of the measurements for 100 gm, 200 gm, and
+300 gm of Dacron Hollofil II stuffing. The format of the plots is the same as described for
+Figure 2.2.
+I studied the measurement results to try and understand the behavior of the test
+transmission line. I started with the unstuffed measurements shown in Figure 2.2. A lot
+can be learned from these three plots. First, I calculated the quarter wavelength modes
+of the tube after including an end correction to the tube length corresponding to an
+unflanged exit boundary condition. The ¼ wavelength calculation is shown below.
+L = 48.25” = 1.226 m
+tube
+L = 48.25” + 0.6 x 3.625” = 1.281 m
+effective
+f = c / (4 L ) = 67 Hz
+effective
+c = 342 m/sec
+air
+Table 2.2 shows the driver resonant frequency, the calculated tube quarter wavelength
+frequencies, and the measured system peaks from the plots in Figure 2.2.
+Table 2.2 : Calculated and Measured Frequencies for the Unstuffed Test Line
+Mode Measured Driver Calculated Tube Measured System
+Resonance (Hz) Frequencies (Hz) Frequencies (Hz)
+Driver 34 22
+1/4 Wavelength 67 94
+3/4 Wavelength 200 214
+5/4 Wavelength 334 343
+7/4 Wavelength 467 475
+9/4 Wavelength 601 598
+11/4 Wavelength 734 727
+The first thing I noticed in Figure 2.2 was a shift of the driver resonant frequency
+in the impedance curve. The driver resonant frequency of approximately 34 Hz, as
+reported in Table 2.1, dropped to 22 Hz when the driver was mounted in the test
+transmission line. I attribute this change in frequency to an additional mass loading on
+the speaker cone from the air moving in the transmission line. At this low frequency, the
+air in the transmission line acts like a solid slug of mass. Using the value of M from
+md
+Table 2.1 and the mass of air in the tube, the lowest system resonant frequency can be
+estimated and compared to the measured value.
+Page 2 of 10
+
+===== PAGE 3 =====
+Section 2.0 : Construction and Measurement of a Simple Test Transmission Line
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+M = 22.2 gm
+md
+M = ρ V
+air air tube
+= 1.21 kg/m3 (0.033 m3)
+= 39.9 gm
+f = (1 / 2π) {1 / [C (M + M )]}1/2
+system md md air
+= 20 Hz
+I also noticed in Figure 2.2 that the resonance peak I would associate with the ¼
+wavelength mode of the tube had risen in frequency. The peak in the impedance plot,
+and in the terminus SPL response plot, occurs at 91 Hz versus the calculated value of
+67 Hz. However, in the driver SPL response plot, a sharp null is evident at 70 Hz. This
+sharp null almost matches the calculated ¼ wavelength frequency of 67 Hz. The drop in
+the driver resonant frequency and the rise in the first tube resonant frequency is identical
+in behavior to what is seen in the response plots for a ported box design.
+I then started looking at Figures 2.3, 2.4, and 2.5 that show the same
+measurements as Figure 2.2 but for three different amounts of Dacron Hollofil II stuffing.
+Converting the amount of stuffing in the test line into a mass per unit volume yields the
+following densities.
+100 gm = 0.191 lb/ft3
+200 gm = 0.382 lb/ft3
+300 gm = 0.573 lb/ft3
+These values span the stuffing density I anticipated using in my final designs. The
+quarter wavelength resonant frequencies were tabulated for each stuffing density. The
+terminus SPL phase plots were used to identify the measured resonant frequency for
+each mode. At the quarter wavelength frequencies, the phase angle passes through +90
+degrees or -90 degrees. The impedance curves were used to identify the measured
+shifted driver resonant frequency. Table 2.3 shows these results.
+Page 3 of 10
+
+===== PAGE 4 =====
+Section 2.0 : Construction and Measurement of a Simple Test Transmission Line
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Table 2.3 : Measured Resonant Frequencies for the Unstuffed and Stuffed Test Line
+Mode Unstuffed 100 gm of 200 gm of 300 gm of
+Line (Hz) Hollofil Hollofil Hollofil
+Stuffing (Hz) Stuffing (Hz) Stuffing (Hz)
+Driver 22 21 22 22
+1/4 Wavelength 94 94 94 91
+3/4 Wavelength 214 205 199 193
+5/4 Wavelength 343 330 319 306
+7/4 Wavelength 475 454 439 428
+9/4 Wavelength 598 577 560 545
+11/4 Wavelength 727 703 686 669
+Looking at the first two rows of Table 2.3, observe that the driver resonant
+frequency and the ¼ wavelength frequency are essentially constant with increasing
+stuffing density. The frequency values appear to be independent of the amount of
+stuffing. This is the frequency range where Bradbury’s equations would predict that the
+air and the fibers are coupled, by a viscous damping coefficient, and the speed of sound
+is significantly reduced due to the moving fibers. There is no evidence in Table 2.3 that
+this is occurring. There does not appear to be any dramatic reduction in the speed of
+sound. At this point, I postulated that at low frequencies the fibers in a transmission line
+are not moving.
+There are two sources of energy dissipation in the stuffed transmission line. First,
+viscous losses occur as the sound wave moves through the fibrous tangle. The relative
+motion between the air and the fibers results in viscous forces opposing the air motion.
+As the sound wave travels along the tube, overcoming these viscous forces transforms
+mechanical energy into heat.
+A second energy dissipation source can be attributed to the traveling sound wave
+changing from an adiabatic process to a non-adiabatic process. This occurs when heat
+transfer takes place between the sound wave and the fibrous tangle. The direct result of
+changing from an adiabatic to a non-adiabatic process is a slight reduction in the speed
+of sound. The speed of sound in air can be calculated using the following equation.
+c = [(n p ) / ρ ]1/2
+air 0 air
+n = 1.4 (adiabatic process)
+p = 1.013 x 105 Pa at 20 C
+0
+ρ = 1.21 kg/m3 at 20 C
+air
+c = 342 m/sec
+air
+If the process were to become non-adiabatic, the ratio of the specific heats n would
+decrease slightly. For example, if n decreased from 1.4 to 1.2.
+n = 1.2 for a non-adiabatic process
+c = 317 m/sec
+fiber
+Page 4 of 10
+
+===== PAGE 5 =====
+Section 2.0 : Construction and Measurement of a Simple Test Transmission Line
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Starting at the ¾ wavelength mode and moving across the rows in Table 2.3, you
+can see a slight drop in the frequency of each mode as more stuffing is added to the test
+line. If the fibers are not moving, then this results from the viscous damping and a non-
+adiabatic process decreasing the speed of sound. Knowing the length of the tube and
+the quarter wavelength frequencies, you can calculate the speed of sound for each entry
+in Table 2.3. Table 2.4 displays the results of this calculation for each stuffing density.
+Table 2.4 : Calculated Speed of Sound for the Unstuffed and Stuffed Test Line
+Mode Unstuffed 100 gm of 200 gm of 300 gm of
+Line Stuffing Stuffing Stuffing
+(m/sec) (m/sec) (m/sec) (m/sec)
+3/4 Wavelength 350 335 325 315
+5/4 Wavelength 336 323 313 300
+7/4 Wavelength 332 318 308 299
+9/4 Wavelength 326 314 305 297
+11/4 Wavelength 324 313 306 298
+To double-check the assumption that the fibers are not moving, reverse the
+argument. Assume that the process is adiabatic and that only fiber motion leads to a
+reduction in the speed of sound. First, calculate the density that would be required to
+lower the speed of sound from 342 m/sec in air to 297 m/sec, the minimum value in
+Table 2.4, corresponding to 300 gm of stuffing in the test line.
+ρ = (n p ) / c 2
+air/fiber 0 fiber
+n = 1.4 (adiabatic process)
+p = 1.013 x 105 Pa at 20 C
+0
+c = 297 m/sec
+fiber
+ρ = 1.61 kg/m3
+air/fiber
+The difference in the density of air and the combined air and fiber density is 0.40 kg/m3.
+Now, multiplying the density difference by the volume in the test line gives the total mass
+of the moving fibers.
+M = 0.40 kg/m3 (0.033 m3)
+fiber
+= 1.32 gm
+Remember that the air in the test line volume has an approximate mass of 39.9
+gm. So for the speed of sound to be reduced to 297 m/sec by fiber motion, only 1.32 gm
+of the possible 300 gm of fiber is moving. The 1.32 gm of moving fiber must be evenly
+distributed over the entire volume of the test line. Why would only 1.32 gm, out of a
+possible 300 gm, be moving? If all of the 300 gm were moving, the speed of sound
+would drop to approximately 117 m/sec.
+Summary :
+Based on the preceding argument, I conclude that motion of the fibers in a
+stuffed transmission line does not occur under normal operating conditions and should
+not be the basis for a mathematical model. Also, the mathematical model of the air
+Page 5 of 10
+
+===== PAGE 6 =====
+Section 2.0 : Construction and Measurement of a Simple Test Transmission Line
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+motion in a stuffed transmission line should include two sources of energy dissipation.
+The model should include viscous damping losses and a slightly reduced speed of
+sound due to a non-adiabatic process that occurs as the sound waves travel through the
+fibrous tangle.
+Figure 2.1 : Test Transmission Line Layout
+All dimensions are in inches.
+48.25
+7.25
+Input Signal
+3.0
+Page 6 of 10
+
+===== PAGE 7 =====
+Section 2.0 : Construction and Measurement of a Simple Test Transmission Line
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Figure 2.2 : Unstuffed Test Line
+Page 7 of 10
+
+===== PAGE 8 =====
+Section 2.0 : Construction and Measurement of a Simple Test Transmission Line
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Figure 2.3 : Test Line Stuffed With 100 gm of Dacron Hollofil II
+Page 8 of 10
+
+===== PAGE 9 =====
+Section 2.0 : Construction and Measurement of a Simple Test Transmission Line
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Figure 2.4 : Test Line Stuffed With 200 gm of Dacron Hollofil II
+Page 9 of 10
+
+===== PAGE 10 =====
+Section 2.0 : Construction and Measurement of a Simple Test Transmission Line
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Figure 2.5 : Test Line Stuffed With 300 gm of Dacron Hollofil II
+Page 10 of 10

@@ -1,0 +1,688 @@
+PDF PAGE 1
+Section 4.0 : The Calculation Algorithm
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Section 4.0 : The Calculation Algorithm
+The Velocity and Pressure Equations for an Acoustic Element :
+In the previous section, the general equations for the displacement, the velocity,
+and the pressure were derived as functions of position and time. These relationships are
+restated below as Equations (4.1), (4.2), and (4.3).
+Equations (4.1), (4.2), and (4.3)
+((−α − Iβ)x) ((−α + Iβ)x) (Iω t)
+ξ(x, t) = (C e + C e )e
+1 2
+((−α − Iβ)x) ((−α + Iβ)x) (Iω t)
+u(x, t) = Iω(C e + C e )e
+1 2
+2
+((−α − Iβ)x) ((−α + Iβ)x) (Iωt)
+p(x,t) = Iρc (C (Iα + β)e − C (−Iα + β)e )e
+1 2
+If the two constants, C and C , could be determined or eliminated from these
+1 2
+equations, then the values of displacement, velocity, and pressure would be known
+everywhere within the transmission line. Having a background in mechanical
+engineering and experience performing structural finite element analyses, I decided to
+apply some of the methods used to derive one-dimensional truss elements to formulate
+a one-dimensional acoustic transmission line element. My one-dimensional acoustic
+transmission line element is shown in Figure 4.1 along with a positive sign convention,
+the geometry definition, and the variables at end 1 and end 2.
+Figure 4.1 : One-Dimensional Acoustic Element
+L
+p1 p2
+u1 u2
+S1 S2
+u(x,t) = ∂ξ(x,t)/∂t
+positive sign convention
+At end 1 : x = 0 (m) At end 2 : x = L (m)
+p – pressure (Pa) p – pressure (Pa)
+1 2
+u – velocity (m/sec) u – velocity (m/sec)
+1 2
+S – area (m2) S – area (m2)
+1 2
+Page 1 of 11
+PDF PAGE 2
+Section 4.0 : The Calculation Algorithm
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Derivation of an Acoustic Element Transfer Matrix :
+Equations (4.2) and (4.3) for velocity and pressure contain two unknowns. If two
+values are assigned to any of the four variables (u , u , p , or p ) from the acoustic
+1 2 1 2
+element shown in Figure 4.1, then the remaining two variables can be used to eliminate
+the constants C and C . By careful selection of the two assigned values, convenient
+1 2
+expressions for the two remaining variables result. In the following derivation the time
+(I ω t)
+varying term e has been dropped since it is common to every expression.
+Case 1 : u = 1 m/sec and u = 0 m/sec
+1 2
+2 (IL β) (−IL β)
+Iρ c ((−α + Iβ)e + (α + Iβ)e )
+p =
+1 (−IL β) (IL β)
+ω (e − e )
+2 (−α L)
+ρc β e
+p = −2
+2 (IL β) (−IL β)
+ω (−e + e )
+Case 2 : u = 0 m/sec and u = 1 m/sec
+1 2
+2 (α L)
+ρc β e
+p = 2
+1 (IL β) (−IL β)
+ω (−e + e )
+2 (−IL β) (IL β)
+Iρ c ((α − Iβ)e − (α + Iβ)e )
+p =
+2 (−IL β) (IL β)
+ω (e − e )
+At this point, a demonstration problem would probably help the reader
+understand the pressure solutions for Cases 1 and 2. Assume that the length L of the
+acoustic transmission line element is 1 meter and that the cross-sectional area is a
+constant 0.05 m2. Since an expression for the fiber damping has not yet been derived,
+assume that the transmission line is empty. Also, define the excitation velocity as 0.001
+m/sec. For these assumptions, the resonances of the 1 m long closed end transmission
+line should be approximately :
+f = n x c / (2 x L) n = 1, 2, 3, … and c = 342 m/sec
+f = 171 Hz for n = 1
+= 342 Hz for n = 2
+= 513 Hz for n = 3
+Figures 4.2 and 4.3 show the pressure results for Cases 1 and 2 after applying these
+assumptions.
+Page 2 of 11
+PDF PAGE 3
+Section 4.0 : The Calculation Algorithm
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Figure 4.2 : Results for Case 1
+100
+80
+60
+40
+20
+0
+20
+40
+60
+80
+100 . 3
+1 10 100 1 10
+Frequency (Hz)
+Acoustic Finite Element Model | Lumped Parameter Model
+|
+m | S0 ⋅L
+p0 ⋅0.001⋅ =22.522Pa
+|
+Cab :=
+1 sec 2
+|
+ρ⋅c
+( )
+arg p0 =−90.000deg | m
+1 | S0 ⋅0.001⋅
+sec
+m | p:=
+pL
+1
+⋅0.001⋅
+sec
+=22.526Pa
+|
+j⋅1⋅Hz⋅Cab
+|
+( )
+arg pL =−90.000deg | p =22.525Pa arg(p) =−90.000deg
+1
+Page 3 of 11
+)ged(
+esahP
+100
+10
+1
+0.1
+0.01 . 3
+1 10 100 1 10
+( )
+argp
+0
+r
+deg
+( )
+argp
+L r
+deg
+r⋅dω⋅Hz
+−1
+)aP(
+erusserP
+Excitation at x = 0 : u(0) = 1, u(L) = 0
+( ) ( ) ( ) ( )
+2
+ −α + j⋅β
+r
+⋅expj⋅β
+r
+⋅L + α + j⋅β
+r
+⋅exp−j⋅β
+r
+⋅L
+p0 :=j⋅ρ⋅c ⋅ ( ( ) ( ))
+r r⋅dω⋅ exp−j⋅β r ⋅L −expj⋅β r ⋅L
+2 ( )
+−2⋅ρ⋅c ⋅β
+r
+⋅exp−α⋅L
+pL := ( ( ) ( ))
+r r⋅dω⋅ exp−j⋅β r ⋅L −expj⋅β r ⋅L
+p
+0
+r
+1000⋅Pa
+p
+L
+r
+1000⋅Pa
+r⋅dω⋅Hz
+−1
+PDF PAGE 4
+Section 4.0 : The Calculation Algorithm
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Figure 4.3 : Results for Case 2
+100
+80
+60
+40
+20
+0
+20
+40
+60
+80
+100 . 3
+1 10 100 1 10
+Frequency (Hz)
+Acoustic Finite Element Model | Lumped Parameter Model
+|
+m | S0 ⋅L
+p0 ⋅0.001⋅ =22.526Pa
+|
+Cab :=
+1 sec 2
+|
+ρ⋅c
+( )
+arg p0 =90.000deg | m
+1 | S0 ⋅0.001⋅
+sec
+m | p:=
+pL
+1
+⋅0.001⋅
+sec
+=22.522Pa
+|
+j⋅1⋅Hz⋅Cab
+|
+( )
+arg pL =90.000deg | p =22.525Pa arg(p) =−90.000deg
+1
+Page 4 of 11
+)ged(
+esahP
+100
+10
+1
+0.1
+0.01 . 3
+1 10 100 1 10
+( )
+argp
+0
+r
+deg
+( )
+argp
+L r
+deg
+r⋅dω⋅Hz
+−1
+)aP(
+erusserP
+Excitation at x = L : u(0) = 0, u(L) = 1
+( ) ( ) ( ) ( )
+2
+ α −j⋅β
+r
+⋅exp−j⋅β
+r
+⋅L − α + j⋅β
+r
+⋅expj⋅β
+r
+⋅L
+pL :=j⋅ρ⋅c ⋅ ( ( ) ( ))
+r r⋅dω⋅ exp−j⋅β r ⋅L −expj⋅β r ⋅L
+2 ( )
+2⋅ρ⋅c ⋅β
+r
+⋅expα⋅L
+p0 := ( ( ) ( ))
+r r⋅dω⋅ exp−j⋅β r ⋅L −expj⋅β r ⋅L
+p
+0
+r
+1000⋅Pa
+p
+L
+r
+1000⋅Pa
+r⋅dω⋅Hz
+−1
+PDF PAGE 5
+Section 4.0 : The Calculation Algorithm
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+A lot of information is contained in Figures 4.2 and 4.3 that warrants some further
+discussion and explanation. Lets start by looking closely at Figure 4.2, the same
+observations will apply to Figure 4.3 unless otherwise noted. The top plot is the pressure
+magnitude where it can be seen that sharp pressure peaks occur at the expected half
+wavelength frequencies. The pressure at both ends of the line spikes to extreme
+magnitudes at these frequencies.
+There are also some deep nulls in Figure 4.2 but only in the pressure at the
+driven end. I would not classify these nulls as quarter wavelength resonances even
+thought the frequencies are consistent with quarter wavelength frequencies for the
+assumed length. At these frequencies, the length of the line is equivalent to a quarter
+wavelength and a pressure distribution exists that tends to unload the driven end. The
+pressure at the closed end is set by the velocity magnitude at the driven end and does
+not spike in a similar manner to the half wavelength modes. This is a velocity-controlled
+standing wave and therefore not what I would define as a true resonance.
+At the bottom of Figures 4.2 and 4.3, the lumped parameter pressure is
+calculated and compared to the 1 Hz results from the acoustic transmission line element.
+This is really a check on the element static stiffness and it can be seen that both
+methods yield identical pressure magnitudes and phases. Also note the 180-degree
+difference in the phase calculated in Figure 4.2 and Figure 4.3 at the 1 Hz frequency.
+This is a direct result of the positive sign convention assumed in Figure 4.1. A positive
+displacement increases pressure in Figure 4.2 while it decreases pressure in Figure 4.3.
+Acoustic impedances can be calculated for the four variables (u , u , p , and p )
+1 2 1 2
+from the acoustic element shown in Figure 4.1. These relationships are shown below for
+the two load cases.
+Case 1 : u = 1 m/sec and u = 0 m/sec
+1 2
+p
+1
+Z =
+11
+S u
+1 1
+p
+2
+Z =
+21
+S u
+1 1
+Case 2 : u = 0 m/sec and u = 1 m/sec
+1 2
+p
+1
+Z =
+12
+S u
+2 2
+p
+2
+Z =
+22
+S u
+2 2
+Page 5 of 11
+PDF PAGE 6
+Section 4.0 : The Calculation Algorithm
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+These impedance relationships can be arranged to express the pressures in terms of the
+volume velocities and then placed in matrix notation.
+ p  Z Z S u 
+ 1   11 12 1 1
+  =   
+     
+p Z Z S u
+ 2   21 22 2 2
+ p  Z Z  U 
+ 1   11 12 1 
+  =   
+     
+p Z Z U
+ 2   21 22 2 
+One more rearranging of the equations yields the transfer matrix for the one-dimensional
+acoustic element.
+Equation (4.4)
+ Z 
+ 22 1 
+ − 
+ U   Z Z  U 
+ 1   21 21 2 
+  =   
+
+p
+ 
+ Z Z Z
+
+
+
+p
+
+ 1   11 22 11 2 
+− + Z 
+ 12 
+Z Z
+ 21 21
+Equation (4.4) expresses the pressure and volume velocity at one end of the acoustic
+element in terms of the pressure and volume velocity at the other end. This transfer
+matrix equation is the basis for the transmission line calculation algorithm I have
+programmed into my new MathCad worksheets.
+Closed End and Open End Simple Transmission Line Models :
+Figure 4.4 shows the acoustic equivalent circuit model, using the impedance
+analogy, for a simple transmission line. Figure 4.5 shows the corresponding electrical
+equivalent circuit model. From the classic papers by Thiele(1) and Small(2-4), all of the
+circuit elements have already been defined with the exception of the transmission line’s
+acoustic impedance and electrical impedance. Equation (4.4) can be used to determine
+these remaining circuit elements.
+Simple Transmission Line – Closed End
+Assume a unit velocity excitation at the driven end of the transmission line and a
+zero velocity boundary condition at the closed end.
+S m
+1
+U =
+1
+sec
+U = 0
+2
+Page 6 of 11
+PDF PAGE 7
+Section 4.0 : The Calculation Algorithm
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+The unit velocity input is converted to the equivalent volume velocity and applied
+at end 1. A zero volume velocity condition is applied at end 2. In Equation (4.4) this
+leaves two equations and two unknowns, p and p , which can be solved for as
+1 2
+functions of frequency.
+Having solved for the pressures resulting from the assumed volume velocity
+input, the acoustic impedance and the electrical impedance can be determined.
+p sec
+1
+Z =
+acoustic
+S m
+1
+2 2
+B l
+Z =
+electrical
+S 2Z
+1 acoustic
+The equivalent circuits in Figures 4.4 and 4.5 can now be solved to obtain the
+electrical and SPL system performance as functions of frequency for a closed end
+simple transmission line. This is the basis for the first MathCad model titled “TL Closed
+End.MCD”.
+Simple Transmission Line – Open End
+Assume a unit velocity excitation at the driven end of the transmission line and a
+zero pressure boundary condition at the open end.
+S m
+1
+U =
+1
+sec
+Again, the unit velocity input is converted to the equivalent volume velocity and
+applied at end 1. However, at the open end a more complicated boundary condition will
+be applied. My first models simply set the pressure p to zero but this did not lead to a
+2
+good correlation with the measured test line data. To make the model more accurate I
+applied an acoustic impedance boundary condition at the open end. The acoustic
+impedance of a piston in an infinite baffle was used to model the terminus impedance. A
+typical terminus (or mouth) impedance is shown in Figure 4.6.
+p = Z U
+2 mouth 2
+In Equation (4.4) this leaves two equations and two unknowns, p and U , which can be
+1 2
+solved for as functions of frequency.
+Having solved for the pressures and the open end’s volume velocity resulting
+from the unit velocity input, the acoustic impedance and the electrical impedance can be
+determined.
+Page 7 of 11
+PDF PAGE 8
+Section 4.0 : The Calculation Algorithm
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+p sec
+1
+Z =
+acoustic
+S m
+1
+2 2
+B l
+Z =
+electrical
+S 2Z
+1 acoustic
+One last relationship is needed, the velocity at the open end as a function of the
+velocity at the driven end.
+S U
+1 2
+ε =
+S U
+2 1
+u
+2
+ε =
+u
+1
+The open end simple transmission line electrical and SPL system performance
+can now be calculated as functions of frequency using the equivalent circuit models
+shown in Figures 4.4 and 4.5. This is the basis for the second MathCad model titled “TL
+Open End.MCD”.
+Summary :
+A transfer matrix for a one-dimensional acoustic element has been derived and
+boundary conditions applied to represent two simple transmission line configurations.
+The only remaining unknown to be discussed is the damping coefficient for the fibrous
+tangle typically used to stuffing transmission lines. The following section will present the
+empirically derived damping coefficient and the correlation with the test data presented
+in Section 2.0, using the simple MathCad transmission line model “TL Open End.MCD”.
+Page 8 of 11
+PDF PAGE 9
+Section 4.0 : The Calculation Algorithm
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Figure 4.4 : Acoustic Equivalent Circuit for a Simple Transmission Line Speaker
+Ratd Mad Cad
+Ud
+pg Zal
+where :
+p = pressure source
+g
+= (e Bl) / (S R )
+g d e
+R = driver acoustic resistance
+ad
+= (Bl2 / S 2) [Q / ((R + R ) Q )]
+d ed g e md
+R = total acoustic resistance
+atd
+= R + (Bl)2 / [S 2 ((R + R ) + jω L )]
+ad d g e vc
+C = driver acoustic compliance
+ad
+= V / (ρ c2)
+d air
+M = driver acoustic mass
+ad
+= (f 2 C )-1
+d ad
+Z = transmission line acoustic impedance
+al
+U = driver volume velocity
+d
+= S u
+d d
+u = driver cone velocity
+d
+then :
+u = terminus air velocity
+L
+= ε u
+d
+ε = u / u
+L d
+Page 9 of 11
+PDF PAGE 10
+Section 4.0 : The Calculation Algorithm
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Figure 4.5 : Electrical Equivalent Circuit for a Simple Transmission Line Speaker
+Rg + Re Lvc
+eg Lced Cmed Red Zel ed
+where :
+e = voltage source
+g
+= 2.8284 volt
+R +R = electrical resistance of the amplifier, cables, and voice coil
+g e
+L = voice coil inductance
+vc
+L = inductance due to the driver suspension compliance
+ced
+= [C (Bl)2] / S 2
+ad d
+C = capacitance due to the driver mass
+med
+= (M S 2) / (Bl)2
+ad d
+R = resistance due to the driver suspension damping
+ed
+= R (Q / Q )
+e md ed
+Z = transmission line equivalent electrical impedance
+el
+= (Bl)2 / (S 2 Z )
+d al
+e = Bl u
+d d
+Page 10 of 11
+PDF PAGE 11
+Section 4.0 : The Calculation Algorithm
+By Martin J. King, 07/05/02
+Copyright  2002 by Martin J. King. All Rights Reserved.
+Figure 4.6 : Transmission Line Open End Acoustic Impedance
+Terminus Impedance : Piston in an Infinite Baffle Impedance Model
+SL
+aL :=
+π
+∑ 25
+
+ (−1) k⋅  
+
+x
+2
+
+
+2⋅k+1
+
+
+J1(x):= 
+ k!⋅Γ(k+ 2)
+
+
+k=0
+∑ 25
+
+
+
+(−1) k⋅  
+
+x
+2
+
+
+2⋅k+2 
+
+
+H1(x):= 
+ 3  5
+
+k=0 
+
+Γ
+
+k+ 
+
+⋅Γ
+
+k+ 
+
+
+
+2 2
+  r⋅dω   r⋅dω 
+ρ⋅c
+ 2⋅J1 
+
+2⋅
+c
+⋅aL 
+
+ 2⋅H1 
+
+2⋅
+c
+⋅aL 
+
+
+Zmouth := ⋅1−  + j⋅ 
+r SL 
+
+
+
+2⋅
+r⋅dω
+⋅aL
+
+
+2⋅
+r⋅dω
+⋅aL
+
+
+c c
+Terminus Impedance
+1.25
+1
+0.75
+0.5
+0.25
+0
+0 2 4 6 8 10 12 14
+Page 11 of 11
+.spmoC
+ecnadepmI
+yranigamI
+dna
+laeR
+( )
+SL ⋅Re Zmouth
+r
+ρ⋅c
+( )
+SL ⋅Im Zmouth
+r
+ρ⋅c
+r⋅dω
+2⋅ ⋅aL
+c

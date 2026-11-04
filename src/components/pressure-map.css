@@ -1,0 +1,263 @@
+.pressure-map {
+  padding: 18px !important;
+  min-width: 0;
+  background: #101b25 !important;
+  color: #dce9f7;
+}
+.field-view-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 5px;
+  background: #0e1b18;
+  border: 1px solid #354e41;
+  border-radius: 10px;
+}
+.field-view-switch button {
+  padding: 10px 18px;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 7px;
+  font-size: 13px;
+}
+.field-view-switch button[aria-pressed="true"] {
+  border-color: #749b7b;
+  background: #304c39;
+  color: #f1f8ef;
+}
+.field-view-switch button:disabled {
+  opacity: 0.45;
+}
+.field-volume-description {
+  font-size: 13px;
+  color: #acc5b8;
+  max-width: 900px;
+  margin: 0 0 18px;
+}
+.field-views.field-whole-wave {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+.field-views.field-whole-wave .model-view {
+  height: clamp(500px, 72vh, 850px) !important;
+}
+.field-volume-inspector {
+  border: 1px solid #354e41;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 4px;
+}
+.field-volume-inspector > summary {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+}
+.field-volume-inspector > summary span {
+  font-size: 11px;
+  font-weight: 400;
+  color: #9ab4a6;
+}
+.field-volume-inspector .field-section-toolbar {
+  margin-top: 20px;
+}
+.field-volume-inspector > .pressure-map {
+  margin-top: 15px;
+}
+.pressure-overview-scale {
+  width: 100%;
+}
+.pressure-overview-scale > div:first-child {
+  height: 10px;
+  border-radius: 5px;
+}
+.pressure-overview-scale > div:last-child {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 8px;
+}
+.pressure-map-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.pressure-map-heading h3 {
+  margin: 0 0 5px;
+  font-size: 16px;
+}
+.pressure-map-heading span {
+  font-size: 12px;
+  color: #a2b6cb;
+}
+.pressure-map-heading > div:last-child {
+  display: flex;
+  gap: 6px;
+}
+.pressure-map-heading button {
+  font-size: 11px;
+  padding: 8px;
+  min-height: 32px;
+}
+.pressure-map-stage {
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0c1420;
+  border: 1px solid #2b3c4c;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.pressure-map-stage canvas {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: fill !important;
+  cursor: crosshair;
+  display: block;
+}
+.pressure-map-scale {
+  margin-top: 16px;
+}
+.pressure-map-scale > div:first-child {
+  height: 12px;
+  border-radius: 5px;
+}
+.pressure-map-scale > div:last-child {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-top: 7px;
+  font-variant-numeric: tabular-nums;
+}
+.pressure-extrema {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #a4b7cb;
+  margin: 14px 0;
+}
+.pressure-extrema b {
+  display: block;
+  color: #e1ecf7;
+  font-size: 13px;
+  margin-top: 4px;
+}
+.pressure-inspector {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid #33485b;
+  border-radius: 8px;
+  background: #142331;
+  min-height: 110px;
+}
+.pressure-inspector > div {
+  flex: 1;
+}
+.pressure-inspector span,
+.pressure-inspector small {
+  display: block;
+  font-size: 11px;
+  color: #a9bdce;
+}
+.pressure-inspector strong {
+  display: block;
+  font-size: 21px;
+  line-height: 1.5;
+}
+.pressure-inspector svg {
+  width: 42%;
+  max-width: 260px;
+  overflow: visible;
+}
+.pressure-map:fullscreen {
+  padding: 24px !important;
+  display: flex;
+  flex-direction: column;
+}
+.pressure-map:fullscreen .pressure-map-stage {
+  flex: 1;
+  height: auto;
+}
+.field-views {
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 1fr) !important;
+}
+.field-section-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin: 10px 0 20px;
+}
+.field-section-toolbar label {
+  font-size: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.field-section-toolbar select {
+  min-width: 150px;
+}
+.field-section-toolbar input[type="range"] {
+  width: 130px;
+}
+.field-pressure-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-size: 12px;
+}
+.field-pressure-range button {
+  padding: 7px 10px;
+  font-size: 12px;
+}
+.field-legend .pressure-colour-bar {
+  flex: 1;
+  height: 10px;
+  min-width: 90px;
+  border-radius: 5px;
+}
+.negative-swatch {
+  background: #2f87ff !important;
+}
+.positive-swatch {
+  background: #ff5b31 !important;
+}
+@media (min-width: 1500px) {
+  .pressure-map-stage {
+    height: 600px;
+  }
+}
+@media (max-width: 1100px) {
+  .field-views {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .pressure-map-stage {
+    height: 560px;
+  }
+}
+@media (max-width: 650px) {
+  .pressure-map-stage {
+    height: 420px;
+  }
+  .pressure-map-heading {
+    flex-wrap: wrap;
+  }
+  .pressure-inspector {
+    flex-wrap: wrap;
+  }
+  .pressure-inspector svg {
+    width: 100%;
+  }
+  .field-pressure-range {
+    margin-left: 0;
+  }
+}

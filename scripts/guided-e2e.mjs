@@ -277,8 +277,8 @@ try {
     true,
   );
   await page
-    .getByLabel("Field display", { exact: true })
-    .selectOption("volume");
+    .getByRole("button", { name: "Whole 3D wave", exact: true })
+    .click();
   await page.waitForTimeout(150);
   const softVolume = await page
     .locator(".field-views .model-view")
@@ -299,8 +299,8 @@ try {
     .getByLabel("Pressure opacity mapping", { exact: true })
     .selectOption("soft");
   await page
-    .getByLabel("Field display", { exact: true })
-    .selectOption("fronts");
+    .getByRole("button", { name: "3D wave surfaces", exact: true })
+    .click();
   assert.deepEqual(
     (await call("field.result", { id: jobId, frame: 36 })).frame,
     raw.frame,

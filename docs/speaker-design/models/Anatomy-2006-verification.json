@@ -1,0 +1,421 @@
+{
+  "kind": "published-simulation-validation",
+  "createdDateLocal": "2026-11-03",
+  "appVersion": "0.9.3",
+  "source": {
+    "title": "Anatomy of a Transmission Line Loudspeaker",
+    "author": "Martin J. King",
+    "revised": "2006-10-18",
+    "url": "http://quarter-wave.com/TLs/TL_Anatomy.pdf",
+    "sha256": "0ce9341e6f44ea538f432ffc40cc2a148f97bcd270bb8a9d7644644bd1b0a510",
+    "pdf": "research/anatomy-2006/TL_Anatomy.pdf",
+    "evidence": "published generic-driver simulation, not physical measurements"
+  },
+  "scope": "Unfitted published-simulation comparison. Generic author-specified driver. No physical measurements or original MathCad worksheet available.",
+  "solverChangesThisTask": false,
+  "fittedParameters": [],
+  "comparisonBandHz": [
+    10,
+    800
+  ],
+  "sourceTraces": {
+    "spectra": 8,
+    "profiles": 20,
+    "enclosureLoad": 2
+  },
+  "liveJobs": [
+    {
+      "id": "9b42d8bd-2d3d-4d09-a7c7-1400c3327ad3",
+      "kind": "simulation",
+      "status": "completed",
+      "projectRevision": 14,
+      "createdAt": "2026-11-02T23:02:28.564Z",
+      "finishedAt": "2026-11-02T23:02:29.791Z"
+    },
+    {
+      "id": "c10ba98e-c94d-404a-875b-a83ec565a6da",
+      "kind": "reference",
+      "status": "completed",
+      "projectRevision": 14,
+      "createdAt": "2026-11-02T23:02:28.688Z",
+      "finishedAt": "2026-11-02T23:02:29.843Z"
+    },
+    {
+      "id": "617a9a39-8b0c-4074-b229-ba2c8f38fadd",
+      "kind": "simulation",
+      "status": "completed",
+      "projectRevision": 15,
+      "createdAt": "2026-11-02T23:04:34.422Z",
+      "finishedAt": "2026-11-02T23:04:35.438Z"
+    },
+    {
+      "id": "45cea70d-ef6b-4833-8486-ecef0badfaa9",
+      "kind": "reference",
+      "status": "completed",
+      "projectRevision": 15,
+      "createdAt": "2026-11-02T23:04:34.558Z",
+      "finishedAt": "2026-11-02T23:04:35.512Z"
+    },
+    {
+      "id": "dee97121-497b-45a6-a508-376aca98192c",
+      "kind": "field",
+      "status": "completed",
+      "projectRevision": 16,
+      "createdAt": "2026-11-02T23:06:42.685Z",
+      "finishedAt": "2026-11-02T23:06:56.706Z",
+      "cellMm": 20
+    },
+    {
+      "id": "b36c2e2c-976e-430b-a8bb-e7e494482721",
+      "kind": "field",
+      "status": "completed",
+      "projectRevision": 16,
+      "createdAt": "2026-11-02T23:09:19.087Z",
+      "finishedAt": "2026-11-02T23:09:46.316Z",
+      "cellMm": 16
+    },
+    {
+      "id": "5dfb3f09-2cb2-4c95-948e-eb1eab6ed1d6",
+      "kind": "field",
+      "status": "completed",
+      "projectRevision": 16,
+      "createdAt": "2026-11-02T23:09:53.471Z",
+      "finishedAt": "2026-11-02T23:11:08.817Z",
+      "cellMm": 12
+    }
+  ],
+  "nativeCoreParity": {
+    "cases": [
+      {
+        "case": "empty",
+        "points": 1004,
+        "maxAbsoluteDifference": 3.8318148654070683e-10
+      },
+      {
+        "case": "stuffed",
+        "points": 1004,
+        "maxAbsoluteDifference": 2.361844053666573e-11
+      }
+    ],
+    "totalPoints": 2008,
+    "interpretation": "Shared implementation execution consistency, not independent physics validation"
+  },
+  "integrationStepSensitivity": 2.1382041488344142e-13,
+  "peakFrequencyErrors": [
+    {
+      "sourceHz": 32,
+      "modelHz": 32.359365692962825,
+      "errorPercent": 1.123017790508829,
+      "modelOhm": 89.28605237498637
+    },
+    {
+      "sourceHz": 68,
+      "modelHz": 69.18309709189364,
+      "errorPercent": 1.7398486645494815,
+      "modelOhm": 103.7134049455459
+    },
+    {
+      "sourceHz": 149,
+      "modelHz": 149.2794409578996,
+      "errorPercent": 0.18754426704670202,
+      "modelOhm": 28.327830445941075
+    },
+    {
+      "sourceHz": 242,
+      "modelHz": 242.10290467361776,
+      "errorPercent": 0.04252259240402623,
+      "modelOhm": 12.784469980497626
+    }
+  ],
+  "caseMetrics": [
+    {
+      "case": "empty",
+      "curves": [
+        {
+          "id": "empty-spl",
+          "metric": "spl",
+          "status": "incompatible",
+          "rmse": 0.5872649603466872,
+          "maxError": 1.9890401903924015,
+          "issues": [
+            "Reference drive voltage is unknown; absolute SPL cannot be verified.",
+            "Reference observation distance is unknown."
+          ]
+        },
+        {
+          "id": "empty-conespl",
+          "metric": "coneSpl",
+          "status": "incompatible",
+          "rmse": 0.3714146721191296,
+          "maxError": 1.191256391600703,
+          "issues": [
+            "Reference drive voltage is unknown; absolute SPL cannot be verified.",
+            "Reference observation distance is unknown."
+          ]
+        },
+        {
+          "id": "empty-terminusspl",
+          "metric": "terminusSpl",
+          "status": "incompatible",
+          "rmse": 0.541050759505133,
+          "maxError": 1.8220058694972465,
+          "issues": [
+            "Reference drive voltage is unknown; absolute SPL cannot be verified.",
+            "Reference observation distance is unknown."
+          ]
+        },
+        {
+          "id": "empty-impedance",
+          "metric": "impedance",
+          "status": "mismatch",
+          "rmse": 2.084124209993607,
+          "maxError": 12.750233409098513,
+          "issues": []
+        }
+      ],
+      "openingToDriverRatio": {
+        "scope": "Paired far-field contributions: subtract opening and driver dB values, cancelling a common excitation/observation gain. Assumes both source traces use the common far-field convention suggested by the figure; no fitted normalization.",
+        "rmse": 0.5048327317449539,
+        "meanError": -0.013307856169447279,
+        "maxError": 1.4861165611645948,
+        "uncertaintyDb": 2
+      }
+    },
+    {
+      "case": "stuffed",
+      "curves": [
+        {
+          "id": "stuffed-spl",
+          "metric": "spl",
+          "status": "incompatible",
+          "rmse": 1.2619483405654834,
+          "maxError": 3.3121310878326398,
+          "issues": [
+            "Reference drive voltage is unknown; absolute SPL cannot be verified.",
+            "Reference observation distance is unknown.",
+            "Stuffing parameters are assumed or fitted; independent material validation is pending."
+          ]
+        },
+        {
+          "id": "stuffed-conespl",
+          "metric": "coneSpl",
+          "status": "incompatible",
+          "rmse": 0.8014385425340335,
+          "maxError": 1.9387711269251326,
+          "issues": [
+            "Reference drive voltage is unknown; absolute SPL cannot be verified.",
+            "Reference observation distance is unknown.",
+            "Stuffing parameters are assumed or fitted; independent material validation is pending."
+          ]
+        },
+        {
+          "id": "stuffed-terminusspl",
+          "metric": "terminusSpl",
+          "status": "incompatible",
+          "rmse": 3.19179664438513,
+          "maxError": 5.414953126465832,
+          "issues": [
+            "Reference drive voltage is unknown; absolute SPL cannot be verified.",
+            "Reference observation distance is unknown.",
+            "Stuffing parameters are assumed or fitted; independent material validation is pending."
+          ]
+        },
+        {
+          "id": "stuffed-impedance",
+          "metric": "impedance",
+          "status": "incompatible",
+          "rmse": 1.7695537193896196,
+          "maxError": 4.777699116046465,
+          "issues": [
+            "Stuffing parameters are assumed or fitted; independent material validation is pending."
+          ]
+        }
+      ],
+      "openingToDriverRatio": {
+        "scope": "Paired far-field contributions: subtract opening and driver dB values, cancelling a common excitation/observation gain. Assumes both source traces use the common far-field convention suggested by the figure; no fitted normalization.",
+        "rmse": 2.735016660058004,
+        "meanError": -2.3463238777081665,
+        "maxError": 5.3299109280647965,
+        "uncertaintyDb": 2
+      }
+    }
+  ],
+  "fieldRefinement": "anatomy-2006-comparison/field-refinement.json",
+  "fieldAcceptance": "UNRESOLVED: non-monotonic voxel volume errors up to 9%; stable one-tone impedance does not establish convergence",
+  "retainedFieldArchive": {
+    "path": "docs\\speaker-design\\models\\Anatomy-2006-empty-100Hz-12mm.aegir-field.zip",
+    "sha256": "89f1d7bfa6e838ccead342e9059bf451444762903415362419362fd1134f5e77"
+  },
+  "preservation": {
+    "originalProjectRevision": 13,
+    "nativeSave": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Before-independent-design-2026-11-03.aegir.json",
+    "nativeSaveSha256": "074afeeadf6e947a592b7c62af6cd9bfbce1037183da3e6dd29661f5f13f0891",
+    "snapshotId": "e6105b3f-fa42-4fc8-98ff-cb812b66d288",
+    "backups": [
+      {
+        "path": "backups\\independent-design-2026-11-03\\workspace.json",
+        "sha256": "295201e12d12cd504c9e8654d5eeb7ca9219cddf93f2f8f5295867ec05aa4c3c"
+      },
+      {
+        "path": "backups\\independent-design-2026-11-03\\history.json",
+        "sha256": "630f484990200e7677d37c31715434fccc8c5df36630840907155af2ffe2f047"
+      },
+      {
+        "path": "backups\\independent-design-2026-11-03\\final-workspace.json",
+        "sha256": "2340bc83d165ca14d90867e1c751cf140f75c75b3e04b826c982379e0bdcb966"
+      }
+    ]
+  },
+  "activeProject": {
+    "projectRevision": 16,
+    "name": "King 2006 \u00b7 straight TL \u00b7 empty \u00b7 published generic driver",
+    "drivers": 1,
+    "fieldJobId": "5dfb3f09-2cb2-4c95-948e-eb1eab6ed1d6",
+    "displayMode": "volume"
+  },
+  "snapshots": [
+    {
+      "id": "2e1bc8cd-bccd-4ed3-b4f4-8a4fef5cc0d5",
+      "name": "King 2006 \u00b7 straight TL \u00b7 empty \u00b7 source inputs"
+    },
+    {
+      "id": "39e7c552-e630-4710-a2a9-126f01696e20",
+      "name": "King 2006 \u00b7 straight TL \u00b7 0.5 lb/ft\u00b3 \u00b7 assumed filling law"
+    }
+  ],
+  "unverified": [
+    "Reference excitation voltage and far-field distance are not explicitly exposed in the PDF; absolute SPL differences are diagnostic, not acceptance. No level or frequency offset fitted.",
+    "Source text says c343m/s, but printed driver derivation is more consistent with c342m/s; both retained without selecting by agreement.",
+    "18mm stock and schematic mechanical driver dimensions are implementation assumptions; source gives an ideal constant-area line. No fabrication or headroom claim.",
+    "Historical2003 empty/fibre law transferred to2006 as an assumption.",
+    "Source labels its directly-derived mass Mmd; Aegir derives Mms then removes two free-air piston loads. These conventions may differ.",
+    "The 2006 reference is a published generic-driver simulation, not a built measured loudspeaker."
+  ],
+  "artifacts": [
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\acoustic-load.png",
+      "sha256": "55beac3a849bbd52059074a3719b4b8f81d5b81165f5d747ac6d2adb59b6d76f",
+      "bytes": 187545
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\comparison.html",
+      "sha256": "91ab0d943e0c51b3fe4b9951a4085dd65f2295ac09afd6f9dcb03890f4ef557a",
+      "bytes": 9949
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\comparison.json",
+      "sha256": "c950c3daeb38a1e7432dec09dc5deb3206a55a2540697c915d78f802d9a73ad1",
+      "bytes": 2118763
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\comparison.png",
+      "sha256": "3e621b70fe12afd6435f4c6e04285afbbbbecc07a1ecef560d2613cfed38a24c",
+      "bytes": 537325
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\empty-prediction.csv",
+      "sha256": "db80d17ed658ace155bd1a46069bbee00e2e141ef0637a9230d6f4327b134d7f",
+      "bytes": 208312
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\empty-profiles.png",
+      "sha256": "3b5b8a9efe25a98521e9bd575a5ea4432101fc0505fcaf6caf5eb9c2ac09b79c",
+      "bytes": 373239
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\empty-residuals.csv",
+      "sha256": "2e7ce0e47faa3ba1e93af744c6413334950d6d5dfbd5cc864a27d28ab46ef51a",
+      "bytes": 33408
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\field-refinement.json",
+      "sha256": "cc1951d11192dd5569dabe730f65869fa4191fca82869390d679822c98b99ca0",
+      "bytes": 7062
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\live-empty-analysis.json",
+      "sha256": "85674d3fa8c01f9c646f8cbccb73c1ddc695514fc5010b04bd7020da927ed678",
+      "bytes": 617699
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\live-empty-reference.json",
+      "sha256": "d57c547c7387cdee5615a1937e90ef26f702829716d003f5927046b2edd5199b",
+      "bytes": 683037
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\live-field-12mm.json",
+      "sha256": "1104a1eac1083b28a25d48ad5a5678bbd4eca50e5ee9a804389ec7ec76eb9480",
+      "bytes": 12219
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\live-field-16mm.json",
+      "sha256": "fb8751214e05f62d83e7ceb334fadae6fe34e48edc021e871c8af2c7ecbc0d97",
+      "bytes": 12354
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\live-field-20mm.json",
+      "sha256": "a5ad84ceb144452851d5dc7e080df36636b10f5356350fbd00b146bad9c35b9b",
+      "bytes": 12239
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\live-stuffed-analysis.json",
+      "sha256": "f22fdc665b55594bb405013fe351bd730c47ffe5e8dfb82e8ac08aad1a631586",
+      "bytes": 618913
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\live-stuffed-reference.json",
+      "sha256": "dbbb9e661e5e6d5fba0d39ea70256d367b930ff59c7ab733d9d1f9c8d8dd4b1d",
+      "bytes": 692542
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\relative-response.png",
+      "sha256": "c7f7448a68d1f699a3932b765c43d719642406d87372048ad183bd975fc624c1",
+      "bytes": 172965
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\stuffed-prediction.csv",
+      "sha256": "921b27d1d36f92c445ec0652ee86fdd5fe73a9018355f269867af2e57973f9aa",
+      "bytes": 209058
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\stuffed-profiles.png",
+      "sha256": "f748f45d7ac7170e0c558c6d4dda5726ede831f1ab24c79a0dbbd983dbd8efec",
+      "bytes": 374664
+    },
+    {
+      "path": "docs\\speaker-design\\models\\anatomy-2006-comparison\\stuffed-residuals.csv",
+      "sha256": "9afe268fc6a4e74afc6fcd93ce548aff80393652e7d036130283bb33f5e399d3",
+      "bytes": 38452
+    },
+    {
+      "path": "docs\\speaker-design\\models\\Anatomy-2006-straight-empty.aegir.json",
+      "sha256": "ec1a2e7a4344101a23c7beff369365b3cd8971cca7cc03be01b8032fb70b14f9",
+      "bytes": 37726
+    },
+    {
+      "path": "docs\\speaker-design\\models\\Anatomy-2006-straight-stuffed.aegir.json",
+      "sha256": "632da8f40d7e551db4bec997e6a7029f4747aed815ea33085b807c76ff80aff2",
+      "bytes": 42515
+    },
+    {
+      "path": "docs\\speaker-design\\models\\Anatomy-2006-model.png",
+      "sha256": "26b8f25aa9e94936c7f1c04328ee5a5853a866d8bad3b943e0914da888e1b868",
+      "bytes": 49711
+    },
+    {
+      "path": "docs\\speaker-design\\models\\Anatomy-2006-response.png",
+      "sha256": "06bc9b3d07b255892b751737acdd07d9aa0449eed30a97d9d062517f1767f39d",
+      "bytes": 102631
+    },
+    {
+      "path": "docs\\speaker-design\\models\\Anatomy-2006-wave.png",
+      "sha256": "a44a9d0a12d00257b8f2b5d6f61e1041bc3d9b15b206ab57845b831674aa4ff1",
+      "bytes": 85037
+    },
+    {
+      "path": "examples\\anatomy-2006-traces.json",
+      "sha256": "3f58818a5f72f20ac13c645702435360c780030df10def3fa9a48d5e6b17dfdc",
+      "bytes": 177530
+    }
+  ]
+}

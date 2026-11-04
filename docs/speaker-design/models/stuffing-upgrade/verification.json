@@ -1,0 +1,202 @@
+{
+  "version": "0.9.4",
+  "dateLocal": "2026-11-03",
+  "status": "implemented, built, packaged, native UI/WebGPU checked; original live project restored",
+  "scope": "Source-specific material validation and unfitted enclosure sensitivity; source materials are distinct specimens. No new physical tests. Rigid-frame and lining approximations remain.",
+  "models": [
+    "mjk-2003",
+    "miki",
+    "jca",
+    "jcal",
+    "empirical-power-law"
+  ],
+  "fittedParametersThisTask": [],
+  "sourceSpecificPresets": 6,
+  "unfittedFillAndLiningVariants": 12,
+  "sourceHashes": {
+    "king2003": "b263515bd1c2c393d7f6e72f384efcbdfeab00cfd1e17c905c6f3e93fbb05e18",
+    "miki1990": "7f088125a280ef26c8e21ef518d3a53e94ff31202f32c3f54d69a0fd30e0211d",
+    "nasa2016": "b9e779b39c366a5911d28fe037ce0de218ad111f13aaae6904c111ba19c28c04",
+    "polyester2018": "52b634ebdcf1a2e1ee1b970fd576d658f6efd7b692bc10426d758da35c8fa96a"
+  },
+  "nasaHoldoutAbsorption": {
+    "bandHz": [
+      100,
+      800
+    ],
+    "count": 21,
+    "rmse": 0.011127124110619481,
+    "maxAbsoluteError": 0.018942872133098976
+  },
+  "nasaAmbient": "assumed rho1.21/c343, not source-confirmed; no fitting",
+  "baselineParity": [
+    {
+      "case": "empty",
+      "points": 1004,
+      "maxAbsoluteDifference": 0
+    },
+    {
+      "case": "stuffed",
+      "points": 1004,
+      "maxAbsoluteDifference": 0
+    }
+  ],
+  "historicalStuffedRmsDb": 2.735016660058004,
+  "tests": {
+    "fullUnitSuite": {
+      "command": "npx vitest run --maxWorkers=1",
+      "passed": 123,
+      "files": 17,
+      "durationSeconds": 104.38,
+      "note": "Default and two-worker attempts had CPU-heavy test timeouts; unchanged assertions/timeouts pass sequentially."
+    },
+    "build": "TypeScript, shared engine and Vite production build passed",
+    "independentReference": "20 Python complex rows and 35 original measured NASA vector markers",
+    "developmentUi": "passed: presets, placement, adjacency, provenance, persistence, response and WebGPU",
+    "initialPackagedUi": "passed before final 3D transverse-frame correction; final packaged rerun required",
+    "finalPackagedUi": "passed after directional correction: source presets, adjacent intervals, no overlaps, thickness, provenance edit/reset, save/reload, response and real WebGPU foam shell"
+  },
+  "preservation": {
+    "projectRevision": 16,
+    "workspace": "backups/stuffing-upgrade-2026-11-03/workspace.json",
+    "beforeRestart": "backups/stuffing-upgrade-2026-11-03/before-restart.json",
+    "history": "backups/stuffing-upgrade-2026-11-03/history.json",
+    "jobs": "backups/stuffing-upgrade-2026-11-03/jobs.json",
+    "oldAppArchive": "backups/stuffing-upgrade-2026-11-03/before-0.9.4-app.asar"
+  },
+  "unresolved": [
+    "King2006 historical material-law mismatch remains2.735dB RMS for opening/driver ratio",
+    "3D cavity-volume mesh convergence unresolved; up to9% previously",
+    "Rigid-frame/isotropic material approximations; no causal broadband filling transient",
+    "Uniform four-wall lining only; no simultaneous overlapping different materials in one interval",
+    "Source specimen or coefficient fit does not characterize every purchased batch; material-range extrapolation must be checked"
+  ],
+  "activeProjectPreserved": true,
+  "snapshotsPreserved": 12,
+  "nativePackagedUi": {
+    "profile": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-stuffing-dJsJFf",
+    "persistence": true,
+    "sourceSpecificPresets": true,
+    "nonOverlappingRegions": true,
+    "lining": true,
+    "responseJob": "1ccec7c1-f737-49a3-8ae5-a871c81b0a06",
+    "fieldJob": "2317010f-09a6-46f0-941c-33d596718cf5",
+    "fieldBackend": "webgpu-float32",
+    "field": {
+      "frequency": 300,
+      "materialCells": 8600,
+      "regionCells": [
+        3096
+      ],
+      "placement": "nearest-route-guide",
+      "scope": "Frequency-local equivalent fluid, steady tone only. Startup and broadband material response are not predicted. Lining uses channel-wall distance, with a resolved air core; refine layer thickness and route assignment. Local wide-duct loss is an approximation, not resolved thermoviscous flow."
+    },
+    "sourceSave": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-stuffing-dJsJFf\\agent\\files\\lining.aegir.json",
+    "errors": []
+  },
+  "nativeField": {
+    "cells": 95400,
+    "frequency": 300,
+    "durationMs": 60,
+    "gridMm": 20,
+    "liningThicknessMm": 20,
+    "material": {
+      "frequency": 300,
+      "materialCells": 8600,
+      "regionCells": [
+        3096
+      ],
+      "placement": "nearest-route-guide",
+      "scope": "Frequency-local equivalent fluid, steady tone only. Startup and broadband material response are not predicted. Lining uses channel-wall distance, with a resolved air core; refine layer thickness and route assignment. Local wide-duct loss is an approximation, not resolved thermoviscous flow."
+    },
+    "quality": {
+      "cadCavityLitres": 68.58,
+      "voxelCavityLitres": 68.8,
+      "volumeError": 0.0032079323417906203,
+      "pointsPerWavelength": 57.166666666666664,
+      "pmlCells": 6,
+      "rearAirReachesExterior": true
+    },
+    "settling": {
+      "relativeChange": 0.0006550160422690324,
+      "settled": true,
+      "cycles": 18
+    },
+    "warnings": [
+      "Experimental linear 3D FDTD: rigid cabinet, rigid-piston T/S sources, no panel vibration, cone breakup or nonlinear port flow.",
+      "Driver basket/magnet and bracing displacement are not included unless represented by cabinet solids. Material parameters require independent characterization; steady-tone media do not predict broadband filling transients.",
+      "Exterior PML and staircase geometry require padding/grid convergence and physical validation.",
+      "Material 1: material properties are treated as isotropic. Match the source measurement direction and packing; fibre orientation and compression can change them.",
+      "Material 1: 1D wall lining uses an equal-pressure parallel-channel approximation. The 3D steady-tone solver places the liner at channel walls; refine cells across its thickness.",
+      "Material 1: rigid-frame equivalent fluid; frame vibration, anisotropy and nonlinear flow are not predicted. JCA/JCAL low-frequency asymptotes are approximate.",
+      "Lining region 1 is less than two calculation cells thick; refine the grid across the material before quantitative use.",
+      "Playback has fewer than four samples per shortest estimated source-band cycle; interpolation smooths drawing but cannot reconstruct missing temporal detail. Increase recorded frames or shorten duration.",
+      "Preview grid: thinnest stock spans 0.9 cells. Exact face barriers prevent wall leakage, but volume/angle errors require refinement."
+    ],
+    "scope": "Computation and media-placement check. 20mm layer has only one20mm grid cell; not geometric convergence or physical speaker validation."
+  },
+  "packageIntegrity": "package-integrity.json",
+  "packaging": {
+    "command": "npx electron-builder --win portable --config.compression=store --config.npmRebuild=false",
+    "success": true,
+    "note": "First highly-compressed intermediate build was cancelled; final store-compression build completed after directional correction. Previous0.9.3 archive retained."
+  },
+  "artifacts": [
+    {
+      "path": "release\\AEONFORGE-Aegir-0.9.4-x64.exe",
+      "bytes": 468294314,
+      "sha256": "f02a790ccd1058ca4e5364d44ce8b48c9be792468d0109df95e0eeb590bb114b"
+    },
+    {
+      "path": "release\\win-unpacked\\resources\\app.asar",
+      "bytes": 88703462,
+      "sha256": "b63ccd8678ee37cf175e0f80e31b3b12cd53476bf96e154c030d2a5129032e1b"
+    },
+    {
+      "path": "docs\\speaker-design\\models\\stuffing-upgrade\\comparison.json",
+      "bytes": 6453726,
+      "sha256": "50ab33c0690ecbcade49c98894e58c9d8e49e6e583db2e68e2974d96e6641a61"
+    },
+    {
+      "path": "docs\\speaker-design\\models\\stuffing-upgrade\\comparison.html",
+      "bytes": 5530,
+      "sha256": "03548fcc834152ae1542b7bd30d226ae493aae0d537191abcd5c34cacbad9eda"
+    },
+    {
+      "path": "docs\\speaker-design\\models\\stuffing-upgrade\\foam-validation.png",
+      "bytes": 174376,
+      "sha256": "cd6fcbf116cfa9d75cbb25b1d7e8b6a5f6f9f921c566061526cfea7d9b209f62"
+    },
+    {
+      "path": "docs\\speaker-design\\models\\stuffing-upgrade\\placement-comparison.png",
+      "bytes": 229200,
+      "sha256": "810c5ae1c2284489840b973dccb88eec98715d43145cd6ff2b2b5f38e8657c34"
+    },
+    {
+      "path": "docs\\speaker-design\\models\\stuffing-upgrade\\material-editor.png",
+      "bytes": 168419,
+      "sha256": "cb8b2b936e3f75136e8a62dc00fa69975e7d01063741b1120c0576b6ba0ada58"
+    },
+    {
+      "path": "tests\\fixtures\\porous-materials.json",
+      "bytes": 9346,
+      "sha256": "eb60b82ef988b1b010307a2e512a9b8ef71d203aa686f52c220a5ce4f3cca07f"
+    }
+  ],
+  "changedApplicationFilesThisTask": [
+    "src/core/types.ts",
+    "src/core/system-schema.ts",
+    "src/core/medium.ts",
+    "src/core/porous-materials.ts",
+    "src/core/system.ts",
+    "src/field/media.ts",
+    "src/field/grid.ts",
+    "src/components/PhysicsControls.tsx",
+    "src/components/StuffingControls.tsx",
+    "src/studio.css",
+    "src/agent/service.ts",
+    "src/agent/mcp.ts",
+    "package.json",
+    "package-lock.json"
+  ]
+}

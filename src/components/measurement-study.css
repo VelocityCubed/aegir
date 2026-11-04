@@ -1,0 +1,123 @@
+.measurement-study {
+  margin-top: 26px;
+}
+.measurement-context {
+  padding: 18px 20px;
+  background: #12231e;
+  border: 1px solid #314f42;
+  border-radius: 10px;
+}
+.measurement-context > span {
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  color: #a6c4b5;
+}
+.measurement-context h3 {
+  font-size: 17px;
+  margin: 8px 0;
+}
+.measurement-context p {
+  margin: 0;
+  font-size: 13px;
+}
+.measurement-steps {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin: 24px 0;
+  font-size: 12px;
+  color: #b1c7bd;
+}
+.measurement-steps b {
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid #52735f;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+.measurement-drivers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+.measurement-driver {
+  padding: 20px;
+  border: 1px solid #35483e;
+  border-radius: 12px;
+  background: #13201b;
+  min-width: 0;
+}
+.measurement-driver-title {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+.measurement-driver-title > span {
+  border: 1px solid #6b8c75;
+  border-radius: 8px;
+  padding: 10px;
+  color: #d0e0d5;
+  font-size: 13px;
+}
+.measurement-driver-title h3 {
+  margin: 0 0 5px;
+  font-size: 15px;
+}
+.measurement-study small {
+  font-size: 11px;
+  color: #94afa3;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.measurement-files {
+  display: grid;
+  gap: 20px;
+}
+.measurement-files label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.measurement-files strong {
+  font-size: 13px;
+}
+.measurement-files input {
+  font-size: 12px;
+  padding: 10px !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+.measurement-file-state {
+  font-size: 11px;
+  color: #b1c5ba;
+}
+.measurement-driver details {
+  margin-top: 20px;
+  border-top: 1px solid #31473a;
+  padding-top: 16px;
+}
+.measurement-next {
+  padding: 18px;
+  margin-top: 20px;
+  border: 1px solid #736745;
+  border-radius: 10px;
+}
+.measurement-next h3 {
+  font-size: 14px;
+  margin: 0;
+}
+.measurement-next p {
+  font-size: 12px;
+  margin: 8px 0;
+}
+.measurement-scope {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #35483e;
+  font-size: 12px;
+}

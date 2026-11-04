@@ -1,0 +1,1306 @@
+{
+  "version": 1,
+  "name": "MJK Satori TL \u00b7 two-way reference reproduction",
+  "driver": {
+    "id": "satori-wo24p4-mjk-consistent-2023",
+    "name": "Satori WO24P-4 \u00b7 King's measured set",
+    "note": "SOURCE: MJK Fig6 consistent set: Fs32.81 Qes.545 Qms7.637 Vas48.31 Re3.3 Sd255 Le.3721mH Rp.740ohm Lp.5948mH. Xmax8.5mm derived from17mm p-p; cutout210.185mm from plan. Frame242mm and overall depth131.4mm from manufacturer; depth retained conservatively as rear clearance. This two-way model includes the sealed-back TW29R and the Fig18 crossover.",
+    "fs": 32.81,
+    "qes": 0.545,
+    "qms": 7.637,
+    "vas": 48.31,
+    "re": 3.3,
+    "le": 0.3721,
+    "sd": 255,
+    "xmax": 8.5,
+    "cutout": 210.185,
+    "frame": 242,
+    "depth": 131.4,
+    "lossyInductance": {
+      "resistance": 0.74,
+      "inductance": 0.5948
+    }
+  },
+  "design": {
+    "length": 1.85928,
+    "areaRatio": 2.53,
+    "laneWidth": 254,
+    "folds": 2,
+    "thickness": 12.7,
+    "driverPosition": 0.345,
+    "damping": 0,
+    "voltage": 2.83,
+    "temperature": 20
+  },
+  "targets": {
+    "low": 30,
+    "high": 200,
+    "maxHeight": 1000,
+    "maxWidth": 300,
+    "maxDepth": 370,
+    "minLength": 1.5,
+    "maxLength": 2.3,
+    "maxVelocity": 17
+  },
+  "layout": {
+    "width": 279.4,
+    "height": 958.85,
+    "depth": 342.9,
+    "baffles": [
+      {
+        "id": "tapered-divider",
+        "label": "Published single-fold divider \u00b7 83.9 degrees",
+        "start": [
+          0,
+          0
+        ],
+        "end": [
+          0,
+          774.7
+        ],
+        "thickness": 12.7,
+        "pose": {
+          "center": [
+            139.7,
+            400.05,
+            231.81074633265817
+          ],
+          "size": [
+            254,
+            777.7324627417753
+          ],
+          "rotation": [
+            -0.10615680151263622,
+            0,
+            0
+          ]
+        }
+      }
+    ],
+    "route": [
+      [
+        139.7,
+        0
+      ],
+      [
+        139.7,
+        933.45
+      ],
+      [
+        139.7,
+        57.15
+      ]
+    ],
+    "mouth": {
+      "side": "back",
+      "center": [
+        127,
+        57.15
+      ],
+      "height": 63.5,
+      "offset": 57.15,
+      "width": 203.2
+    }
+  },
+  "mounts": [
+    {
+      "id": "primary",
+      "driver": {
+        "id": "satori-wo24p4-mjk-consistent-2023",
+        "name": "Satori WO24P-4 \u00b7 King's measured set",
+        "note": "SOURCE: MJK Fig6 consistent set: Fs32.81 Qes.545 Qms7.637 Vas48.31 Re3.3 Sd255 Le.3721mH Rp.740ohm Lp.5948mH. Xmax8.5mm derived from17mm p-p; cutout210.185mm from plan. Frame242mm and overall depth131.4mm from manufacturer; depth retained conservatively as rear clearance. This two-way model includes the sealed-back TW29R and the Fig18 crossover.",
+        "fs": 32.81,
+        "qes": 0.545,
+        "qms": 7.637,
+        "vas": 48.31,
+        "re": 3.3,
+        "le": 0.3721,
+        "sd": 255,
+        "xmax": 8.5,
+        "cutout": 210.185,
+        "frame": 242,
+        "depth": 131.4,
+        "lossyInductance": {
+          "resistance": 0.74,
+          "inductance": 0.5948
+        }
+      },
+      "position": 0.345,
+      "face": "front",
+      "at": [
+        139.7,
+        647.7
+      ],
+      "voltageScale": 1,
+      "phase": 0,
+      "rearLoading": "cabinet",
+      "crossover": {
+        "passive": [
+          {
+            "connection": "series",
+            "kind": "L",
+            "value": 0.0035,
+            "resistance": 0.81
+          },
+          {
+            "connection": "shunt",
+            "kind": "C",
+            "value": 3.6e-05
+          }
+        ]
+      }
+    },
+    {
+      "id": "tweeter",
+      "driver": {
+        "id": "satori-tw29r-consistent",
+        "name": "Satori TW29R \u00b7 Fig 6 consistent",
+        "note": "SOURCE: MJK Fig 6 consistent T/S set. Le interpreted as 0.017 mH (table unit ambiguity); loss branch omitted pending clarification. Dimensions SB TW29R Rev1: overall depth37.3 minus5mm flange =32.3 behind baffle. Xmax0.25mm derived from0.5mm p-p.",
+        "fs": 671.7,
+        "qes": 1.375,
+        "qms": 2.214,
+        "vas": 0.022,
+        "re": 3.05,
+        "le": 0.017,
+        "sd": 9.6,
+        "xmax": 0.25,
+        "cutout": 71.12,
+        "frame": 103.8,
+        "depth": 32.3
+      },
+      "position": 0.345,
+      "face": "front",
+      "at": [
+        114.3,
+        850.9
+      ],
+      "voltageScale": 1,
+      "phase": 0,
+      "rearLoading": "sealed-back",
+      "crossover": {
+        "passive": [
+          {
+            "connection": "series",
+            "kind": "C",
+            "value": 1.8e-05
+          },
+          {
+            "connection": "shunt",
+            "kind": "L",
+            "value": 0.00033,
+            "resistance": 0.1
+          },
+          {
+            "connection": "series",
+            "kind": "R",
+            "value": 2.5
+          },
+          {
+            "connection": "shunt",
+            "kind": "R",
+            "value": 1.5
+          }
+        ]
+      }
+    }
+  ],
+  "system": {
+    "profile": {
+      "source": "Martin J. King, The Two-Year Transmission Line Speaker Design, 2023-09-23; http://quarter-wave.com/Project13/Satori_TL_Design_Documentation.pdf; Fig 8 raster digitization: 0.5in sample, estimated area uncertainty \u00b10.03\u00d72Sd; not exact MathCad input. The acoustic profile includes corner volumes unlike the CAD cavity.",
+      "evidence": "digitized",
+      "sections": [
+        {
+          "distance": 0.0,
+          "area": 64172.19,
+          "width": 252.64642,
+          "damping": 0
+        },
+        {
+          "distance": 0.0127,
+          "area": 64172.19,
+          "width": 252.64642,
+          "damping": 0
+        },
+        {
+          "distance": 0.0254,
+          "area": 64172.19,
+          "width": 252.64642,
+          "damping": 0
+        },
+        {
+          "distance": 0.0381,
+          "area": 63496.69,
+          "width": 249.98697,
+          "damping": 0
+        },
+        {
+          "distance": 0.0508,
+          "area": 62483.44,
+          "width": 245.9978,
+          "damping": 0
+        },
+        {
+          "distance": 0.0635,
+          "area": 62483.44,
+          "width": 245.9978,
+          "damping": 0
+        },
+        {
+          "distance": 0.0762,
+          "area": 62145.7,
+          "width": 244.66811,
+          "damping": 0
+        },
+        {
+          "distance": 0.0889,
+          "area": 61807.95,
+          "width": 243.33839,
+          "damping": 0
+        },
+        {
+          "distance": 0.1016,
+          "area": 61807.95,
+          "width": 243.33839,
+          "damping": 0
+        },
+        {
+          "distance": 0.1143,
+          "area": 61132.45,
+          "width": 240.67894,
+          "damping": 0
+        },
+        {
+          "distance": 0.127,
+          "area": 60456.95,
+          "width": 238.01949,
+          "damping": 0
+        },
+        {
+          "distance": 0.1397,
+          "area": 59781.46,
+          "width": 235.36008,
+          "damping": 0
+        },
+        {
+          "distance": 0.1524,
+          "area": 60119.21,
+          "width": 236.6898,
+          "damping": 0
+        },
+        {
+          "distance": 0.1651,
+          "area": 59105.96,
+          "width": 232.70063,
+          "damping": 0
+        },
+        {
+          "distance": 0.1778,
+          "area": 59105.96,
+          "width": 232.70063,
+          "damping": 0
+        },
+        {
+          "distance": 0.1905,
+          "area": 59105.96,
+          "width": 232.70063,
+          "damping": 0
+        },
+        {
+          "distance": 0.2032,
+          "area": 58768.21,
+          "width": 231.37091,
+          "damping": 0
+        },
+        {
+          "distance": 0.2159,
+          "area": 57754.97,
+          "width": 227.38177,
+          "damping": 0
+        },
+        {
+          "distance": 0.2286,
+          "area": 57754.97,
+          "width": 227.38177,
+          "damping": 0
+        },
+        {
+          "distance": 0.2413,
+          "area": 57754.97,
+          "width": 227.38177,
+          "damping": 0
+        },
+        {
+          "distance": 0.254,
+          "area": 57754.97,
+          "width": 227.38177,
+          "damping": 0
+        },
+        {
+          "distance": 0.2667,
+          "area": 57079.47,
+          "width": 224.72232,
+          "damping": 0
+        },
+        {
+          "distance": 0.2794,
+          "area": 56741.72,
+          "width": 223.3926,
+          "damping": 0
+        },
+        {
+          "distance": 0.2921,
+          "area": 56066.23,
+          "width": 220.73319,
+          "damping": 0
+        },
+        {
+          "distance": 0.3048,
+          "area": 57754.97,
+          "width": 227.38177,
+          "damping": 0
+        },
+        {
+          "distance": 0.3175,
+          "area": 56066.23,
+          "width": 220.73319,
+          "damping": 0
+        },
+        {
+          "distance": 0.3302,
+          "area": 55728.48,
+          "width": 219.40346,
+          "damping": 0
+        },
+        {
+          "distance": 0.3429,
+          "area": 55728.48,
+          "width": 219.40346,
+          "damping": 0
+        },
+        {
+          "distance": 0.3556,
+          "area": 54715.23,
+          "width": 215.41429,
+          "damping": 0
+        },
+        {
+          "distance": 0.3683,
+          "area": 54377.48,
+          "width": 214.08457,
+          "damping": 0
+        },
+        {
+          "distance": 0.381,
+          "area": 54377.48,
+          "width": 214.08457,
+          "damping": 0
+        },
+        {
+          "distance": 0.3937,
+          "area": 54039.74,
+          "width": 212.75488,
+          "damping": 0
+        },
+        {
+          "distance": 0.4064,
+          "area": 53364.24,
+          "width": 210.09543,
+          "damping": 0
+        },
+        {
+          "distance": 0.4191,
+          "area": 53026.49,
+          "width": 208.76571,
+          "damping": 0
+        },
+        {
+          "distance": 0.4318,
+          "area": 52350.99,
+          "width": 206.10626,
+          "damping": 0
+        },
+        {
+          "distance": 0.4445,
+          "area": 51675.5,
+          "width": 203.44685,
+          "damping": 0
+        },
+        {
+          "distance": 0.4572,
+          "area": 51337.75,
+          "width": 202.11713,
+          "damping": 0
+        },
+        {
+          "distance": 0.4699,
+          "area": 51337.75,
+          "width": 202.11713,
+          "damping": 0
+        },
+        {
+          "distance": 0.4826,
+          "area": 49649.01,
+          "width": 195.46854,
+          "damping": 0
+        },
+        {
+          "distance": 0.4953,
+          "area": 51000.0,
+          "width": 200.7874,
+          "damping": 0
+        },
+        {
+          "distance": 0.508,
+          "area": 50662.25,
+          "width": 199.45768,
+          "damping": 0
+        },
+        {
+          "distance": 0.5207,
+          "area": 49986.75,
+          "width": 196.79823,
+          "damping": 0
+        },
+        {
+          "distance": 0.5334,
+          "area": 49311.26,
+          "width": 194.13882,
+          "damping": 0
+        },
+        {
+          "distance": 0.5461,
+          "area": 48973.51,
+          "width": 192.80909,
+          "damping": 0
+        },
+        {
+          "distance": 0.5588,
+          "area": 48973.51,
+          "width": 192.80909,
+          "damping": 0
+        },
+        {
+          "distance": 0.5715,
+          "area": 48973.51,
+          "width": 192.80909,
+          "damping": 0
+        },
+        {
+          "distance": 0.5842,
+          "area": 48635.76,
+          "width": 191.47937,
+          "damping": 0
+        },
+        {
+          "distance": 0.5969,
+          "area": 48298.01,
+          "width": 190.14965,
+          "damping": 0
+        },
+        {
+          "distance": 0.6096,
+          "area": 47622.52,
+          "width": 187.49024,
+          "damping": 0
+        },
+        {
+          "distance": 0.6223,
+          "area": 47960.26,
+          "width": 188.81992,
+          "damping": 0
+        },
+        {
+          "distance": 0.635,
+          "area": 47622.52,
+          "width": 187.49024,
+          "damping": 0
+        },
+        {
+          "distance": 0.6477,
+          "area": 47622.52,
+          "width": 187.49024,
+          "damping": 0
+        },
+        {
+          "distance": 0.6604,
+          "area": 46947.02,
+          "width": 184.83079,
+          "damping": 0
+        },
+        {
+          "distance": 0.6731,
+          "area": 46271.52,
+          "width": 182.17134,
+          "damping": 0
+        },
+        {
+          "distance": 0.6858,
+          "area": 44920.53,
+          "width": 176.85248,
+          "damping": 0
+        },
+        {
+          "distance": 0.6985,
+          "area": 45596.03,
+          "width": 179.51193,
+          "damping": 0
+        },
+        {
+          "distance": 0.7112,
+          "area": 44245.03,
+          "width": 174.19303,
+          "damping": 0
+        },
+        {
+          "distance": 0.7239,
+          "area": 44920.53,
+          "width": 176.85248,
+          "damping": 0
+        },
+        {
+          "distance": 0.7366,
+          "area": 43907.28,
+          "width": 172.86331,
+          "damping": 0
+        },
+        {
+          "distance": 0.7493,
+          "area": 42894.04,
+          "width": 168.87417,
+          "damping": 0
+        },
+        {
+          "distance": 0.762,
+          "area": 42894.04,
+          "width": 168.87417,
+          "damping": 0
+        },
+        {
+          "distance": 0.7747,
+          "area": 44245.03,
+          "width": 174.19303,
+          "damping": 0
+        },
+        {
+          "distance": 0.7874,
+          "area": 44245.03,
+          "width": 174.19303,
+          "damping": 0
+        },
+        {
+          "distance": 0.8001,
+          "area": 47284.77,
+          "width": 186.16051,
+          "damping": 0
+        },
+        {
+          "distance": 0.8128,
+          "area": 51337.75,
+          "width": 202.11713,
+          "damping": 0
+        },
+        {
+          "distance": 0.8255,
+          "area": 53364.24,
+          "width": 210.09543,
+          "damping": 0
+        },
+        {
+          "distance": 0.8382,
+          "area": 57417.22,
+          "width": 226.05205,
+          "damping": 0
+        },
+        {
+          "distance": 0.8509,
+          "area": 58430.46,
+          "width": 230.04118,
+          "damping": 0
+        },
+        {
+          "distance": 0.8636,
+          "area": 57754.97,
+          "width": 227.38177,
+          "damping": 0
+        },
+        {
+          "distance": 0.8763,
+          "area": 55052.98,
+          "width": 216.74402,
+          "damping": 0
+        },
+        {
+          "distance": 0.889,
+          "area": 51000.0,
+          "width": 200.7874,
+          "damping": 0
+        },
+        {
+          "distance": 0.9017,
+          "area": 48298.01,
+          "width": 190.14965,
+          "damping": 0
+        },
+        {
+          "distance": 0.9144,
+          "area": 42218.54,
+          "width": 166.21472,
+          "damping": 0
+        },
+        {
+          "distance": 0.9271,
+          "area": 40529.8,
+          "width": 159.56614,
+          "damping": 0
+        },
+        {
+          "distance": 0.9398,
+          "area": 40192.05,
+          "width": 158.23642,
+          "damping": 0
+        },
+        {
+          "distance": 0.9525,
+          "area": 40192.05,
+          "width": 158.23642,
+          "damping": 0
+        },
+        {
+          "distance": 0.9652,
+          "area": 41543.05,
+          "width": 163.55531,
+          "damping": 0
+        },
+        {
+          "distance": 0.9779,
+          "area": 45596.03,
+          "width": 179.51193,
+          "damping": 0
+        },
+        {
+          "distance": 0.9906,
+          "area": 48298.01,
+          "width": 190.14965,
+          "damping": 0
+        },
+        {
+          "distance": 1.0033,
+          "area": 52350.99,
+          "width": 206.10626,
+          "damping": 0
+        },
+        {
+          "distance": 1.016,
+          "area": 51675.5,
+          "width": 203.44685,
+          "damping": 0
+        },
+        {
+          "distance": 1.0287,
+          "area": 51675.5,
+          "width": 203.44685,
+          "damping": 0
+        },
+        {
+          "distance": 1.0414,
+          "area": 50662.25,
+          "width": 199.45768,
+          "damping": 0
+        },
+        {
+          "distance": 1.0541,
+          "area": 44920.53,
+          "width": 176.85248,
+          "damping": 0
+        },
+        {
+          "distance": 1.0668,
+          "area": 41543.05,
+          "width": 163.55531,
+          "damping": 0
+        },
+        {
+          "distance": 1.0795,
+          "area": 35463.58,
+          "width": 139.62039,
+          "damping": 0
+        },
+        {
+          "distance": 1.0922,
+          "area": 35125.83,
+          "width": 138.29067,
+          "damping": 0
+        },
+        {
+          "distance": 1.1049,
+          "area": 33437.09,
+          "width": 131.64209,
+          "damping": 0
+        },
+        {
+          "distance": 1.1176,
+          "area": 34112.58,
+          "width": 134.3015,
+          "damping": 0
+        },
+        {
+          "distance": 1.1303,
+          "area": 33437.09,
+          "width": 131.64209,
+          "damping": 0
+        },
+        {
+          "distance": 1.143,
+          "area": 32761.59,
+          "width": 128.98264,
+          "damping": 0
+        },
+        {
+          "distance": 1.1557,
+          "area": 32086.09,
+          "width": 126.32319,
+          "damping": 0
+        },
+        {
+          "distance": 1.1684,
+          "area": 32086.09,
+          "width": 126.32319,
+          "damping": 0
+        },
+        {
+          "distance": 1.1811,
+          "area": 31748.34,
+          "width": 124.99346,
+          "damping": 0
+        },
+        {
+          "distance": 1.1938,
+          "area": 30735.1,
+          "width": 121.00433,
+          "damping": 0
+        },
+        {
+          "distance": 1.2065,
+          "area": 31072.85,
+          "width": 122.33406,
+          "damping": 0
+        },
+        {
+          "distance": 1.2192,
+          "area": 30735.1,
+          "width": 121.00433,
+          "damping": 0
+        },
+        {
+          "distance": 1.2319,
+          "area": 30397.35,
+          "width": 119.67461,
+          "damping": 0
+        },
+        {
+          "distance": 1.2446,
+          "area": 29721.85,
+          "width": 117.01516,
+          "damping": 0
+        },
+        {
+          "distance": 1.2573,
+          "area": 30059.6,
+          "width": 118.34488,
+          "damping": 0
+        },
+        {
+          "distance": 1.27,
+          "area": 29384.11,
+          "width": 115.68547,
+          "damping": 0
+        },
+        {
+          "distance": 1.2827,
+          "area": 29046.36,
+          "width": 114.35575,
+          "damping": 0
+        },
+        {
+          "distance": 1.2954,
+          "area": 29384.11,
+          "width": 115.68547,
+          "damping": 0
+        },
+        {
+          "distance": 1.3081,
+          "area": 28708.61,
+          "width": 113.02602,
+          "damping": 0
+        },
+        {
+          "distance": 1.3208,
+          "area": 28708.61,
+          "width": 113.02602,
+          "damping": 0
+        },
+        {
+          "distance": 1.3335,
+          "area": 27695.36,
+          "width": 109.03685,
+          "damping": 0
+        },
+        {
+          "distance": 1.3462,
+          "area": 27357.62,
+          "width": 107.70717,
+          "damping": 0
+        },
+        {
+          "distance": 1.3589,
+          "area": 27357.62,
+          "width": 107.70717,
+          "damping": 0
+        },
+        {
+          "distance": 1.3716,
+          "area": 27357.62,
+          "width": 107.70717,
+          "damping": 0
+        },
+        {
+          "distance": 1.3843,
+          "area": 27019.87,
+          "width": 106.37744,
+          "damping": 0
+        },
+        {
+          "distance": 1.397,
+          "area": 26006.62,
+          "width": 102.38827,
+          "damping": 0
+        },
+        {
+          "distance": 1.4097,
+          "area": 26006.62,
+          "width": 102.38827,
+          "damping": 0
+        },
+        {
+          "distance": 1.4224,
+          "area": 26006.62,
+          "width": 102.38827,
+          "damping": 0
+        },
+        {
+          "distance": 1.4351,
+          "area": 26006.62,
+          "width": 102.38827,
+          "damping": 0
+        },
+        {
+          "distance": 1.4478,
+          "area": 24993.38,
+          "width": 98.39913,
+          "damping": 0
+        },
+        {
+          "distance": 1.4605,
+          "area": 25331.13,
+          "width": 99.72886,
+          "damping": 0
+        },
+        {
+          "distance": 1.4732,
+          "area": 24993.38,
+          "width": 98.39913,
+          "damping": 0
+        },
+        {
+          "distance": 1.4859,
+          "area": 24317.88,
+          "width": 95.73969,
+          "damping": 0
+        },
+        {
+          "distance": 1.4986,
+          "area": 23642.38,
+          "width": 93.08024,
+          "damping": 0
+        },
+        {
+          "distance": 1.5113,
+          "area": 23304.64,
+          "width": 91.75055,
+          "damping": 0
+        },
+        {
+          "distance": 1.524,
+          "area": 22629.14,
+          "width": 89.0911,
+          "damping": 0
+        },
+        {
+          "distance": 1.5367,
+          "area": 22629.14,
+          "width": 89.0911,
+          "damping": 0
+        },
+        {
+          "distance": 1.5494,
+          "area": 22629.14,
+          "width": 89.0911,
+          "damping": 0
+        },
+        {
+          "distance": 1.5621,
+          "area": 22629.14,
+          "width": 89.0911,
+          "damping": 0
+        },
+        {
+          "distance": 1.5748,
+          "area": 21615.89,
+          "width": 85.10193,
+          "damping": 0
+        },
+        {
+          "distance": 1.5875,
+          "area": 20602.65,
+          "width": 81.1128,
+          "damping": 0
+        },
+        {
+          "distance": 1.6002,
+          "area": 21615.89,
+          "width": 85.10193,
+          "damping": 0
+        },
+        {
+          "distance": 1.6129,
+          "area": 20264.9,
+          "width": 79.78307,
+          "damping": 0
+        },
+        {
+          "distance": 1.6256,
+          "area": 19589.4,
+          "width": 77.12362,
+          "damping": 0
+        },
+        {
+          "distance": 1.6383,
+          "area": 20264.9,
+          "width": 79.78307,
+          "damping": 0
+        },
+        {
+          "distance": 1.651,
+          "area": 19589.4,
+          "width": 77.12362,
+          "damping": 0
+        },
+        {
+          "distance": 1.6637,
+          "area": 18913.91,
+          "width": 74.46421,
+          "damping": 0
+        },
+        {
+          "distance": 1.6764,
+          "area": 18576.16,
+          "width": 73.13449,
+          "damping": 0
+        },
+        {
+          "distance": 1.6891,
+          "area": 18576.16,
+          "width": 73.13449,
+          "damping": 0
+        },
+        {
+          "distance": 1.7018,
+          "area": 17562.91,
+          "width": 69.14531,
+          "damping": 0
+        },
+        {
+          "distance": 1.7145,
+          "area": 17562.91,
+          "width": 69.14531,
+          "damping": 0
+        },
+        {
+          "distance": 1.7272,
+          "area": 17562.91,
+          "width": 69.14531,
+          "damping": 0
+        },
+        {
+          "distance": 1.7399,
+          "area": 17225.17,
+          "width": 67.81563,
+          "damping": 0
+        },
+        {
+          "distance": 1.7526,
+          "area": 16549.67,
+          "width": 65.15618,
+          "damping": 0
+        },
+        {
+          "distance": 1.7653,
+          "area": 15874.17,
+          "width": 62.49673,
+          "damping": 0
+        },
+        {
+          "distance": 1.778,
+          "area": 17562.91,
+          "width": 69.14531,
+          "damping": 0
+        },
+        {
+          "distance": 1.7907,
+          "area": 18238.41,
+          "width": 71.80476,
+          "damping": 0
+        },
+        {
+          "distance": 1.8034,
+          "area": 16549.67,
+          "width": 65.15618,
+          "damping": 0
+        },
+        {
+          "distance": 1.8161,
+          "area": 19589.4,
+          "width": 77.12362,
+          "damping": 0
+        },
+        {
+          "distance": 1.8288,
+          "area": 14860.93,
+          "width": 58.5076,
+          "damping": 0
+        },
+        {
+          "distance": 1.8415,
+          "area": 15536.42,
+          "width": 61.16701,
+          "damping": 0
+        },
+        {
+          "distance": 1.8542,
+          "area": 15198.68,
+          "width": 59.83732,
+          "damping": 0
+        },
+        {
+          "distance": 1.85928,
+          "area": 14523.18,
+          "width": 57.17787,
+          "damping": 0
+        }
+      ],
+      "mouthArea": 12903.199999999999
+    },
+    "sweep": [
+      10,
+      20000
+    ],
+    "distanceM": 3,
+    "modalReference": {
+      "source": "Martin J. King, The Two-Year Transmission Line Speaker Design, 2023-09-23; http://quarter-wave.com/Project13/Satori_TL_Design_Documentation.pdf; Fig 11 traditional centerline method (rounded table values). Compare ANSYS separately; its boundary is also p=0 but geometry is three-dimensional.",
+      "frequencies": [
+        33,
+        134,
+        228,
+        321,
+        415,
+        506,
+        597,
+        691
+      ],
+      "tolerancePercent": 2
+    },
+    "references": [
+      {
+        "id": "fig18-total",
+        "title": "Fig 18 passive anechoic sum at 3 m (approximate raster)",
+        "source": "Martin J. King, The Two-Year Transmission Line Speaker Design, 2023-09-23; http://quarter-wave.com/Project13/Satori_TL_Design_Documentation.pdf; Fig 18 passive anechoic sum at 3 m (approximate raster)",
+        "evidence": "published-simulation",
+        "metric": "spl",
+        "conditions": {
+          "voltage": null,
+          "distanceM": 3,
+          "radiation": "anechoic",
+          "stuffing": "stuffed",
+          "crossover": "passive",
+          "notes": "The paper text does not explicitly identify input voltage for this graph. Local drive2.83Vrms is ASSUMED, not a verified published test condition."
+        },
+        "tolerance": 2,
+        "uncertainty": 0.6,
+        "samples": [
+          [
+            10,
+            41.025
+          ],
+          [
+            15,
+            53.525
+          ],
+          [
+            20,
+            61.926
+          ],
+          [
+            30,
+            70.123
+          ],
+          [
+            40,
+            74.016
+          ],
+          [
+            50,
+            76.27
+          ],
+          [
+            70,
+            77.09
+          ],
+          [
+            100,
+            76.27
+          ],
+          [
+            150,
+            74.426
+          ],
+          [
+            200,
+            75.246
+          ],
+          [
+            300,
+            75.451
+          ],
+          [
+            500,
+            74.016
+          ],
+          [
+            700,
+            73.811
+          ],
+          [
+            1000,
+            73.197
+          ],
+          [
+            1500,
+            72.787
+          ],
+          [
+            2000,
+            72.172
+          ],
+          [
+            3000,
+            72.582
+          ],
+          [
+            7000,
+            72.582
+          ]
+        ]
+      },
+      {
+        "id": "fig15-low-z",
+        "title": "Fig 15 empty TL unfiltered impedance below45Hz (solid/dashed overlap; approximate raster)",
+        "source": "Martin J. King, The Two-Year Transmission Line Speaker Design, 2023-09-23; http://quarter-wave.com/Project13/Satori_TL_Design_Documentation.pdf; Fig 15 empty TL unfiltered impedance below45Hz (solid/dashed overlap; approximate raster)",
+        "evidence": "published-simulation",
+        "metric": "impedance",
+        "conditions": {
+          "voltage": null,
+          "distanceM": null,
+          "radiation": "near-field",
+          "stuffing": "empty",
+          "crossover": "bypass"
+        },
+        "tolerance": 2,
+        "uncertainty": 1,
+        "samples": [
+          [
+            10,
+            4.644
+          ],
+          [
+            12,
+            5.108
+          ],
+          [
+            15,
+            6.873
+          ],
+          [
+            17,
+            9.752
+          ],
+          [
+            18,
+            12.167
+          ],
+          [
+            19,
+            17.926
+          ],
+          [
+            20,
+            24.706
+          ],
+          [
+            20.5,
+            28.885
+          ],
+          [
+            21,
+            27.028
+          ],
+          [
+            22,
+            19.133
+          ],
+          [
+            23,
+            11.981
+          ],
+          [
+            25,
+            6.873
+          ],
+          [
+            28,
+            4.737
+          ],
+          [
+            30,
+            3.994
+          ],
+          [
+            32,
+            3.901
+          ],
+          [
+            35,
+            4.365
+          ],
+          [
+            40,
+            6.594
+          ],
+          [
+            45,
+            18.39
+          ]
+        ]
+      }
+    ]
+  }
+}

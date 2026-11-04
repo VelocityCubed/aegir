@@ -1,0 +1,833 @@
+PDF PAGE 1
+eprints@whiterose.ac.uk
+https://eprints.whiterose.ac.uk
+Universities of Leeds, Sheffield and York
+Deposited via The University of Sheffield.
+White Rose Research Online URL for this paper:
+https://eprints.whiterose.ac.uk/id/eprint/142018/
+Version: Accepted Version
+Article:
+Yang, T., Saati, F., Horoshenkov, K.V. et al. (2019) Study on the sound absorption behavior
+of multi-component polyester nonwovens: experimental and numerical methods. Textile
+Research Journal, 89 (16). pp. 3342-3361. ISSN: 0040-5175
+https://doi.org/10.1177/0040517518811940
+Yang T, Saati F, Horoshenkov KV, et al. Study on the sound absorption behavior of multi-
+component polyester nonwovens: experimental and numerical methods. Textile Research
+Journal. 2019;89(16):3342-3361. © 2018 The Author(s). doi:10.1177/0040517518811940.
+Article available under the terms of the CC-BY-NC-ND licence
+(https://creativecommons.org/licenses/by-nc-nd/4.0/).
+Reuse
+This article is distributed under the terms of the Creative Commons Attribution-NonCommercial-NoDerivs
+(CC BY-NC-ND) licence. This licence only allows you to download this work and share it with others as long
+as you credit the authors, but you can’t change the article in any way or use it commercially. More
+information and the full terms of the licence here: https://creativecommons.org/licenses/
+Takedown
+If you consider content in White Rose Research Online to be in breach of UK law, please notify us by
+emailing eprints@whiterose.ac.uk including the URL of the record and the reason for the withdrawal request.
+
+PDF PAGE 2
+Study on sound absorption behavior of multi-component
+polyester nonwovens: experimental and numerical methods
+Tao Yang1, Ferina Saati2, Kirill V Horoshenkov3, Xiaoman Xiong1, Kai Yang1, Rajesh
+Mishra1, Steffen Marburg2 and Jiří Militký1
+1Department of Material Engineering, Faculty of Textile Engineering, Technical University of
+Liberec, Liberec 46117, Czech Republic
+2Vibroacoustics of Vehicles and Machines, Technical University of Munich, Boltzmannstrasse
+15, 85748 Garching, Germany
+3Department of Mechanical Engineering, The University of Sheffield, Sheffield S1 3JD, United
+Kingdom
+Abstract:
+This study presents an investigation of the acoustical properties of multi-component polyester
+nonwovens with experimental and numerical methods. 15 types of nonwoven samples made
+with staple, hollow and bi-component polyester fibers were chosen to carry out this study. The
+AFD300 AcoustiFlow device was employed to measure airflow resistivity. Several models
+were grouped in theoretical and empirical model categories and used to predict the airflow
+resistivity. A simple empirical model based on fiber diameter and fabric bulk density was
+obtained through power-fitting method. The difference between measured and predicted
+airflow resistivity was analyzed. The surface impedance and sound absorption coefficient were
+determined by using 45mm Materiacustica impedance tube. Some widely used impedance
+models were used to predict acoustical properties. Comparison between measured and
+predicted values was carried out to determine the most accurate model for multi-component
+polyester nonwovens. The results show that one of the Tarnow model provides the closest
+prediction to the measured value with an error of 12%. The proposed power-fitted empirical
+model exhibits very small error of 6.8%. It is shown that the Delany-Bazley and Miki models
+can accurately predict surface impedance of multi-component polyester nonwovens, but
+Komatsu model is less especially at the low-frequency range. The results indicate that the Miki
+model is the most accurate method to predict the sound absorption coefficient with mean error
+of 8.39%.
+Keywords
+polyester, nonwoven, airflow resistivity, impedance, sound absorption, models
+
+PDF PAGE 3
+Introduction
+Porous sound absorbers are widely used to reduce noise and to control reverberation time.
+Energy loss caused by viscous effects and thermal losses are primarily the mechanism involved
+in sound absorption by porous materials.1 Such losses occur during sound propagation in the
+interconnected pores of a porous absorbent. A thin layer of air adjacent to the wall of a pore is
+where viscous losses happen. This is due to viscosity of air so sound dissipates with friction
+between the pore walls. Thermal conductivity of the air and the absorbent material has some
+impact on losses as well, often being more important at low frequencies. Sound energy losses
+due to vibrations of the material also happen, but they are usually less important than the
+viscous-thermal absorption effects as sound propagates mainly through the interconnected
+pores which volume prevail. Fibrous materials are typical porous materials, playing an
+important role in building and automotive industries for noise control and sound quality. Due
+to their high porosity, low pollution, light weight, low cost and high absorbing, fibrous
+materials are popular sounds absorbers.2
+The noise reduction application of inorganic fibrous materials, such as glass fiber and mineral
+wool, attracted a considerable attention due to their large specific surface area and high
+acoustical performance. The characteristic impedance and sound absorption of glass fiber and
+mineral wool have been investigated using impedance tube and Johnson-Champoux-Allard
+(JCA) model in Wang and Torng’s study.3 They stated that the difference in sound absorption
+is not obvious for materials with different bulk densities. Chen and Jiang4 compared the sound
+absorption of activated carbon fiber and glass fiber separately laminated with pure cotton, pure
+ramie and pure polypropylene (PP) nonwovens. Their results indicated that nonwovens with
+activated carbon fiber as surface layer have better sound absorption than nonwovens with
+surface layer of glass fiber. Although inorganic fibrous materials have significant advantages,
+there are potential human health problems as a result of inhaling fibers or due to skin irritation
+and lay-down in the lung alveoli.5 Thus, some researchers investigate the usage of natural fibers
+instead of inorganic fibers.
+Compared to glass fiber and mineral wool, natural fibers as sound-absorbing materials have
+relatively high thermal and acoustic performances and are more environmentally friendly.
+Reviews of acoustic properties of natural fibers can be found in literature.6-7 The sound
+absorption and physical properties of nonwovens produced via needle-punching through
+combining banana, bamboo and jute fibers with PP staple fibers have been reported in the ratio
+of 50 : 50.8 The results showed that bamboo/PP nonwoven exhibits higher stiffness, better
+sound absorption, higher tensile strength, lower elongation, lower thermal conductivity and
+lower air permeability. It is known to be more suitable for interior automotive noise control
+than other fiber composites. Oldham et al.9 carried out experiments for sound absorption on
+cotton, wool, ramie, flax, jute and sisal fiber through impedance tube and reverberation
+chamber measurements. They studied the accuracy of the Delany-Bazely and Garai-Pompoli
+models for the prediction of the absorptive properties of natural fibers. They stated that the two
+prediction models agree with measured data for natural fibers with less than 60 diameter.
+However, these models have less than satisfactory applicability in the case of most natural
+𝜇𝜇𝜇𝜇
+fibers where fiber diameters are relatively large.
+
+PDF PAGE 4
+Beside inorganic and natural fibers, synthetic fibers presently play an important role in
+applications for noise reduction. Unlike natural fibers, synthetic fibrous materials can be more
+widely used in various applications for noise reduction due to their structural diversity.
+Pelegrinis et al.10 applied an alternative model based on the Kozeny-Carman equation, to
+theoretically predict the airflow resistivity of polyester materials with uniform fiber diameter.
+The airflow resistivity retrieved using the Miki model applied to absorption coefficient data
+was compared with the predicted airflow resistivity. The results indicated that the flow
+resistivity retrieved from the acoustical absorption data agreed well with that predicted by the
+Kozeny-Carman model, giving an error within 10%. The thermal properties and sound
+absorption of high-loft nonwovens made by staple, hollow and bi-component polyester were
+reported in refs. [11,12] The results showed that high-loft polyester nonwovens result in a
+sound absorption that shows a strong correlation with their thermal resistance. In addition, it
+was concluded that polyester nonwovens show the best sound absorption performance with
+airflow resistivity of 6000 Pa s/m2. An investigation by Tascan and Vaughn13 into the
+acoustical insulation of different types of polyester fiber was also carried out. In this work it
+was stated that materials with 3-denier fibers were better sound insulators than the ones with
+15-denier fibers. It also indicated that 4DG and trilobal polyester fibers have better sound
+insulation results than nonwoven fabrics made from round fibers.
+Although a number of studies related to the acoustic properties of fibrous materials have been
+reported, there are only a few publications focusing on multi-component polyester nonwovens.
+14 Thus, the aim of the current study is to investigate the airflow resistivity, impedance and
+sound absorption of multi-component polyester nonwovens by using practical measurements
+and existing prediction methods. The accuracy between measured and predicted results is
+analyzed.
+Some models for airflow resistivity and impedance prediction
+The presently widely used sound absorption prediction methods are based on the theory
+proposed by Zwikker and Kosten.15 In their theory, the surface characteristic impedance of
+rigidly-backed layer of porous material with finite thickness can be calculated from the
+following equation:
+= coth( ) , (1)
+where is the surface characteristi𝑍𝑍c𝑠𝑠 imp𝑍𝑍e𝑐𝑐dance,𝑘𝑘 𝑘𝑘 is the characteristic impedance, is the
+propagation constant and is the material thickness. Then, the normal-incidence sound
+𝑍𝑍𝑠𝑠 𝑍𝑍𝑐𝑐 𝑘𝑘
+absorption coefficient can be derived from the surface characteristic impedance as
+𝑘𝑘
+= 1 | | = 1 , (2)
+𝑍𝑍𝑠𝑠 2
+2
+𝜌𝜌0𝑐𝑐0 −1
+𝑍𝑍𝑠𝑠
+𝛼𝛼 − 𝑅𝑅 −�
+𝜌𝜌0𝑐𝑐0
++1�
+where is the sound absorption coefficient, R is the pressure reflection coefficient, is the
+air density at room temperature, and is the sound speed in air media at room temperature.
+𝛼𝛼 𝜌𝜌0
+𝑐𝑐0
+
+PDF PAGE 5
+Airflow resistivity models
+In a majority of the impedance models, the airflow resistivity is the critical parameter to predict
+the characteristic impedance and propagation constant. The airflow resistivity is a measure of
+how easy air passes through a porous absorber and the resistance that airflow meets through a
+structure. This measure gives an estimate of the sound energy penetrated in the material pores
+and lost due to inertia and viscous effects in the pore structure. Therefore, the airflow resistivity
+is very important parameter to determine accurately. Xue et al.14 proposed a modification based
+on the existing models for two-component fibrous materials with varying fiber diameter. In
+their paper, the micro-CT measurement was applied to obtain the fiber radii distribution. By
+applying the fiber radii distribution in one of the Tarnow model, they accurately predicted the
+airflow resistivity of materials having two fiber components. Models for predicting the airflow
+resistivity by using bulk density, porosity and mean fiber diameter are available.16 Existing
+models can be categorized into two groups: theoretical and empirical models. A summary of
+some commonly used theoretical and empirical models is given in Table 1.
+The theoretical models for airflow resistivity are mainly based on two theories: drag force
+theory and capillary channel theory. The capillary channel theory assumes that the flow through
+the porous material is treated as a conduit flow between cylindrical parallel capillary tubes.17
+The flow resistivity theoretically related to the material bulk density, fiber diameter and
+porosity as suggested by Carman and Kozeny.17 Pelegrinis et al.10 modified the Kozeny-
+Carmen model to predict more accurately the airflow resistivity of uniform fiber diameter
+polyester material. In drag force theory, the fibers in the porous material, or in other words the
+walls of the pores in the structure are treated as obstacles to an otherwise straight flow of the
+fluid and the fibers cannot be displaced.18 Drag force theory models demonstrate the
+relationship between permeability and the internal structural architecture of the porous material
+unlike capillary flow theory. Langmuir developed the earliest equivalent dimensionless
+permeability for flow parallel to an array.19 A new way to calculate the airflow resistivity of
+randomly placed parallel fibers based on Voronoi polygons was presented by Tarnow.20 He
+proposed a two-dimensional model that consists of parallel fibers randomly spaced for flow
+perpendicular to, or parallel with the fibers. Since samples in this study have perpendicular-
+laid fiber structure, one of the Tarnow’s models used to predict airflow parallel passing through
+fibers arranged in random lattice is listed in Table 1.
+The empirical airflow resistivity model was first introduced by Nichols, which requires an
+adjustable parameter 0.3 x 1.21 Nichols model was modified by Garai and Pompoli22 for
+accurate prediction of airflow resistivity for double-fiber component polyester materials.
+≤ ≤
+Manning and Panneton23 established three simple airflow resistivity models based on weight
+of evidence approach for Shoddy fiber materials which were manufactured by three different
+bonding methods. Thermal bonding material model was selected due to that the chosen high-
+loft nonwovens were thermally bonded. The applied fiber diameter determination method in
+this study is different with Xue’s method14 because the fiber components used in our research
+have various length. The fiber diameter was calculated by using length-weighted average
+method, detailed method will be introduced in the Materials section.
+
+PDF PAGE 6
+Table 1. Some airflow resistivity models established using theoretical and empirical methods.
+Category Model Airflow resistivity
+Capillary channel Kozeny-Carman17 180 (1 )
+=
+theory 2
+𝜂𝜂 −𝜀𝜀
+𝜎𝜎 2 3
+Pelegrinis et al.10 180𝑑𝑑(1𝜀𝜀 )
+=
+2
+𝜂𝜂 −𝜀𝜀
+𝜎𝜎 2
+Drag force theory Langmuir19 16 ( 𝑑𝑑 1 )
+=
+(1 )
+[ ln(1 ) 1.𝜂𝜂5+−2( 𝜀𝜀1 )
+2
+]
+𝜎𝜎 2
+2 −𝜀𝜀
+Tarnow20 Airflo 𝑑𝑑 w is − paralle − l t 𝜀𝜀 o f − ibers arranged − in 𝜀𝜀 ra − ndom lattice
+16 (1 )
+=
+[ 1.280ln(1 )+0.526 2 ]
+𝜂𝜂 −𝜀𝜀
+𝜎𝜎 2
+Empirical Method Garai-Pompoli22 𝑑𝑑 − 2.83×10−𝜀𝜀× . − 𝜀𝜀
+=
+−8 1404
+𝜌𝜌
+𝜎𝜎 2
+Manning-Panneton23
+Thermal bonded =
+𝑑𝑑. × × .
+−8 1516
+194 10 𝜌𝜌
+2
+𝜎𝜎 𝑑𝑑
+Note: is the airflow resistivity, is the dynamic viscosity of air, is the material porosity and d is the
+fiber diameter.
+𝜎𝜎 𝜂𝜂 𝜀𝜀
+Impedance models
+When modelling the acoustical behavior of porous materials, non-acoustic parameters such as
+porosity, airflow resistivity, tortuosity, thermal permeability and viscous and thermal
+characteristic lengths are difficult to determine. Therefore, usage of empirical models that are
+developed by regression method based on a reduced set of non-acoustical parameters is more
+popular. As described with Eqs. (1) and (2), it is essential to obtain the characteristic impedance
+and propagation constant to predict the surface characteristic impedance and sound absorption
+coefficient. Therefore, several impedance models are introduced in this section. The summary
+of the formula for these impedance models are presented in Appendix A.
+Delany-Bazley model
+Delany and Bazley24 carried out several impedance tube measurements in the 1960s with which
+they could derive empirical relationships between impedance and propagation constant to the
+airflow resistivity (see Eqs. (A1) and (A2) in Appendix A). These relationships are widely used
+across quite a wide frequency range due to the reasonable estimations. It is necessary to note
+that several empirical models have been developed based on Delany-Bazley model. In Delany-
+
+PDF PAGE 7
+Bazley model,24 only a non-acoustical parameter of airflow resistivity is required to predict
+acoustical characteristics.
+Miki model
+Miki25 developed a new regression model based on experimental data from Delany and
+Bazley’s study in 1989. Miki proposed modifications to the Delany-Bazley model were in order
+to generate a more accurate model, valid for a broader frequency range (see Eqs. (A3) and (4)
+in Appendix A).
+Garai-Pompoli model
+A new simple model for airflow resistivity prediction which was developed by Garai and
+Pompoli. They also presented a modified impedance model based on Delany-Bazley method
+(see Eqs. (A5) and (A6) in Appendix A).22 The accuracy of Delany-Bazley, Dunn-Davern and
+Garai-Pompoli prediction models were investigated by comparing the measured sound
+absorption of polyester materials with diameter ranging from18 to 48 m22, suggesting a
+suitable method of prediction for the acoustical characteristics of polyester materials. They
+𝜇𝜇
+performed a similar set of measurements on polyester materials to those of Delany-Bazely’s.
+Komatsu model
+Komatsu26 proposed a new prediction model (Eqs. (A7) and (A8) in Appendix A) based on the
+impedance tube measurements from 15 types of glass fiber and 9 types of mineral wool samples
+in 2008. The airflow resistivity of the samples ranges from 6000 to 72900 Pa·s/m2. He stated
+that this new model was more accurate for the prediction of the acoustical properties of a
+fibrous material when compared with the Delany-Bazley and Miki models.
+Materials and methods
+Materials
+In this study, three samples were selected. First, a polyester nonwoven sample was produced
+using vibrating perpendicular technology. In addition, two commercially available types of
+polyester nonwoven materials that were made separately using rotation-vibration perpendicular
+technology.12, 27 Sample WM20 was prepared using perpendicular rotation technology;
+samples STG1 and STG2 were produced using perpendicular vibration technology. The fiber
+content in all of the samples in this study was the same. The sheath part of bi-component fibers
+was low-melting polyethylene terephthalate (PET). Three types of polyester fiber exist in the
+polyester materials. In order to get the cross-sectional slice of fibers, the resin embedding
+
+PDF PAGE 8
+technology was utilized. Cross sectional and longitudinal microscopic images were also
+captured (see in Figure 1) at the Technical University of Liberec using JENAPOL microscope
+and NIS-elements software.
+(a) (b) (c)
+(a) (b) (c)
+Figure 1. Cross-sectional and longitudinal microscopic images of polyester fibers: (a) hollow PET; (b)
+PET; (c) bi-component PET.
+Table 2. Key characteristics of polyester materials used in this study.
+Fiber
+Mean fiber Airflow
+Bulk Surface orientation
+Fiber diameter Porosity Thickness resistivity
+Samples density density angle
+contents (%) (mm)
+(kg/m3) (g/m2)
+( ) (Pa·s/m²)
+(º)
+𝜇𝜇𝜇𝜇
+WM20 98.15 21.07 24.09 507.5 5757 ± 589 56.07
+WM20 97.86 24.45 20.76 507.5 7319 ± 243 45.65
+30% -
+WM20 Hollow 97.66 26.71 19.00 507.5 7530 ± 408 40.88
+PET
+WM20 97.59 27.54 18.43 507.5 9829 ± 376 39.41
+45% - PET 15.94
+WM20 96.89 35.56 14.27 507.5 14989 ± 285 29.44
+25% - Bi-
+WM20 component 96.86 35.87 14.15 507.5 15414 ± 167 29.17
+PET
+WM20 96.01 45.56 11.14 507.5 19733 ± 433 22.56
+ST G1 97.94 23.54 20.32 478.3 7498 ± 332 45.70
+
+PDF PAGE 9
+ST G1 97.29 30.94 15.46 478.3 13397 ± 277 32.99
+ST G2 98.52 16.93 27.48 465.2 4108 ± 199 79.09
+ST G2 98.29 19.49 23.87 465.2 5337 ± 217 58.53
+ST G2 98.03 22.48 20.69 465.2 7029 ± 356 47.67
+ST G2 97.58 27.61 16.85 465.2 10181 ± 259 37.02
+ST G2 96.94 34.95 13.31 465.2 12868 ± 199 28.40
+ST G2 96.09 44.60 10.43 465.2 20474 ± 687 21.88
+To prepare polyester nonwoven samples with various densities and thicknesses, heat pressing
+method was used. Samples WM20, ST G1, and ST G2 got compressed under 600 Pa pressure
+at 130 ℃ for the duration of 5 minutes. Thickness gauges were used to ensure the specific
+thickness attained at the end of this process. In Table 2, the characteristics of the polyester
+specimens are listed. The content percentage of samples is based on weight. The mean fiber
+diameter is length weighted average value as defined in Eq. (3). Reproducible statistics were
+ensured through 250 fiber diameter measurements for each type of fiber. According to ASTM
+C830-00, sample porosities were determined28 as = 1 , where is the fiber density
+that was 1141.82 kg/m3 for the fiber material used in this study, and is the fabric bulk density.
+𝜀𝜀 −𝜌𝜌⁄𝜌𝜌𝑓𝑓 𝜌𝜌𝑓𝑓
+The densities of the three fiber types were measured by liquid pycnometer method.29 Since the
+𝜌𝜌
+closed pores have little or no effect on the airflow resistivity and sound absorption, voids in
+hollow fibers were not included in this analysis.30 By means of an Alambeta device
+(SENSORA), fabric thicknesses were measured and fabric surface density was determined
+according to ISO 9073-1:1989.31 Figure 2 illustrates that the majority of fibers in an
+uncompressed sample are vertically orientated and parallel arranged. The fiber orientation
+angle in this study (Figure 2, areas highlighted in red) was defined as the angle between the
+surface of the material specimen and the dominant fiber axis. Such an angle is dependent on
+material density or compression degree of the fibrous specimen. During the process of heat
+press, the angle of fiber orientation decreased and consequently, thickness of specimen reduced
+and material density increased.
+= + + + , (3)
+𝑙𝑙𝑖𝑖 𝑙𝑙𝑖𝑖+1 𝑙𝑙𝑁𝑁
+𝑑𝑑 𝑑𝑑𝑖𝑖 ∑ 𝑁𝑁 𝑖𝑖=1𝑙𝑙𝑖𝑖 𝑑𝑑𝑖𝑖+1 ∑ 𝑁𝑁 𝑖𝑖=1𝑙𝑙𝑖𝑖 ∙∙∙ 𝑑𝑑𝑁𝑁 ∑ 𝑁𝑁 𝑖𝑖=1𝑙𝑙𝑖𝑖
+where is the fiber diameter obtained from average value of 50 fibers, and is the total fiber
+length for each type fiber in a unit volume of nonwoven fabric:
+𝑑𝑑𝑖𝑖 𝑘𝑘𝑖𝑖
+= , (4)
+( )
+𝑊𝑊𝑖𝑖
+𝑘𝑘𝑖𝑖 𝜋𝜋 𝑑𝑑𝑖𝑖⁄2 2 𝜌𝜌𝑖𝑖
+where is the fiber total weight in a unit volume of nonwoven fabric, and is the fiber
+density.
+𝑊𝑊𝑖𝑖 𝜌𝜌𝑖𝑖
+
+PDF PAGE 10
+Fiber orientation WM20
+ST G1
+ST G2
+Figure 2. Cross-sectional macroscopic images of samples WM20, ST G1 and ST G2.
+Circular specimens with 100mm diameter were cut with an ELEKTRONISCHE
+STANZMASCHINE TYPE 208. Measurements were carried out in a standard setup for air
+flow resistivity. In current study, the airflow resistivity was measured directly with an AFD300
+AcoustiFlow device (Gesellschaft für Akustikforschung Dresden mbH, Dresden, Germany)
+according to ISO 9053:1991.32 The AcoustiFlow device determines the airflow resistivity
+based on direct-airflow method on open porosity porous materials. For each polyester
+nonwoven fabric, ten samples were measured to ensure the reproducibility of the airflow
+resistivity experiment, results summarized in Table 2.
+Impedance tube measurement
+Acoustic properties of materials can be evaluated by steady-state methods, reverberant
+chamber methods, impedance tube methods, etc. In this study, the impedance tube was used to
+obtain normal incidence impedance. The surface impedance of polyester nonwovens was
+determined according to ISO 10534-2.33 The 45 mm impedance tube manufactured by
+Materiacustica was used to carry out the impedance measurements. The measurement
+frequency range was between 200 and 4200 Hz. The lower boundary was chosen higher than
+the tube limit in order to avoid inaccuracies caused by structural vibrations or phase
+mismatch.34 The measurements of airflow resistivity and impedance were carried in the Jonas
+Lab at the University of Sheffield. For each nonwoven fabric, ten samples were measured.
+
+PDF PAGE 11
+Figure 3. Two-microphone impedance tube schematic.
+A schematic of the two microphone impedance tube setup used in this work is depicted in
+Figure 3. Steady state pressure in the impedance tube is given by:
+= ( + ) , (5)
+𝑘𝑘𝑘𝑘 −𝑘𝑘𝑘𝑘
+where A is a complex constant, R is th𝑝𝑝e pre𝐴𝐴ss𝑒𝑒ure ref𝑅𝑅le𝑒𝑒ction coefficient, k is the propagation
+constant, and x is the position of sample surface in the tube.
+There are two standard methods for sampling the pressure within the tube: standing wave ratio
+method and transfer function technique.1 The second method was applied for determination of
+impedance in this work. The transfer function between two microphone positions in the
+impedance tube is measured as shown in Figure 3. The transfer function is the ratio of pressure
+between two microphone positions:
+= , (6)
+𝑝𝑝𝑥𝑥2
+𝐻𝐻12
+𝑝𝑝𝑥𝑥1
+and then using Eq. (5), the transfer function is given by:
+= , (7)
+𝑘𝑘𝑥𝑥2 −𝑘𝑘𝑥𝑥2
+𝑒𝑒 +𝑅𝑅𝑒𝑒
+where and are the positions of th𝐻𝐻e 1 m 2 icro𝑒𝑒p 𝑘𝑘𝑥𝑥 h 1 o+n𝑅𝑅e𝑒𝑒s − 𝑘𝑘 a 𝑥𝑥 s 1 shown in Figure 3. From Eq. (7), the
+complex pressure reflection coefficient can be obtained by:
+𝑥𝑥1 𝑥𝑥2
+= . (8)
+𝑘𝑘𝑥𝑥1 𝑘𝑘𝑥𝑥2
+𝐻𝐻12𝑒𝑒 −𝑒𝑒
+𝑅𝑅 𝑒𝑒
+−𝑘𝑘𝑥𝑥2
+−𝐻𝐻12𝑒𝑒
+−𝑘𝑘𝑥𝑥1
+Appling Eq. (8) to Eq. (2), the surface impedance and sound absorption coefficient are
+consequently attained.
+Results and Discussion
+The predicted and measured impedance, airflow resistivity and sound absorption coefficient of
+multi-component polyester nonwovens were presented in this section. The accuracy of
+
+PDF PAGE 12
+impedance and airflow resistivity models was investigated, comparing the relative prediction
+errors.
+Airflow resistivity
+In order to investigate the accuracy of airflow resistivity models, the relative errors, , between
+predicted and measured data were calculated according to the following equation:
+𝛿𝛿
+= = , , ×100% , (9)
+𝑁𝑁
+∑𝑖𝑖=1𝛿𝛿𝑖𝑖 1 𝑁𝑁 �𝜎𝜎𝑚𝑚𝑖𝑖−,𝜎𝜎𝑝𝑝𝑖𝑖�
+𝛿𝛿 𝑁𝑁 𝑁𝑁∑𝑖𝑖=1 𝜎𝜎𝑚𝑚𝑖𝑖
+where is the measured airflow resistivity, is the predicted airflow resistivity, and N is
+number of the tested configurations (N=15).
+𝜎𝜎𝑚𝑚 𝜎𝜎𝑝𝑝
+
+PDF PAGE 13
+Figure 4. The prediction error of airflow resistivity and the linear relation between measured and
+predicted airflow resistivity.
+Figure 5. The minimum, mean and maximum prediction error based on some airflow resistivity models.
+The mean error was obtained using Eq. (9).
+𝛿𝛿
+
+PDF PAGE 14
+Figure 6. Predicted airflow resistivity and fitted model.
+Figure 4 presents the comparison of the predicted airflow resistivity values against the
+measured values. The minimum, mean and maximum prediction errors among the polyester
+nonwoven samples are shown in Figure 5. The predicted airflow resistivity values based on
+theoretical and empirical models are shown in Figure 6 as a function of the bulk density. It is
+observed that the relative prediction error lies in the range of 12-32.5%. It can be found that
+the minimum and maximum errors have same trend with mean relative errors from Figure 5.
+In the three groups of prediction models, the capillary channel theory models (Kozeny-Carman
+and Pelegrinis et al) exhibit relatively low errors between 15.7% and 18.5%. A similar error
+among capillary channel theory models is due to that the Pelegrinis et al model was slightly
+modified from Kozeny-Carmen model. However, Pelegrinis et al model shows better
+prediction for denser samples (e.g. > 35 kg/m3), although Kozeny-Carman model has better
+accuracy. Figure 6 shows that the model developed by Langmuir significantly overestimates
+the resistivity. Therefore, Langmuir model exhibits the highest relative error with a value of
+32.5%. The most accurate model for the airflow resistivity of multi component polyester
+nonwovens is the Tarnow model that is accurate within 12%. Furthermore, when materials are
+of relatively lower density, the Tarnow model gives a higher accuracy, whereas this model
+exhibits higher variation compared to measured values at high density range. To explain this
+phenomenon, fiber orientation angle was decreased with the increase in the density for high
+specimen compression as illustrated in Figure 2 and Table 2. Reduction in the fiber orientation
+angle leads to the airflow no longer be parallel to the fibers. As the orientation angle approaches
+0, the airflow becomes perpendicular to the fibers. For compressed materials, the measured
+airflow resistivity (see Figure 6) is higher than that predicted by Tarnow model which works
+better when flow is parallel to the fibers. It can be concluded that Tarnow model is more
+accurate for multi-component polyester with lower density and airflow resistivity. For the
+samples with denser structure and lower airflow resistivity, Pelegrinis et al. model is more
+accurate. The Garai-Pompoli and Manning-Panneton models predict similar values of airflow
+resistivity. The linear regression between measured and predicted value is also presented in
+Figure 4. It can be seen that all the regression lines have slope values close to 1 except Tarnow
+
+PDF PAGE 15
+method. This is because of the fact that the predicted airflow resistivity by Tarnow model for
+denser samples is relatively low compared with measured value. The coefficient of
+determinations for the models are over 0.95.
+Although one drag force theory model exhibits acceptable accuracy for multi-component
+polyester nonwovens, the two empirical models are not reliable which overestimate the airflow
+resistivity by 24%. One same type simple empirical model was developed by power-fitting the
+values of measured resistivity, the model presented in Eq. (10). The fitted empirical model is
+show in Figure 6. The relative prediction error of the fitted empirical model is 6.8%. The values
+of predicted airflow resistivity for each sample are presented in Appendix B. It was similar to
+that adopted in ref. [34].
+. × × 1.565
+= . (10)
+−8
+13395 10 𝜌𝜌
+2
+𝜎𝜎 𝑑𝑑
+Surface impedance and absorption coefficient
+The effect of a porous surface on the incident acoustic wave can be characterized by four
+interrelated acoustic quantities: impedance, admittance, pressure reflection coefficient and
+absorption coefficient. The impedance, admittance and pressure reflection coefficient describe
+the magnitude and phase change in the wave upon reflection. The absorption coefficient only
+gives information about the energy change on reflection.15 The impedance models introduced
+in previous section were used to predict characteristic impedance and propagation constant. By
+substituting the characteristic impedance and propagation constant into Eqs. (1) and (2), the
+surface impedance and sound absorption can be easily obtained. The surface impedance
+contains real part (resistance) and imaginary part (reactance). The real part of surface
+impedance is associated with energy propagated in the material, and the imaginary part with
+phase changes. Thus, the surface acoustic impedance gives more insight information about the
+absorbing properties of a material than the absorption coefficient. The predicted surface
+impedance and absorption coefficient will be demonstrated in this section. In addition, the
+accuracy between predicted and measured absorption coefficient will be presented.
+
+PDF PAGE 16
+Figure 7. Range of the ratio of frequency to airflow resistivity of nonwoven samples. The lower and
+upper limits are shown in terms of the applicability of the Delany and Bazley model.
+Delany and Bazley advised that their method is more accurate in the range of 10 1.23
+In order to verify the adaptability of Delany-Bazley model for predicting impedan−c2e an 𝑓𝑓 d sound
+≤ 𝜎𝜎 ≤
+absorption of multi-component polyester nonwovens, the against frequency has been
+𝑓𝑓
+presented in Figure 7 for the materials considered in this study. The slope of each line is equal
+𝜎𝜎
+to the reciprocal of airflow resistivity ( ). It can be seen that one sample with 4108 Pa s/m²
+airflow resistivity demonstrates high value of (i.e. > 1) from 4108 to 4200 Hz which means
+𝜎𝜎
+𝑓𝑓
+the sample with lowest airflow resistivity has 2.3% invalid prediction range in the whole
+𝜎𝜎
+measurement range (200 - 4200 Hz). Miki, Garai and Komatsu stated that their methods had
+wider confident prediction range compared with Delany-Bazley method.21, 25,26 Thus, the
+predicted and measured impedance absorption coefficients was also compared in this paper in
+the frequency range of 200 - 4200 Hz.
+
+PDF PAGE 17
+Figure 8. Measured and predicted impedance for the sample with airflow resistivity of 5757 Pa s/m².
+One sample of WM20 type nonwoven with 5757 Pa·s/m² airflow resistivity was chosen to
+determine the most suitable model for impedance prediction of multi-component polyester
+nonwoven. Figure 8 demonstrates the comparisons of normalized impedance between the
+measured values and the values calculated using the Delany–Bazley model, the Miki model,
+the Garai-Pompoli and the Komstsu model. The normalized surface impedance is the ratio of
+surface impedance to the characteristic impedance of air ( ). It can be seen that Delany-
+Bazley and Miki model have accurate predictions not only for the real part of the normalized
+𝑍𝑍𝑠𝑠⁄𝜌𝜌0𝑐𝑐0
+surface impedance but also for the imaginary part, while Komatsu model exhibits significant
+difference compared to measured values especially at low to mid frequency range. The reason
+for the inaccuracy of Komatsu model can be attributed to a wider airflow resistivity range (i.e.
+6000 - 72900 Pa s/m²) that was used to derive the impedance prediction equations that that
+used in this study (4108 to 20474 Pa·s/m²). The predictions of surface impedance for other
+types of nonwoven samples with varying airflow resistivity are presented in Appendix C.
+Figure 9. Sound absorption coefficient of polyester nonwoven samples with different airflow resistivity
+and thickness.
+
+PDF PAGE 18
+The absorption coefficient of six multi-component polyester nonwovens is shown in Figure 9.
+The airflow resistivity and thickness of each of these sample are also listed in the graph. The
+sound absorption results measured by impedance tube are plotted in the frequency range of
+200-4200 Hz. As expected, the sample with the highest airflow resistivity and smallest
+thickness shows the lowest absorption coefficient in the whole measurement range. Meanwhile,
+the sample with 5757 Pa s/m² airflow resistivity and 24.09 mm thickness has the highest sound
+absorption performance in the mid- and high-frequency bands (i.e. 2000 – 4200 Hz). The
+thickest sample exhibits the best sound absorption capability at low-frequency band. It can be
+seen that the decrease of thickness results in decreasing of absorption coefficient at low-
+frequency band. This result is expected.11, 35 The effect of airflow resistivity on sound
+absorption performance was also investigated in our previous study.12 It was found that the
+sound absorption coefficient of fibrous materials with similar thickness increases with the
+increasing airflow resistivity up to around 6000 Pa s/m². After that the absorption coefficient
+decreases with the increase in airflow resistivity.12, 36
+By applying predicted surface impedance into Eq. (2), the calculated absorption coefficient can
+be rapidly attained. A similar method for comparison between measured and predicted airflow
+resistivity was used to analyze the prediction errors of sound absorption coefficient among the
+four models. The relative prediction errors on sound absorption coefficient, , were calculated
+according to the following equation:
+𝛿𝛿𝛼𝛼
+= ×100% , (11)
+�∑𝛼𝛼𝑚𝑚𝑚𝑚𝑚𝑚𝑠𝑠−∑𝛼𝛼𝑝𝑝𝑟𝑟𝑚𝑚𝑒𝑒�
+𝛿𝛿𝛼𝛼
+∑𝛼𝛼𝑚𝑚𝑚𝑚𝑚𝑚𝑠𝑠
+where is the measured absorption coefficient, and is the predicted value.
+𝛼𝛼𝑚𝑚𝑒𝑒𝑚𝑚𝑠𝑠 𝛼𝛼𝑝𝑝𝑝𝑝𝑒𝑒𝑑𝑑
+Figure 10. Relative prediction error based on Komatsu model. The airflow resistivity on horizontal axis
+represents corresponding samples.
+
+PDF PAGE 19
+Figure 11. Relative prediction error based on Delany–Bazley model, Miki model and Garai-Pompoli
+model.
+As shown in Figure 8 and Appendix C, the Komatsu model demonstrates the lowest accuracy
+in surface impedance prediction. Consequently, the error in the absorption coefficient based on
+Komatsu model can be very high as compared with that when predicted with the Delany-Bazley
+model and Miki model. In order to clearly show the adaptability of the models for multi-
+component polyester nonwovens, the prediction error with Komatsu model is separately
+presented in Figure 10. The errors in predictions with the Delany-Bazley, Miki and Garai-
+Pompoli models are shown in Figure 11. The Komatsu model exhibits the highest error of 125%
+for the sample with 12868 Pa s/m² airflow resistivity. This error is relatively low when the
+resistivity is small. The Komatsu method shows around 70% for its mean error, while the values
+from other three methods are less than 15%. From Figure 11 it is found that the Delany–Bazley
+and Miki models have similar accuracy. The difference in their mean errors is less than 0.6%
+which are 8.92% and 8.39%, respectively. It is found that the absorption coefficient predicted
+with the Miki model better prediction for a majority of the samples studied in this work than
+that achieved with the Delany-Bazley model. The errors between the Delany-Bazley and Miki
+models and measured values of the absorption coefficient are smaller than those between the
+Garai-Pompoli method and measured values. The maximum error of 25.48% is found between
+the absorption coefficient predicted by the Delany-Bazley model and that measured for the
+sample with 14989 Pa s/m² airflow resistivity. The maximum error in the Garai-Pompoli model
+is 20.57% for the sample with 19733 Pa s/m² airlow resistivity. The minimum errors achieved
+with the Delany-Bazley and Miki methods were 1.79% and 1.67%, respectively.
+It can be considered that the results with an error less than 10% are accurate enough for this
+kind of analysis, as the value of bulk density and thickness for a fibrous material can vary due
+to several uncertainties during measurements. Uncertainties such as fabric compression, fiber
+density and any inaccuracy or noise that is present during the acquisition of the acoustical data
+might have resulted in erroneous data.34 Thus, it can be concluded that the Delany-Bazley and
+
+PDF PAGE 20
+Miki models are superior in terms of the sound absorption coefficient when compared against
+the Garai-Pompoli and Komatsu models. It can also be concluded that the Miki model can be
+used to accurately predict sound absorption coefficient of multi-component polyester
+nonwovens.
+Conclusion
+This work studied the airflow resistivity, impedance and sound absorption properties of multi-
+component polyester nonwoven materials by using experimental and numerical methods. The
+samples made with three types of polyester fibers were chosen to carry out this study. The
+airflow resistivity and impedance tube measurements were well performed in the Jonas Lab at
+the University of Sheffield. The values of airflow resistivity were obtained through AFD300
+AcoustiFlow device. Impedance and sound absorption coefficient measurements on some
+samples were conducted by using Materiacustica impedance tube. Six models based on
+capillary channel and drag force theories as well as empirical method were used to predict
+airflow resistivity. One simple empirical model based on the Nichols21 method was proposed.
+The proposed empirical model demonstrates an error of 6.8% by simple using fiber diameter
+and nonwoven bulk density as input. The airflow resistivity results also indicated that one of
+the model proposed by Tarnow20 exhibits the most suitable prediction with the relative error of
+12.0%.
+The Delany-Bazley, Miki, Garai-Pompoli and Komatsu models were applied to predict the
+acoustic properties. Subsequently, the measured and predicted values of the acoustical
+properties were compared to study their prediction accuracy. It was found that the Komatsu
+model is the least accurately predict the surface impedance, especially in the low-frequency
+range. The Delany-Bazley and Miki models showed a good agreement with the measured real
+and imaginary parts of the surface impedance. It was also observed that the Delany-Bazley and
+Miki models can accurately predict absorption coefficient for multi-component polyester
+nonwoven materials. Miki model exhibits the lowest mean relative error of 8.39%.
+
+PDF PAGE 21
+Declaration of conflicting interests
+The authors declare no potential conflicts of interest with respect to the research, authorship,
+and/or publication of this article.
+Acknowledgement
+This work was supported by the research project of the Student Grant Competition of Technical
+University of Liberec no. 21239 granted by the Ministry of Education Youth and Sports of the
+Czech Republic, DENORMS Cost Action Short Term Scientific Mission funding scheme,
+European Structural and Investment Funds in the frames of Operational Programme Research,
+Development and Education – project Hybrid Materials for Hierarchical Structures (HyHi, Reg.
+No. CZ.02.1.01/0.0/0.0/16_019/0000843) and by project “Modular platform for autonomous
+chassis of specialized electric vehicles for freight and equipment transportation”, Reg. No.
+CZ.02.1.01/0.0/0.0/16_025/0007293. The authors would like to thank Alistair I. Hurrel and
+Mohan Jiao for their help throughout the airflow resistivity and impedance tube measurements.
+
+PDF PAGE 22
+Appendix A. Summary of the formula from the impedance models
+Delany-Bazley model:
+. .
+= 1+0.0571 0.087 (A1)
+−0754 −0732
+𝜌𝜌0𝑓𝑓 𝜌𝜌0𝑓𝑓
+𝑍𝑍𝑐𝑐 𝜌𝜌0𝑐𝑐0� � 𝜎𝜎 � −𝑗𝑗 � 𝜎𝜎 � �
+. .
+= 0.189 + 1+0.0978 , (A2)
+−0595 −07
+𝜔𝜔 𝜌𝜌0𝑓𝑓 𝜌𝜌0𝑓𝑓
+𝑘𝑘 𝑐𝑐0� � 𝜎𝜎 � 𝑗𝑗� � 𝜎𝜎 � ��
+where is the airflow resistivity, f is the frequency, = 1 is the complex number and =
+2 is the angular frequency.
+𝜎𝜎 𝑗𝑗 √− 𝜔𝜔
+𝜋𝜋𝜋𝜋
+Miki model:
+. .
+= 1+0.0699 0.107 (A3)
+−0632 −0632
+𝑓𝑓 𝑓𝑓
+𝑍𝑍𝑐𝑐 𝜌𝜌0𝑐𝑐0� �𝜎𝜎� −𝑗𝑗 �𝜎𝜎� �
+. .
+= 0.160 + 1+0.109 . (A4)
+−0618 −0618
+𝜔𝜔 𝑓𝑓 𝑓𝑓
+𝑘𝑘 𝑐𝑐0� �𝜎𝜎� 𝑗𝑗� �𝜎𝜎� ��
+Garai-Pompoli model:
+. .
+= 1+0.078 0.074 (A5)
+−0623 −0660
+𝜌𝜌0𝑓𝑓 𝜌𝜌0𝑓𝑓
+𝑍𝑍𝑐𝑐 𝜌𝜌0𝑐𝑐0� � 𝜎𝜎 � −𝑗𝑗 � 𝜎𝜎 � �
+. .
+= 0.159 + 1+0.121 . (A6)
+−0571 −0530
+𝜔𝜔 𝜌𝜌0𝑓𝑓 𝜌𝜌0𝑓𝑓
+𝑘𝑘 𝑐𝑐0� � 𝜎𝜎 � 𝑗𝑗� � 𝜎𝜎 � ��
+Komatsu model:
+. .
+= 1+0.00027 2 log 0.0047 2 log (A7)
+62 41
+𝑓𝑓 𝑓𝑓
+𝑍𝑍𝑐𝑐 𝜌𝜌0𝑐𝑐0� � − 𝜎𝜎� −𝑗𝑗 � − 𝜎𝜎� �
+. .
+= 0.0069 2 log + 1+0.0004 2 log . (A8)
+41 62
+𝜔𝜔 𝑓𝑓 𝑓𝑓
+𝑘𝑘 𝑐𝑐0� � − 𝜎𝜎� 𝑗𝑗� � − 𝜎𝜎� ��
+
+PDF PAGE 23
+Appendix B. The values of airflow resistivity
+Table B1. The predicted and measured airflow resistivity.
+Bulk Kozeny- Pelegrinis Garai - Manning -
+Langmuir Tarnow Fitted Measured
+Samples density Carman et al. Pompoli Panneton
+(kg/m3) Airflow Resistivity (Pa·s/m2)
+WM20 21.07 4711 4455 8485 5842 8043 7750 6219 5757 ± 589
+WM20 24.45 6401 5998 10435 7138 9911 9710 7849 7319 ± 243
+WM20 26.71 7611 7161 11821 8052 11223 11105 9016 7530 ± 408
+WM20 27.54 8189 7611 12343 8394 11714 11630 9456 9829 ± 376
+WM20 35.56 13960 12695 17840 11962 16776 17139 14112 14989 ± 285
+WM20 35.87 14209 12912 18062 12105 16976 17359 14300 15414 ± 167
+WM20 45.56 23538 20832 25777 17005 23750 24944 20791 19733 ± 433
+ST G1 23.54 5920 5562 9898 6782 9398 9169 7398 7498 ± 332
+ST G1 30.94 10433 9608 14577 9853 13795 13876 11347 13297 ± 277
+ST G2 16.93 3008 2877 6292 4370 5917 5564 4416 4108 ± 199
+ST G2 19.49 4015 3813 7623 5266 7210 6887 5505 5337 ± 217
+ST G2 22.48 5387 5075 9286 6376 8813 8554 6886 7029 ± 356
+ST G2 27.61 8234 7651 12389 8424 11757 11676 9495 10181 ± 259
+ST G2 34.95 13461 12262 17840 11575 16372 16694 13734 12868 ± 199
+ST G2 44.60 22504 19969 24976 16495 23055 24157 20114 20474 ± 687
+
+PDF PAGE 24
+Appendix C. Predictions of surface impedance for the nonwoven samples with varying airflow
+resistivities
+Figure C1. Measured and predicted impedance for the sample with airflow resistivity of 4108 Pa·s/m².
+
+PDF PAGE 25
+Figure C2. Measured and predicted impedance for the sample with airflow resistivity of 7530 Pa·s/m².
+
+PDF PAGE 26
+Figure C3. Measured and predicted impedance for the sample with airflow resistivity of 10181 Pa·s/m².
+
+PDF PAGE 27
+Figure C4. Measured and predicted impedance for the sample with airflow resistivity of 13397 Pa·s/m².
+
+PDF PAGE 28
+Figure C5. Measured and predicted impedance for the sample with airflow resistivity of 20474 Pa·s/m².
+
+PDF PAGE 29
+Reference:
+1. Cox TJ and D’Antonio P. Acoustic Absorbers and Diffusers: Theory, Design and Application.
+2nd ed. London; New York: Taylor & Francis, 2009, p. 156-157.
+2. Albrecht W, Fuchs H and Kittelmann W. Nonwoven fabrics. Weinheim: Wiley-VCH, 2003,
+p.748.
+3. Wang CN and Torng JH. Experimental Study of the Absorption Characteristics of Some
+Porous Fibrous Materials. Appl Acoust 2001; 4: 447–459.
+4. Chen Y and Jiang N. Carbonized and Activated Non-Wovens as High-Performance Acoustic
+Materials: Part I Noise Absorption. Text Res J 2007; 77: 785–791.
+5. European Council Directive 67/548/EEC of 27 June 1967, On the approximation of laws,
+regulations and administrative provisions relating to the classification, packaging and labelling
+of dangerous substances, Official Journal of the European Union 1967; 196: 1-98.
+6. Mamtaz H, Fouladi MH, Al-Atabi M and Namasivayam SN. Acoustic Absorption of Natural
+Fiber Composites. Journal of Engineering 2016; 2016: 1-11.
+7. Tang X and Yan X. Acoustic energy absorption properties of fibrous materials: A review.
+Composites Part A 2017; 101: 360-380.
+8. Thilagavathi G, Pradeep E, Kannaian T and Sasikala L. Development of Natural Fiber
+Nonwovens for Application as Car Interiors for Noise Control. J Ind Text 2010; 39: 267–278.
+9. Oldham DJ, Egan CA and Cookson RD. Sustainable Acoustic Absorbers from the Biomass.
+Appl Acoust 2011; 72: 350–363.
+10. Pelegrinis MT, Horoshenkov KV and Burnett A. An Application of Kozeny–Carman Flow
+Resistivity Model to Predict the Acoustical Properties of Polyester Fibre. Appl Acoust 2016;
+101: 1–4.
+11. Yang T, Xiong X, Mishra R, Novak J and Militky J. Acoustic evaluation of Struto
+nonwovens and their relationship with thermal properties. Text Res J 2018; 88: 426–437.
+12. Yang T, Xiong X, Mishra R, Novák J, Militký J. Sound absorption and compression
+properties of perpendicular-laid nonwovens. Text Res J 2018. doi: 10.
+1177/0040517517753634.
+13. Tascan M and Vaughn EA. Effects of fiber denier, fiber cross-sectional shape and fabric
+density on acoustical behavior of vertically lapped nonwoven fabrics. J Eng Fiber Fabr 2008;
+3: 32–38.
+14. Xue Y, Bolton JS, Gerdes R, Lee S and Herdtle T. Prediction of Airflow Resistivity of
+Fibrous Acoustical Media Having Two Fiber Components and a Distribution of Fiber Radii.
+Appl Acoust 2018; 134: 145–153.
+
+PDF PAGE 30
+15. Zwikker C and Kosten CW. Sound Absorbing Materials. New York: Elsevier: 1949.
+16. Yang T, Mishra R, Horoshenkov KV, Hurrell A, Saati F and Xiong X. A Study of Some
+Airflow Resistivity Models for Multi-Component Polyester Fiber Assembly. Appl Acoust 2018;
+139 139: 75–81.
+17. Carman PC. Flow of Gases through Porous Media. New York: Academic Press, 1956.
+18. Scheidegger AE. THE PHYSICS OF FLOW THROUGH POROUS MEDIA, Adrian E.:
+University of Toronto Press, Toronto Hardcover, 2nd Edition, 1963.
+19. Jackson GW and James DF. The Permeability of Fibrous Porous Media. Can J Chem Eng
+1986; 64: 364–374.
+20. Tarnow V. Airflow Resistivity of Models of Fibrous Acoustic Materials. J Acoust Soc Am
+1996; 100: 3706–3713.
+21. Nichols RH. Flow‐Resistance Characteristics of Fibrous Acoustical Materials. J Acoust Soc
+Am 1947;19: 866–871.
+22. Garai M and Pompoli F. A Simple Empirical Model of Polyester Fibre Materials for
+Acoustical Applications. Appl Acoust 2005; 66: 1383–1398.
+23. Manning J and Panneton R. Acoustical Model for Shoddy-Based Fiber Sound Absorbers.
+Text Res J 2013; 83: 1356–1370.
+24. Delany ME and Bazley EN. Acoustical Properties of Fibrous Absorbent Materials. Appl
+Acoust 1970; 3: 105–116.
+25. Miki Y. Acoustical Properties of Porous Materials-Modifications of Delany-Bazley Models.
+Journal of the Acoustical Society of Japan (E) 1990; 11: 19–24.
+26. Komatsu T. Improvement of the Delany-Bazley and Miki Models for Fibrous Sound-
+Absorbing Materials. Acoust Sci & Tech 2008; 29: 121-129.
+27. Jirsak O and Wadsworth L. Nonwoven Textiles. Durham, NC: Carolina Academic Pr, 1998.
+28. ASTM C830-00: 2000. Standard test methods for apparent porosity, liquid absorption,
+apparent specific gravity, and bulk density of refractory shapes by vacuum pressure.
+29. Maciel N de OR, Ribeiro CGD, Ferreira J, Vieira J da S, Marciano CR, Vieira CM, Margem
+FM and Monteiro SN. Comparative Analysis of Curaua Fiber Density Using the Geometric
+Characterization and Pycnometry Technique. In: Ikhmayies S, Li B, Carpenter JS, et al., eds.
+Characterization of Minerals, Metals, and Materials 2017. Cham: Springer International
+Publishing; 2017:11-19.
+
+PDF PAGE 31
+30. McRae JD, Naguib HE and Atalla N. Mechanical and Acoustic Performance of
+Compression-Molded Open-Cell Polypropylene Foams. J Appl Polym Sci 2010; 116: 1106–
+1115.
+31. ISO 9073-1:1989. Textiles -- Test methods for nonwovens -- Part 1: Determination of mass
+per unit area.
+32. ISO 9053-1991: Acoustics -- Materials for acoustical applications -- Determination of
+airflow resistance.
+33. ISO10534-2:1998. Determination of sound absorption coefficient and impedance in
+impedance tubes, Part 2: Transfer-function method international organization for
+standardization.
+34. Hurrell AI, Horoshenkov KV and Pelegrinis MT. The Accuracy of Some Models for the
+Airflow Resistivity of Nonwoven Materials. Appl Acoust 2018; 130: 230-237.
+35. Coates M and Kierzkowski M. Acoustic textiles: lighter, thinner and more sound absorbent.
+Tech Text Int 2002; 11: 15–18.
+36. Zent A and Long JT. Automotive sound absorbing material survey results. SAE Int 2007;
+25: 1-7.

@@ -1,5 +1,12 @@
 # Solver, geometry and scoring definitions
 
+For the whole-speaker extension (sealed-back units, loaded passive/active
+crossovers, explicit acoustic profiles and published-reference checks), read
+[SYSTEM-STUDIES.md](SYSTEM-STUDIES.md) and [PHYSICS-UPGRADES.md](PHYSICS-UPGRADES.md). The original single-driver equations
+below are the default special case. A factory sealed-back driver's T/S fit
+includes its rear chamber and replaces only front radiation; it is not connected
+to the line's rear-pressure network.
+
 SI units in the acoustic solver; millimetres for CAD, litres for displayed volume. Project input stores Fs in Hz, Vas in L, Sd in cm², Le in mH and linear Xmax as **one-way peak mm**. Excursion and air velocity outputs are peak. Drive voltage is RMS; SPL is RMS dB re 20 µPa at 1 m.
 
 ## Linear driver

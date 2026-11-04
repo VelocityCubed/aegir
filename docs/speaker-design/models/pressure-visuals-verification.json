@@ -1,0 +1,42 @@
+{
+  "kind": "verification",
+  "date": "2026-11-02",
+  "release": "0.9.2",
+  "scope": "Display and optional measured-driver import; acoustic solver unchanged",
+  "project": "MJK Satori · passive worksheet · cable placement assumed",
+  "projectRevision": 13,
+  "projectUnchanged": true,
+  "archiveSha256": "2f637e3d2e0394d153c6aff4a659a7d572f6c6b7efec4da3c51706e8fee50cac",
+  "tests": {
+    "unitTests": 115,
+    "unitFiles": 16,
+    "studioE2E": "passed",
+    "pressurePackagedE2E": "passed",
+    "targetedFinalVisualizationTests": 13
+  },
+  "view": {
+    "jobId": "75fafdf5-89f6-4878-ab8d-5f0efbe0122a",
+    "frame": 85.34880000028397,
+    "playing": false,
+    "fps": 24,
+    "metric": "pressure",
+    "range": 0,
+    "showDrivers": true,
+    "driverMotionScale": 50,
+    "slicePlane": "auto",
+    "slicePosition": 0.5,
+    "opacity": 1,
+    "pressureCurve": "soft",
+    "frontShading": true,
+    "displayMode": "slice",
+    "contours": true,
+    "particles": false,
+    "particleScale": 500,
+    "renderQuality": "high",
+    "interpolation": true
+  },
+  "backup": "backups/pressure-visuals-2026-11-02",
+  "screenshots": "test-results/pressure-ui-packaged",
+  "portable": "release/AEONFORGE-Aegir-0.9.2-x64.exe",
+  "portableSha256": "8be7d2cda8ef80b4a750a82b94a9aef98432909bede3a6fd03e4953a470745ac"
+}

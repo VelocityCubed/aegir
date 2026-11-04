@@ -4,7 +4,7 @@ const path=require('node:path');
 const {execFile}=require('node:child_process');
 const {promisify}=require('node:util');
 const run=promisify(execFile);
-const {DesignService,buildGeometry}=require('../engine/service.cjs');
+const {DesignService,buildGeometry,cavityModalGrid,modalConvergence}=require('../engine/service.cjs');
 const {startBridge}=require('../engine/bridge.cjs');
 
 exports.startAgent=async function(win,{pythonPath,cadRoot}){
@@ -16,17 +16,32 @@ exports.startAgent=async function(win,{pythonPath,cadRoot}){
     finally{await fs.rm(temp,{recursive:true,force:true});}
   };
   let fieldReady=false,fieldCapabilities={webgpu:false,ready:false};const fieldPending=new Map();
+  const runModal=async(project,settings,onProgress,signal)=>{
+    const python=await pythonPath('scipy');if(!python)throw Error('Python/SciPy runtime unavailable; install the optional scientific runtime.');
+    const studies=[];
+    for(let i=0;i<settings.cellMm.length;i++){
+      if(signal.aborted)throw Error('Modal study cancelled.');
+      const data=cavityModalGrid(project,settings.cellMm[i],settings.geometry);data.count=settings.count;
+      const child=execFile(python,[path.join(cadRoot(),'cavity_modes.py')],{windowsHide:true,maxBuffer:4000000},()=>{});
+      const kill=()=>{if(!child.pid)return;if(process.platform==='win32')execFile('taskkill',['/PID',String(child.pid),'/T','/F'],{windowsHide:true},()=>{});else child.kill('SIGTERM');};
+      const abort=()=>kill(),timer=setTimeout(kill,120000);signal.addEventListener('abort',abort,{once:true});
+      child.once('close',()=>{clearTimeout(timer);signal.removeEventListener('abort',abort);});if(signal.aborted)kill();
+      const result=new Promise((resolve,reject)=>{let stdout='',stderr='';child.stdout.on('data',s=>stdout+=s);child.stderr.on('data',s=>stderr+=s);child.on('error',reject);child.on('close',code=>{if(code!==0)reject(Error(stderr||'Modal solve failed.'));else try{resolve(JSON.parse(stdout));}catch(e){reject(e);}});});
+      child.stdin.on('error',()=>{});child.stdin.end(JSON.stringify(data));studies.push(await result);onProgress((i+1)/settings.cellMm.length);
+    }
+    return {studies,...modalConvergence(studies)};
+  };
   const runField=async(id,project,settings,onProgress,signal)=>{
     for(let i=0;!fieldReady&&i<150;i++){if(signal.aborted)throw Error('Field study cancelled.');await new Promise(r=>setTimeout(r,100));}
     if(!fieldReady)throw Error('Desktop field executor is not ready.');
     return new Promise((resolve,reject)=>{
       const abort=()=>{if(!win.isDestroyed())win.webContents.send('field:cancel',id);finish(Error('Field study cancelled.'));};
-      const timer=setTimeout(()=>{if(!win.isDestroyed())win.webContents.send('field:cancel',id);finish(Error('Spatial study exceeded two minutes. Use a coarser grid or shorter duration.'));},120000);
+      const timer=setTimeout(()=>{if(!win.isDestroyed())win.webContents.send('field:cancel',id);finish(Error('Spatial study exceeded five minutes. Use a coarser grid or shorter duration.'));},300000);
       const finish=(error,result)=>{clearTimeout(timer);signal.removeEventListener('abort',abort);fieldPending.delete(id);error?reject(error):resolve(result);};
       fieldPending.set(id,{finish,onProgress});signal.addEventListener('abort',abort,{once:true});if(signal.aborted){abort();return;}win.webContents.send('field:run',{id,project,settings});
     });
   };
-  const service=await new DesignService({directory,workerPath:path.join(__dirname,'..','engine','worker.cjs'),runField,fieldCapabilities:()=>fieldCapabilities,cadStatus:async()=>Boolean(await pythonPath()),exportStep,capture:async(region,revision)=>{
+  const service=await new DesignService({directory,workerPath:path.join(__dirname,'..','engine','worker.cjs'),runModal,runField,fieldCapabilities:()=>fieldCapabilities,cadStatus:async()=>Boolean(await pythonPath()),exportStep,capture:async(region,revision)=>{
     if(win.isMinimized())win.restore();if(!win.isVisible())win.showInactive();
     for(let i=0;i<500;i++){const painted=await win.webContents.executeJavaScript("(()=>{const el=document.querySelector('[data-workspace-revision]');return el?.getAttribute('data-analysis-status')!=='pending'"+(region==='field'?"&&document.querySelector('.field-workbench')?.getAttribute('data-field-state')==='ready'":'')+"?Number(el?.getAttribute('data-workspace-revision')??-1):-1})()");if(painted>=revision)break;if(i===499)throw Error('Desktop has not rendered the requested revision.');await new Promise(r=>setTimeout(r,20));}
     await win.webContents.executeJavaScript('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');

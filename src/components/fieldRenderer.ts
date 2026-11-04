@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { PressureSlice, type SliceChoice } from "../field/pressureSlice";
 import type { FieldResult } from "../field/types";
 import type { FieldMetric } from "../field/pixels";
 import { fieldScale } from "../field/pixels";
@@ -10,6 +11,8 @@ export interface FieldDisplay {
   metric: FieldMetric;
   range: number;
   displayMode: "slice" | "volume" | "fronts";
+  slicePlane?: SliceChoice;
+  slicePosition?: number;
   contours: boolean;
   particles: boolean;
   particleScale: number;
@@ -20,7 +23,7 @@ export interface FieldDisplay {
 }
 const vertex = `out vec2 vUv; out vec3 vWorld;
 void main(){vUv=uv;vWorld=(modelMatrix*vec4(position,1.0)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`;
-const colours = `vec3 pressureColour(float p){return p<0.0?vec3(.549,.737,.796):vec3(.745,.773,.788);}`;
+const colours = `vec3 pressureColour(float p){float q=clamp(abs(p),0.0,1.0);float t=uSoft?sqrt(q):q;vec3 mid=vec3(16.,25.,40.)/255.;vec3 colour=(p<0.?vec3(47.,135.,255.):vec3(255.,91.,49.))/255.;vec3 high=(p<0.?vec3(180.,235.,255.):vec3(255.,233.,173.))/255.;return t<.65?mix(mid,colour,t/.65):mix(colour,high,(t-.65)/.35);}`;
 const planeFragment = `precision highp float;
 uniform sampler2D uA;uniform sampler2D uB;uniform sampler2D uMask;
 uniform float uMix;uniform float uScale;uniform float uRhoC;uniform int uMetric;uniform bool uContours;uniform float uOpacity;uniform bool uSoft;
@@ -28,7 +31,7 @@ in vec2 vUv;out vec4 outColour;
 ${colours}
 void main(){if(texture(uMask,vUv).r<.5)discard;vec4 s=mix(texture(uA,vUv),texture(uB,vUv),uMix);
 float speed=length(s.yzw);float value=uMetric==0?s.x:uMetric==1?speed:abs(s.x)*speed;
-float q=clamp(abs(value)/uScale,0.0,1.0);vec3 col=mix(vec3(.045,.065,.08),pressureColour(value),q);
+float q=clamp(abs(value)/uScale,0.0,1.0);vec3 col=pressureColour(value/uScale);
 float alpha=clamp((.025+.8*(uSoft?sqrt(q):q))*uOpacity,0.0,1.0);
 if(uContours&&uMetric==0){float level=s.x/uScale*4.0;float distance=abs(level-round(level));
 float line=1.0-smoothstep(max(fwidth(level)*.7,.006),max(fwidth(level)*1.5,.012),distance);
@@ -58,7 +61,7 @@ float p=samplePressure(uv);float q=abs(p)/uScale;
 float density=smoothstep(.025,.8,uSoft?sqrt(q):q)*.12;
 if(uFronts){float level=.35;bool crossing=previousAir&&((p/uScale-level)*(previous-level)<0.0||(p/uScale+level)*(previous+level)<0.0);density=crossing?.75:exp(-pow((q-level)/.055,2.0))*.10;}
 float alpha=1.0-exp(-density*uOpacity*ds/uPitch);if(uFronts&&density>.5)alpha=1.0-pow(.35,uOpacity);
-vec3 colour=pressureColour(p);if(uShade&&uFronts&&alpha>.01){vec3 grad=pressureGradient(uv,p);float len=length(grad);if(len>uScale*1e-8)colour*=.58+.42*abs(dot(grad/len,normalize(vec3(.4,.8,-.4))));}accum.rgb+=(1.0-accum.a)*alpha*colour;accum.a+=(1.0-accum.a)*alpha;
+vec3 colour=pressureColour(p/uScale);if(uShade&&uFronts&&alpha>.01){vec3 grad=pressureGradient(uv,p);float len=length(grad);if(len>uScale*1e-8)colour*=.58+.42*abs(dot(grad/len,normalize(vec3(.4,.8,-.4))));}accum.rgb+=(1.0-accum.a)*alpha*colour;accum.a+=(1.0-accum.a)*alpha;
 previous=p/uScale;previousAir=true;}
 if(accum.a<.002)discard;outColour=vec4(accum.rgb/max(accum.a,1e-6),accum.a);}`;
 
@@ -109,6 +112,8 @@ export class FieldRenderer {
     depthBuffer: true,
   });
   private size = new THREE.Vector2();
+  private slice: PressureSlice;
+  private sliceKey = "recorded:0.5";
   private previousA = -1;
   private previousB = -1;
   private particleData: Float32Array;
@@ -121,8 +126,9 @@ export class FieldRenderer {
   private end: [number, number, number] = [0, 0, 0];
   constructor(
     readonly result: FieldResult,
-    linear: boolean,
+    private linear: boolean,
   ) {
+    this.slice = new PressureSlice(result);
     const { plane, volume, particles } = result.meta,
       n = plane.width * plane.height;
     this.planeA = texture(
@@ -301,18 +307,72 @@ export class FieldRenderer {
     this.group.add(this.points, this.lines);
     this.clip = visualMotionClipper(result.meta.project);
   }
+  private setSlice(choice: SliceChoice, position: number) {
+    const key = choice + ":" + position;
+    if (key === this.sliceKey) return;
+    this.sliceKey = key;
+    this.slice = new PressureSlice(this.result, choice, position);
+    const p = this.slice.plane;
+    this.planeA.dispose();
+    this.planeB.dispose();
+    this.planeMask.dispose();
+    this.planeA = texture(
+      new Float32Array(this.slice.mask.length * 4),
+      p.width,
+      p.height,
+      4,
+      this.linear,
+    );
+    this.planeB = texture(
+      new Float32Array(this.slice.mask.length * 4),
+      p.width,
+      p.height,
+      4,
+      this.linear,
+    );
+    this.planeMask = new THREE.DataTexture(
+      Uint8Array.from(this.slice.mask, (x) => x * 255),
+      p.width,
+      p.height,
+      THREE.RedFormat,
+    );
+    this.planeMask.unpackAlignment = 1;
+    this.planeMask.needsUpdate = true;
+    const uniforms = (this.plane.material as THREE.ShaderMaterial).uniforms;
+    uniforms.uA.value = this.planeA;
+    uniforms.uB.value = this.planeB;
+    uniforms.uMask.value = this.planeMask;
+    this.plane.geometry.dispose();
+    this.plane.geometry = new THREE.PlaneGeometry(
+      p.width * p.pitchMm,
+      p.height * p.pitchMm,
+    );
+    const u = new THREE.Vector3(...p.u),
+      v = new THREE.Vector3(...p.v);
+    this.plane.quaternion.setFromRotationMatrix(
+      new THREE.Matrix4().makeBasis(u, v, u.clone().cross(v)),
+    );
+    this.plane.position
+      .set(...p.originMm)
+      .addScaledVector(u, ((p.width - 1) * p.pitchMm) / 2)
+      .addScaledVector(v, ((p.height - 1) * p.pitchMm) / 2);
+    this.previousA = this.previousB = -1;
+  }
   update(display: FieldDisplay) {
+    this.setSlice(
+      display.metric === "pressure"
+        ? (display.slicePlane ?? "recorded")
+        : "recorded",
+      display.slicePosition ?? 0.5,
+    );
     const { a, b, mix } = frameBlend(
         this.result,
         display.frame,
         display.interpolation,
       ),
-      meta = this.result.meta,
-      n = this.result.mask.length;
+      meta = this.result.meta;
     if (a !== this.previousA) {
-      (this.planeA.image.data as Float32Array).set(
-        this.result.data.subarray(a * n * 4, (a + 1) * n * 4),
-      );
+      this.slice.frame(a, this.planeA.image.data as Float32Array, false);
       this.planeA.needsUpdate = true;
       if (meta.volume && this.volumeA) {
         (this.volumeA.image.data as Float32Array).set(
@@ -325,9 +385,7 @@ export class FieldRenderer {
       }
     }
     if (b !== this.previousB) {
-      (this.planeB.image.data as Float32Array).set(
-        this.result.data.subarray(b * n * 4, (b + 1) * n * 4),
-      );
+      this.slice.frame(b, this.planeB.image.data as Float32Array, false);
       this.planeB.needsUpdate = true;
       if (meta.volume && this.volumeB) {
         (this.volumeB.image.data as Float32Array).set(

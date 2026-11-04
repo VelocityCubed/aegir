@@ -62,9 +62,10 @@ free 3D boards/front-back slots and diagnosed when a driver is isolated from its
 guide. CAD and 3D studies remain available. Geometry-only ZIPs include MODEL-NOTES
 instead of a fabricated response CSV. The route guide is not a spatial boundary.
 
-Sources remain linear rigid pistons driven by the same signal with individual
-scales/phases; no crossover filtering, breakup, elastic cabinet vibration or
-calibrated stuffing model is added. A dome needs a finer grid than a woofer: the
+Sources remain linear rigid pistons. In0.9 their loaded circuit, active filters
+and extra coil branch are coupled to the field. Frequency-dependent materials
+require steady tone; see [the contract](CROSSOVER-BUILDER.md). Breakup, elastic
+cabinet vibration and independent material calibration remain outside scope. A dome needs a finer grid than a woofer: the
 study starts with a source-size-aware grid suggestion. Check grid/padding convergence
 and compare prototypes before treating results quantitatively.
 

@@ -316,3 +316,10 @@ td small{display:block;font-size:8px;color:#9caab5;margin-top:4px}
 
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}
 }
+.system-study { margin-top: 18px; }
+.system-study p { max-width: 100%; line-height: 1.5; overflow-wrap: anywhere; }
+.reference-table { overflow-x: auto; margin: 12px 0; }
+.reference-table table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.reference-table th, .reference-table td { text-align: left; padding: 9px 12px; border-bottom: 1px solid #35434d; }
+.system-editor { margin-top: 18px; padding: 16px; background: #111e27; border: 1px solid #35434d; border-radius: 8px; }
+.system-editor textarea { width: 100%; padding: 12px; background: #0b161e; color: #dce8ed; font: 12px/1.5 monospace; border: 1px solid #607480; border-radius: 4px; resize: vertical; }

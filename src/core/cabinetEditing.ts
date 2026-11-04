@@ -5,6 +5,10 @@ export function cabinetDraft(project: Project): Project {
   const g = buildGeometry(project),
     p = editableLayout(project);
   p.mounts = g.mounts.map((m) => ({
+    ...(m.rearLoading?{rearLoading:m.rearLoading}:{}),
+    ...(m.acousticOffsetMm?{acousticOffsetMm:m.acousticOffsetMm}:{}),
+    ...(m.measurements?{measurements:structuredClone(m.measurements)}:{}),
+    ...(m.crossover?{crossover:structuredClone(m.crossover)}:{}),
     id: m.id,
     driver: structuredClone(m.driver),
     position: m.position,

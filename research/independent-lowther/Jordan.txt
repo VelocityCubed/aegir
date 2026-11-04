@@ -1,0 +1,596 @@
+
+===== PAGE 1 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two
+Way Speaker System
+Martin J. King
+40 Dorsman Dr.
+Clifton Park, NY 12065
+MJKing57@aol.com
+
+===== PAGE 2 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Introduction :
+My first open baffle design could only be described as huge. It not only filled the
+room with great sound, it physically filled the room with a solid wall of plywood when the
+baffle extending wings were rotated out to be flush with the front baffle. Once positioned
+in the room, these speakers were so heavy they never moved for almost three years
+while serving as my reference speaker system. Moving them out of the way to try
+another set of speakers was out of the question. At some point this arrangement could
+not continue and this past August they were disassembled and replaced with a new
+dipole speaker system.
+Over the past couple of years, I have learned a lot more about dipole speakers.
+Typical of the way I work, my first open baffle speaker design was a brute force
+approach where I threw baffle size at the problem with little thought for optimization of
+the baffle width and driver Qts to manage the bass extension. Recently, I have added an
+open baffle theory section to my web site which documents some of the lessons I have
+learned. The first article in this section describes the trade-offs used to design a fairly
+compact open baffle speaker system using only passive crossovers. Shortly after the
+first article was completed, I added a second article focusing on extending the bass
+response of dipole speakers using appropriate driver selection and a U or H frame baffle
+without requiring additional low frequency EQ filters. This second article really opened
+my eyes to the potential for deep bass in a reasonably compact dipole design and is the
+motivation for this project.
+As a result of the most recent work, I decided to challenge myself by attempting
+to design and build a compact, cost-effective, two-way dipole speaker system that
+covered as much of the 20 Hz to 20 kHz frequency range as possible. Sticking with what
+I had recently learned, I elected to use an H frame configuration for the bass below 200
+Hz and a smaller diameter full range driver for the frequency range from 200 Hz to 20
+kHz. This was the goal and the following pages describe the results.
+Driver Selection :
+Based on earlier H frame calculations I had done using the Eminence Alpha 15A
+woofers, it was clear that a full range driver with an efficiency of 95+ dB/W/m was going
+to force me into using dual woofers per channel or so much boost that driver
+displacement would start to become a limitation. Starting the design based on one of my
+Lowther drivers was going to quickly back me into another huge system. Realistically, to
+meet my goals of simple, cost effective, and small (a relative term for sure) the maximum
+efficiency for the full range was probably going to be limited to about 90 dB/W/m..
+I assembled a list of the available driver candidates in the Fostex line and a few
+from other manufacturers that I had thought about trying over the years. The six inch and
+larger drivers appeared to be too efficient so I crossed all of them off the list. I was drawn
+towards the 4 to 5 inch diameter full range drivers since they would behave well down to
+200 Hz and still extend upwards towards 20 kHz. I quickly narrowed the search to two
+Fostex drivers, the FX120 and the F120A, and the Jordan JX92S driver.
+Page 1 of 23
+
+===== PAGE 3 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Table 1 lists the Thiele/Small parameters of the three full range drivers that made
+the final cut. The efficiency of each driver is between 88 and 89 dB/W/m (referenced to
+8 ohms) with the most significant differences being the Jordan’s fs and Xmax values.
+Table 1 : Full Range Drivers
+Driver JX92S FX120* F120A* Units
+fs 49.8 70.0 65.0 Hz
+Re 5.3 7.3 7.0 ohm
+Qed 0.71 0.47 0.51 -
+Qmd 2.03 8.40 3.10 -
+Qtd 0.52 0.45 0.44 -
+Vad 15.53 8.21 9.88 liter
+BL 3.66 - - N/amp
+Xmax 9.0 2.0 1.5 mm pk-pk
+SPL 88.2 89 89 dB/W/m
+Unit Cost 180.00 102.60 227.15 US $’s
+* Manufacturer’s Specified Thiele/Small Parameters
+The Jordan JX92S full range driver had intrigued me for many years and when it
+went on sale this summer I just could not pass it up for this project. Conveniently, it
+would also appear that the two Fostex drivers might fit in the same baffle cut-out but with
+a slightly different bolt hole pattern so driver swapping may be a consideration in the
+future.
+Reviewing the drivers listed in Table 1, and recognizing that a woofer will be
+used to eliminate the need to produce bass frequencies, the Thiele / Small parameters
+for the full range drivers are no longer as important in the design process. All three
+drivers shown in Table 1 have almost the same efficiencies. Each will probably work in
+this design with minor adjustments that can be accomplished using an active crossover.
+For a woofer I had two constraints, no EQ and affordably priced. I still wanted to
+use an H frame acoustic solution for the low bass so I started looking for efficient high
+Qts woofers, fortunately this is also the direction of lower cost. I also decided not to
+disassemble my Lowther OB to reuse my Eminence Alpha 15A drivers. Even though my
+Alpha 15A drivers would be perfect for the H frame design, I did not want be without
+music for a number of weeks during construction and testing. This limited the number of
+other candidates to a handful.
+The Goldwood line of drivers from Parts Express contained a pair of 15” woofers
+and an 18” woofer that all met my needs. After running a number of simulations, the
+Goldwood GW-1858 18” diameter woofer was selected. A comparison of the Goldwood
+GW-1858 and the Eminence Alpha 15A measured Thiele/Small parameters is provided
+in Table 2.
+In my opinion, any of the drivers mentioned above would work very well in an H
+frame design and could be substituted into this type of system. In fact, one of the 15 inch
+woofers would lead to a further reduction in the external size of the H frame. You would
+be trading a few Hz of low frequency output for a 3 or 4 inch reduction in the width and
+height of the H frame.
+Page 2 of 23
+
+===== PAGE 4 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Table 2 : Woofer Comparison
+Driver Alpha 15A GW-1858 Units
+fs 41.0 30.0 Hz
+Re 5.88 5.50 ohm
+Qed 1.53 1.15 -
+Qmd 7.23 4.24 -
+Qtd 1.26 0.91 -
+Vad 260.5 497.2 liter
+BL 7.7 10.8 N-amp
+Xmax 3.8 3.5 mm pk-pk
+SPL 94.2 94.4 dB/W/m
+Unit Cost 58.19 67.89 US $’s
+Design Simulations :
+My plan was to build an H frame for the Goldwood GW-1858 woofer and a
+smaller OB for the Jordan JX92S that would sit on top of the H frame and place the
+Jordan at ear level. The OB would not be physically attached and could be positioned to
+provide the best performance. An active crossover and a pair of identical SS amps
+would independently power the two sources and allow easy adjustment of the output
+levels and crossover configuration to provide the best SPL response curve.
+At this time, I do not have a MathCad worksheet that will simulate a two way
+system composed of an H frame and an OB. So I designed each independently and
+calculated the SPL response at a 1 m distance on the axis of the Jordan full range
+driver. Then I saved the output from each into a file (unfortunately this cannot be done
+with the MathCad Explorer 8 program) and used another MathCad worksheet to read in
+the two results and combine them, taking into account the phase of each, at the
+reference position. Then by adjusting the low pass crossover and boost applied to the H
+frame and the high pass crossover applied to the OB, I iterated to find a SPL response
+that matched a specified goal function. This is the same process I used in the passive
+two way OB design study documented on the OB Theory page of this site.
+The MathCad model for the Goldwood woofer in an H frame is shown in Figure 1.
+The H frame’s external dimensions are 21” wide, 21” tall, and 16” deep. The open area
+is a 20” by 20” square. The calculated SPL response, assuming a 2nd order Linkwitz-
+Riley low pass crossover at 100 Hz and applying 2.5 dB of boost, is shown in Figure 2.
+Page 3 of 23
+
+===== PAGE 5 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 1 : MathCad Model of the Goldwood GW-1858 Woofer in an H Frame
+Dimensions are Meters
+H Frame Simple Source Pattern with Baffle Edge Outline
+Front View Side View
+0.75 0.75
+y fm y fm
+0.5 0.5
+y rm y rm
+y o 0.25 y o 0.25
+0 0.25 0.5 0.75 0 0.25 0.5 0.75
+x ,x ,x z ,z ,z
+fm rm o fm rm o
+Figure 2 : H Frame Calculated System SPL Response
+180
+120
+60
+0
+60
+120
+180 10 100 1.10 3
+Page 4 of 23
+)seerged(
+esahP
+Phase
+r
+deg
+−1
+r⋅dω⋅Hz
+110
+105
+100
+95
+90
+85
+80
+75
+70
+65
+60 10 100 1.10 3
+Frequency (Hz)
+)Bd(
+LPS SPL r
+−1
+r⋅dω⋅Hz
+
+===== PAGE 6 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+To model the Jordan full range driver on an OB, the OB was assumed to include
+the H frame and treat it as the lower portion of a floor standing OB. In reality, the OB is a
+20” square with the Jordan off-set to help control ripple typically associated with a driver
+centered on a baffle. Figure 3 shows the MathCad OB model. The calculated SPL
+response, assuming a 2nd order Linkwitz-Riley high pass crossover at 250 Hz, is shown
+in Figure 4.
+Since both of the SPL responses were calculated at the same location, the sum
+will yield the combined system SPL response. When combining the two SPL results, the
+SPL was converted back to a pressure and the phase was used to split the pressure into
+real and imaginary components. After adding these complex pressures the sum was
+converted back to SPL and the result is shown in Figure 5.
+A goal function has been added to the system SPL response plot and is shown
+as the solid black curve. The magnitude of the goal function is 88 dB and the tuning
+frequency is 18 Hz. Comparing the calculated SPL response curve to the goal function,
+the result indicates that the calculated SPL response of this two way design is 88dB +/-
+3dB from 18 Hz to 20 kHz. Could this be for real? To answer this question, I went ahead
+and built then tested the system.
+Figure 3 : MathCad Model of the Jordan JX92S Full Range Driver Woofer in an OB
+Dimensions are Meters
+OB Simple Source Pattern with Baffle Edge Outline
+1.25
+1
+y 0.75
+d
+y
+o
+0.5
+0.25
+0 0.25 0.5 0.75
+x ,x
+d o
+Page 5 of 23
+
+===== PAGE 7 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 4 : OB Calculated System SPL Response
+180
+120
+60
+0
+60
+120
+180 10 100 1.10 3
+Page 6 of 23
+)seerged(
+esahP
+Phase
+r
+deg
+−1
+r⋅dω⋅Hz
+110
+105
+100
+95
+90
+85
+80
+75
+70
+65
+60
+10 100 1.10 3 1.10 4
+Frequency (Hz)
+)Bd(
+LPS SPL r
+−1
+r⋅dω⋅Hz
+Figure 5 : Combined SPL Response for 1 Watt Input
+at 1 m on the Axis of the Jordan Driver
+System Sound Pressure Level Magnitude
+110
+105
+100
+95
+90
+85
+80
+75
+70
+65
+60
+10 100 1.10 3 1.10 4
+)Bd(
+LPS
+SPL System
+s
+SPL Goal s
+−1
+s⋅dω⋅Hz
+
+===== PAGE 8 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Plans and Construction :
+This was probably the easiest design I have built to date. Not too big, not too
+many parts, and no real critical dimensions. Rather then a detailed drawing I have
+included pictures that show the few significant construction details. Figures 6 and 7 show
+the front and rear views respectively.
+Starting with the H frame, the outer dimensions are 21” wide, 21” tall, and 16”
+deep. The baffle is made from a 20” square of ¾” thick (or whatever the metric
+equivalent is to ¾”) plywood with the Goldwood woofer cut-out centered. The top,
+bottom, and sides are all cut from ½” thick plywood. I did not use any special plywood,
+just the inexpensive birch plywood found at the local Lowes. I offset the baffle 1” forward
+in the H frame for two reasons, first I did not want the woofer’s magnet to extend past
+the back of the enclosure and second the acoustic center of the cone is probably about
+1” behind the mounting flange. The distance from the front surface of the baffle to the
+front edge of the H frame is 7”.
+Some of the H frame construction details can be seen in Figures 8 and 9. Two
+longer pieces of plywood were first attached to the sides to position and secure the front
+baffle at the correct distance from the front of the enclosure, then the top and bottom
+pieces were added. Once the top, bottom, and sides were assembled small reinforcing
+strips were glued into the corners to align and stiffen the joints. And finally, a block for
+the binding posts was attached to the center of the bottom panel at the rear of the
+speaker.
+The OB was also made from a 20” square and ¾” thick (or whatever the metric
+equivalent is to ¾”) piece of plywood. The hole for the driver was offset and is 7” from
+the inside edge and 11 inches from the bottom. I built a bracket that attached to the
+bottom of the OB, as can be seen in Figure 9, and the binding posts were located on the
+rear piece of this bracket. The OB is not physically attached to the H frame so the
+position and toe in can be adjusted to produce the best performance at the listening
+position. With the c.g. location of the driver behind the baffle, and the additional weight of
+the bracket, the OB sits on top of the H frame and there is no tendency to wobble or tip
+forward. The exact details of my bracket are not important and any other method for
+supporting the baffle would probably work just as well.
+Both the H frame and the OB were primed and painted flat black. Cabinetry and
+finishing work are not really a strong skill for me so simple and quick is preferred. Overall
+they are not furniture quality but they look fairly decent until you get real close, then they
+look like plywood painted black.
+The only thing I would like to add to the system set-up is a couple of pieces of
+heavy stone or countertop to provide more mass for the enclosure. I hope to find a 21”
+by 16” piece of 1” or ¾” thick heavy finished stone to serve as the top surface of the H
+frame. A second smaller piece would also be nice to have sitting on the top of the OB
+bracket. These are finishing details I need to chase down when I find some free time.
+Page 7 of 23
+
+===== PAGE 9 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 6 : Front View
+Page 8 of 23
+
+===== PAGE 10 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 7 : Rear View
+Page 9 of 23
+
+===== PAGE 11 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 8 : H Frame Rear Details
+Page 10 of 23
+
+===== PAGE 12 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 9 : Open Baffle Rear Details
+Page 11 of 23
+
+===== PAGE 13 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Measured Results :
+To measure the response of the finished speakers, I used my two car garage
+since it is a fairly large open space. I opened both doors and set the speakers so that
+one side of the dipole faced out towards the neighbor across the street and the other
+side faced almost diagonally across the garage. I placed the microphone 1 m inside the
+garage aligned on the axis of the Jordan full range driver, I am not sure if it would have
+been better placed 1 m outside the garage, and proceeded to make electrical and
+acoustic measurements using my recently acquired Praxis system. The microphone and
+speaker system set-up were intended to match the MathCad simulations of each driver
+without the crossover filters connected. This is the first system were I have attempted to
+make a full set of measurements with Praxis so I am still on a learning curve. All of the
+SPL measurements have a 9.03 dB amplitude correction applied in an attempt to
+simulate 2.83 volts (1 watt into 8 ohms) applied at the driver terminals. One third octave
+smoothing was applied to each SPL response eliminating the hash.
+The measured results for the Goldwood GW-1858 are shown in Figures 10, 11,
+and 12. Comparing impedance plots shown in Figures 10 and 11 the shift in the driver’s
+resonant frequency can be seen clearly. The original 30 Hz fs has dropped to just under
+28 Hz while the Qts has risen from 0.905 to 1.040 when the Goldwood woofer was taken
+from the test baffle and mounted in the H frame. The SPL response plots presented in
+Figure 12 indicate bass extension below 30 Hz and the first H frame resonance at
+approximately 250 Hz.
+The measured results for the Jordan JX92S are shown in Figures 13, 14, and 15.
+Comparing the impedance plots shown in Figures 13 and 14, as expected the driver’s
+resonant frequency and the impedance peak are almost identical for the test bench and
+OB measurements. The SPL response plot shown in Figure 15 exhibits a significant
+ripple with peaks at approximately 370 Hz, 650 Hz, and 1100 Hz which are primarily
+generated by floor bounce reinforcement. The SPL response above 2 kHz also appears
+to be about 3 dB too high compared to the Thiele/Small based value shown in Table 1. I
+believe I have a scale factor mistake in my test setup and the SPL test results are all 3
+dB too high.
+Page 12 of 23
+
+===== PAGE 14 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 10 : Goldwood GW-1858 Impedance
+Figure 11 : Goldwood GW-1858 H Frame Impedance
+Page 13 of 23
+
+===== PAGE 15 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 12 : Goldwood GW-1858 H Frame SPL Response
+Page 14 of 23
+
+===== PAGE 16 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 13 : Jordan JX92S Impedance
+Figure 14 : Jordan JX92S OB Impedance
+Page 15 of 23
+
+===== PAGE 17 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 15 : Jordan JX92S OB SPL Response
+Page 16 of 23
+
+===== PAGE 18 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+MathCad Model Correlation :
+The measured impedance and SPL response curves were saved in text format
+and read into MathCad to correlate against the simulation results. The levels of the
+measured SPL were reduced by 3 dB to bring them into line with the calculations. In the
+following figures, the blue curve is the measured response and the red curve is the
+calculated response.
+Figure 16 shows the measured and calculated impedance of the H frame. It is
+clear that the measured tuning frequency of 28 Hz is a couple of Hz higher then the
+calculated value of 24 Hz. I have tried to find a reason for this but have not been able to
+produce a defendable physics based explanation. I will continue to look harder at the
+MathCad model and the measurements to see if I can get the two converged.
+Figure 17 shows the comparison between the measured and calculated SPL
+response of the H frame. The roll-off at 30 Hz seems to correlate well. The peak due to
+the first standing quarter wave resonance is seen in both the test and calculated SPL
+curve at approximately 250 Hz. The results above 250 Hz are not in as close agreement
+but are also not as important since the crossover will effectively remove them from the
+summed system SPL response.
+Figure 18 shows the SPL response for the Jordan driver in the OB portion of the
+speaker. The first couple of floor bounce peaks seem to line up fairly closely but the
+measured results show more ripple amplitude then the calculated curves. In the past, I
+have found that the test data typically did not produce as much ripple as the MathCad
+models so this result is a little puzzling.
+Reading the tested SPL response curves into MathCad, I could apply different
+active crossover settings to see which produced the best system SPL response. Figure
+19 shows the response for the original crossover design and also for an alternative that
+seems to improve the +/- dB variations. This second crossover is the one I am using now
+to evaluate the sound of the speakers. In Figure 19, the goal function has been fit to the
+data and is set to the same magnitude of 88 dB but the tuning frequency has been
+raised to 22 Hz.
+Overall, I am happy with the correlation between the test and the calculated SPL
+response curves. I do have a couple of things to work on to improve the correlation and
+at this time it is not clear if the math or the test set-up needs further investigation. Based
+on these results I believe that the MathCad OB and H frame worksheets, and by
+extension the U frame worksheet, are valuable tools in the design of dipole speaker
+systems.
+Page 17 of 23
+
+===== PAGE 19 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 16 : Goldwood GW-1858 H Frame Impedance
+Red Curve – Calculated
+Blue Curve - Measured
+Page 18 of 23
+
+===== PAGE 20 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 17 : Goldwood GW-1858 H Frame SPL Response
+Red Curve – Calculated
+Blue Curve - Measured
+Page 19 of 23
+
+===== PAGE 21 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 18 : Jordan JX92S OB SPL Response
+Red Curve – Calculated
+Blue Curve - Measured
+Page 20 of 23
+
+===== PAGE 22 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Figure 19 : Measurement Based System SPL Response
+High Pass Crossover – 250 Hz 2nd Order Linkwitz-Riley
+Low Pass Crossover – 100 Hz 2nd Order Linkwitz-Riley
+Low Pass Boost – 2.5 dB
+High Pass Crossover – 350 Hz 4th Order Linkwitz-Riley
+Low Pass Crossover – 100 Hz 2nd Order Linkwitz-Riley
+Low Pass Boost – 2.5 dB
+Page 21 of 23
+
+===== PAGE 23 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Approximate Cost Breakdown :
+Item Quantity US $’s
+Jordan JX92S 2 360.00
+Goldwood GW-1858 2 140.00
+Binding Posts 4 40.00
+1” Rubber Feet 8 8.00
+4’ x 8’ Sheet of ¾ “ Plywood 1 40.00
+4’ x 4’ Sheet of ½” Plywood 3 75.00
+T-Nuts, Bolts, Speaker _ _
+Wire, Spades, Primer, Paint
+Total Cost - 663.00
+Conclusions :
+Twenty some pages of text, figures, and tables later and the question of how this
+combination of drivers and dipoles actually sounds has not been addressed. For me this
+is a three part answer; H frame performance, Jordan JX92S performance, and the
+combination of the two to produce the system’s performance.
+The H frame produces the deepest bass I have ever had in my home stereo
+system. Granted I have never used a dedicated subwoofer, but most of the other
+speakers I have designed and built have tended to reach down to about 40 Hz which
+has always produced enough bass for the enjoyment of my acoustic jazz collection. But
+the Goldwood GW-1858 goes well below 40 Hz without any of the bloat or one note bass
+some speakers can produce; it is just an even growl into the 20 Hz range. I doubt I get
+all the way down to the measured 22 Hz since the rear wave reflecting off the back wall
+probably produces some cancellation of the lowest frequencies. A bigger room allowing
+placement further from the rear wall would definitely improve this situation.
+Taken as an independent woofer system, the stereo pair of Goldwood H frame
+woofers has the potential to mate with a large number of other types of speakers in the
+86 to 92 dB/W/m range. An active crossover can be used to match levels and fine tune
+the crossover. At some point, I would like to try a few other 4 and 5 inch fill range drivers
+and even a couple of multi way bookshelf speakers sitting on top of the H frame
+enclosures. On its own, the Goldwood H frame woofer system can be built for under
+$300 which seems like a great deal.
+The Jordan OB is a little harder to describe. I have seen the Jordan JX92S
+described on the DIY speaker forums as being very smooth. That seems to really sum
+up the performance very well; there are no peaking resonances to address meaning the
+driver just does its job from the crossover point all the way up to 20 kHz. Compared to
+the Lowther DX3 ML TL speakers, sitting along side, the Jordan does not seem to have
+the same airy sound of the Lowther which is probably more a function of the Lowthers’
+high frequency whizzer cone resonances. To be brutally honest, the Lowther is a
+pleasantly colored driver to my ears. I love the presence and detail but understand that it
+is mostly an artifact of the Lowther’s rising and resonant high frequency response and
+not necessarily completely accurate.
+Page 22 of 23
+
+===== PAGE 24 =====
+Jordan JX92S Open Baffle and Goldwood GW-1858 H Frame Two Way Speaker System
+By Martin J. King, 09/18/08
+Copyright © 2008 by Martin J. King. All Rights Reserved.
+Does the Jordan need a tweeter for the very high frequencies? Based on the
+measurements and initial listening my answer would be not necessarily. Listening to the
+Jordan, when called upon to produce cymbals or crisp twinkling piano notes it does the
+job. I guess a tweeter could give the allusion of more air and make the system sound
+closer to the Lowther, but I am not convinced that it is required or would be an
+improvement in tonal accuracy.
+I do have a particular CD that I use as a test disc for my speakers. It will instantly
+expose any hint of sibilance in a speaker’s response. The CD is titled My Turn by Linda
+Eder on the Atlantic label. This is a female vocalist performing in front of an all-star big
+band and she has a great vocal range in a New York Broadway show style. On the
+downside, the recording has a tendency to expose sibilance problems with hissing
+vocals that can become very harsh. On a poorly balanced set of speakers with a rising
+response, it will drive you from the room. My Lowther DX3 ML TL speakers struggle with
+this recording but are tolerable. The Jordan drivers have no problem with the female
+vocals, Linda Eder’s voice comes through dynamic and crystal clear with almost no hint
+of sibilance. The Jordan JX92S really is smooth just as others have described on the
+various DIY speaker forums
+The use of an active crossover really makes the system work. Levels and
+crossover points can be adjusted to optimize performance. Crossing low maintains the
+full range driver sound while removing the demand to produce bass from the Jordan.
+The system comes together really well, deep dynamic bass and clear crisp response
+from approximately 20 Hz to 20 kHz. But be warned, at 88 dB/W/m it does take some
+power to make them really sing their best. At the end of an evening of enjoyable listening
+at decent volume levels, my amps are warm.
+So in conclusion, I have learned some more and am still learning a lot about
+dipoles. I hope that the reader has also found something that increases their
+understanding after reading this narrative. As always any feedback, comments,
+corrections, or direction for future study would be appreciated and taken into
+consideration. Thanks for taking the time to read about this speaker project and if you
+decide to build something based on this design concept, or using my MathCad
+worksheets, please remember to send a picture for my gallery so everybody can see the
+results of your hard work.
+Page 23 of 23

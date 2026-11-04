@@ -1,0 +1,13 @@
+{
+  "sourceProjectUnchanged": true,
+  "savedAndReloaded": true,
+  "exactAir": true,
+  "circuitCoupled": true,
+  "startupTraceOmitted": true,
+  "steadyState": {
+    "relativeChange": 0.00010057471050493293,
+    "settled": true,
+    "cycles": 16
+  },
+  "errors": []
+}

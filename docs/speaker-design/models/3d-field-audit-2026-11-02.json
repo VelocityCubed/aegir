@@ -1,0 +1,72 @@
+{
+  "kind": "read-only-code-and-recording-audit",
+  "date": "2026-11-02",
+  "project": "MJK Satori · passive worksheet · cable placement assumed",
+  "projectRevision": 13,
+  "jobId": "75fafdf5-89f6-4878-ab8d-5f0efbe0122a",
+  "recordingSha256": "2f637e3d2e0394d153c6aff4a659a7d572f6c6b7efec4da3c51706e8fee50cac",
+  "solver": {
+    "dimensions": [
+      50,
+      102,
+      55
+    ],
+    "cells": 280500,
+    "cellMm": 13,
+    "soundSpeed": 344,
+    "timeStepSeconds": 0.000018545699053910945,
+    "steps": 2697,
+    "courant": 0.49074772881118195
+  },
+  "recording": {
+    "frames": 160,
+    "plane": {
+      "axis": "xy",
+      "width": 25,
+      "height": 51,
+      "pitchMm": 26,
+      "originMm": [
+        -160.5,
+        -160.5,
+        177.5
+      ],
+      "u": [
+        1,
+        0,
+        0
+      ],
+      "v": [
+        0,
+        1,
+        0
+      ]
+    },
+    "volume": {
+      "dimensions": [
+        16,
+        34,
+        18
+      ],
+      "originMm": [
+        -160.5,
+        -160.5,
+        -160.5
+      ],
+      "pitchMm": 39,
+      "stride": 3,
+      "offset": 816000,
+      "cells": 9792
+    },
+    "rawTotalBytes": 10130280
+  },
+  "derived": {
+    "cubicAirCflBoundSeconds": 0.000021818469475189346,
+    "wavelengthAt400HzMm": 860,
+    "fullPressureFrameHistoryMiB": 171.20361328125,
+    "fullPressureAndVelocityHistoryMiB": 684.814453125,
+    "currentPressureVolumeHistoryMiB": 5.9765625,
+    "complexPressurePhasorMiB": 2.140045166015625,
+    "historyToPhasorPressureStorageRatio": 80
+  },
+  "scope": "Metrics audit existing study only. No new solve, app change, project edit, fit, mesh convergence or physical validation."
+}

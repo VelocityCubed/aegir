@@ -1,0 +1,27 @@
+{
+  "version": "0.9.1",
+  "originalPreserved": true,
+  "originalProjectRevision": 10,
+  "projectRevision": 13,
+  "currentProject": "MJK Satori \u00b7 passive worksheet \u00b7 cable placement assumed",
+  "driverCount": 2,
+  "ambient": {
+    "densityKgM3": 1.205,
+    "soundSpeedMs": 344,
+    "source": "King Anechoic_Passive/Active.pdf p1, 2023-09-19"
+  },
+  "maximumLineStepMm": 10,
+  "circuitParts": 11,
+  "worksheetCasesSaved": true,
+  "snapshotCount": 9,
+  "capture": {
+    "id": "38676d12-f041-4f28-998e-0316178c8f12",
+    "name": "1793599851778-window.png",
+    "path": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\captures\\1793599851778-window.png",
+    "mimeType": "image/png",
+    "size": 154227,
+    "projectRevision": 13,
+    "createdAt": "2026-11-02T06:10:51.787Z"
+  },
+  "reopenedAfterUpdate": true
+}

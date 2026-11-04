@@ -41,7 +41,7 @@ const saved = () => call("workspace.get"),
   };
 const open = async () => {
   await page
-    .getByRole("button", { name: "Customise cabinet", exact: true })
+    .getByRole("button", { name: "Edit layout", exact: true })
     .click();
   await editor().waitFor();
   await page.locator(".cabinet-canvas canvas").waitFor();
@@ -68,7 +68,7 @@ const drag = async (p, dx, dy) => {
 };
 try {
   await page
-    .getByRole("heading", { name: "Your enclosure, one step at a time." })
+    .getByRole("heading", { name: "Make room for your sound." })
     .waitFor();
   const original = await saved();
   await open();
@@ -283,7 +283,7 @@ try {
     join(out, "export-paths.json"),
     JSON.stringify({ zip, manifest, step, profile }, null, 2),
   );
-  const job = await call("field.run", {
+  const job = await call("field.run", {basicWaveModel:true,
     settings: {
       cellMm: 30,
       paddingMm: 270,
@@ -305,7 +305,7 @@ try {
   assert.equal(field.meta.sources.length, 3);
   assert.equal(field.meta.project.mounts[1].face, "left");
   assert.ok(field.meta.pressurePeak > 0);
-  const gpuJob = await call("field.run", {
+  const gpuJob = await call("field.run", {basicWaveModel:true,
     settings: {
       cellMm: 30,
       paddingMm: 270,

@@ -1,0 +1,27 @@
+
+===== PAGE 1 =====
+Lowther DX Series of Drivers in a Mass Loaded Transmission Line
+MJ King
+5/03/03
+9.5 11.0
+Notes :
+Plywood = 3/4 inch Thick
+All joints made with biscuits
+6.0
+Dacron Hollofil II Fiber
+Stuffing Density = 0.25 lb/ft**3
+Stuff top of cabinet only
+Port Diameter = 4.0 inches
+Port length = 2.0 inches
+Ø 7.50
+Cabinet 1st mode ~ 45 Hz
+All dimensions are in inches
+30.0
+Inside dimensions shown
+42.0
+Ø 4.125
+Two 1/4 inch terminal holes
+.25
+4.0
+4.0
+Front View Side View

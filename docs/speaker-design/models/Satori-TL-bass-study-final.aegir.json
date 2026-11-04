@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "name": "MJK Satori TL · published cabinet / bass study",
+  "driver": {
+    "id": "satori-wo24p4-mjk-consistent-2023",
+    "name": "Satori WO24P-4 · King's measured set",
+    "note": "MJK 23 Sep 2023 Satori report Fig 6 consistent column: Fs32.81 Qes.545 Qms7.637 Vas48.31 Re3.30 Sd255 Le372.10uH=.37210mH. NOT catalog T/S. Xmax8.5mm=17mm p-p/2 (SB datasheet). Cutout210.185mm from plan; frame242 and total depth131.4mm manufacturer. Simple Le omits MJK Rp/Lp model. Bass only; sealed-back TW29R and crossover excluded.",
+    "fs": 32.81,
+    "qes": 0.545,
+    "qms": 7.637,
+    "vas": 48.31,
+    "re": 3.3,
+    "le": 0.3721,
+    "sd": 255,
+    "xmax": 8.5,
+    "cutout": 210.185,
+    "frame": 242,
+    "depth": 131.4
+  },
+  "design": {
+    "length": 1.85928,
+    "areaRatio": 2.53,
+    "laneWidth": 254,
+    "folds": 2,
+    "thickness": 12.7,
+    "driverPosition": 0.345,
+    "damping": 0,
+    "voltage": 1,
+    "temperature": 20
+  },
+  "targets": {
+    "low": 30,
+    "high": 200,
+    "maxHeight": 1000,
+    "maxWidth": 300,
+    "maxDepth": 370,
+    "minLength": 1.5,
+    "maxLength": 2.3,
+    "maxVelocity": 17
+  },
+  "layout": {
+    "width": 279.4,
+    "height": 958.85,
+    "depth": 342.9,
+    "baffles": [
+      {
+        "id": "tapered-divider",
+        "label": "Published single-fold divider · 83.9 degrees",
+        "start": [
+          0,
+          0
+        ],
+        "end": [
+          0,
+          774.7
+        ],
+        "thickness": 12.7,
+        "pose": {
+          "center": [
+            139.7,
+            400.05,
+            231.81074633265817
+          ],
+          "size": [
+            254,
+            777.7324627417753
+          ],
+          "rotation": [
+            -0.10615680151263622,
+            0,
+            0
+          ]
+        }
+      }
+    ],
+    "route": [
+      [
+        139.7,
+        0
+      ],
+      [
+        139.7,
+        933.45
+      ],
+      [
+        139.7,
+        57.15
+      ]
+    ],
+    "mouth": {
+      "side": "back",
+      "center": [
+        127,
+        57.15
+      ],
+      "height": 63.5,
+      "offset": 57.15,
+      "width": 203.2
+    }
+  },
+  "mounts": [
+    {
+      "id": "primary",
+      "driver": {
+        "id": "satori-wo24p4-mjk-consistent-2023",
+        "name": "Satori WO24P-4 · King's measured set",
+        "note": "MJK 23 Sep 2023 Satori report Fig 6 consistent column: Fs32.81 Qes.545 Qms7.637 Vas48.31 Re3.30 Sd255 Le372.10uH=.37210mH. NOT catalog T/S. Xmax8.5mm=17mm p-p/2 (SB datasheet). Cutout210.185mm from plan; frame242 and total depth131.4mm manufacturer. Simple Le omits MJK Rp/Lp model. Bass only; sealed-back TW29R and crossover excluded.",
+        "fs": 32.81,
+        "qes": 0.545,
+        "qms": 7.637,
+        "vas": 48.31,
+        "re": 3.3,
+        "le": 0.3721,
+        "sd": 255,
+        "xmax": 8.5,
+        "cutout": 210.185,
+        "frame": 242,
+        "depth": 131.4
+      },
+      "position": 0.345,
+      "face": "front",
+      "at": [
+        139.7,
+        647.7
+      ],
+      "voltageScale": 1,
+      "phase": 0
+    }
+  ]
+}

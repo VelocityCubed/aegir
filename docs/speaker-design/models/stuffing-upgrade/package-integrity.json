@@ -1,0 +1,47 @@
+{
+  "version": "0.9.4",
+  "archive": "release/win-unpacked/resources/app.asar",
+  "files": [
+    {
+      "name": "engine/service.cjs",
+      "sha256": "54199a823323151572ce55b7252a170d4638e09a412f0ea30978a358e4c53db7",
+      "bytes": 1663670
+    },
+    {
+      "name": "engine/worker.cjs",
+      "sha256": "d5466f66f31d0d019483e306a1ba2fd928043e25fdf585a2c2fc58238b1dcbec",
+      "bytes": 948531
+    },
+    {
+      "name": "dist/index.html",
+      "sha256": "b55963825f469e1c96b9268c40007486c6cb698bd7e4ffff7ded47844220e81c",
+      "bytes": 648
+    },
+    {
+      "name": "dist/assets/circuit.worker-ns_iDdDP.js",
+      "sha256": "b4ed50aff7c54fbae22cd663f9242866250011a3ba34ecf56efbd0949f93ea4e",
+      "bytes": 103098
+    },
+    {
+      "name": "dist/assets/field.worker-B-nSIXA1.js",
+      "sha256": "30d93c2d0db2a1b448b77c6a3f8a7a79ddf337f03e4af24d25e09ac1435cb956",
+      "bytes": 188470
+    },
+    {
+      "name": "dist/assets/index-ISKebVS6.js",
+      "sha256": "6c51b87164bb1de2900ba97a1ba7a03f69be2932fe670a9bfbc687419d4cbebf",
+      "bytes": 1257618
+    },
+    {
+      "name": "dist/assets/pressure.worker-DMzPlCxo.js",
+      "sha256": "673e10c2a8300a56b5a3a79760e73a1b99a18e44c0f78bccc45f9f63f6c6be46",
+      "bytes": 133282
+    },
+    {
+      "name": "dist/assets/simulation.worker-xWXU8i3f.js",
+      "sha256": "6e17edd855c5d3a2daf962f9230987452e9f301d2bfdc1dd59dc3ab9106fd3da",
+      "bytes": 143557
+    }
+  ],
+  "sourceBuildMatchesPackage": true
+}

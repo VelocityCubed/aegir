@@ -1,0 +1,588 @@
+{
+  "profile": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-quality-ui-Mcylg1",
+  "uiStartedFiveRuns": true,
+  "report": {
+    "version": 1,
+    "frequencyHz": 1000,
+    "status": "refine-further",
+    "passed": false,
+    "scope": "Numerical sensitivity at one frequency and these physical probes only. This does not establish broadband convergence, material calibration, independent solver agreement or physical accuracy.",
+    "limits": {
+      "volume": 0.005,
+      "pistonArea": 0.005,
+      "impedance": 0.01,
+      "pressure": 0.02,
+      "settling": 0.01
+    },
+    "studies": [
+      {
+        "cellMm": 20,
+        "paddingMm": 180,
+        "shift": [
+          0,
+          0,
+          0
+        ],
+        "geometry": "conservative-cut-cell",
+        "volumeError": 0,
+        "pistonCoverage": [
+          0.9999999999999997,
+          0.9999999999999997
+        ],
+        "drivers": [
+          {
+            "id": "primary",
+            "impedance": [
+              8.08559044653577,
+              -0.9920649285524816
+            ]
+          }
+        ],
+        "probes": [
+          {
+            "name": "Primary rear air",
+            "positionMm": [
+              118,
+              468,
+              118
+            ],
+            "sampling": "fixed-trilinear",
+            "pressure": [
+              -0.21299188205172048,
+              6.062299363062353
+            ]
+          },
+          {
+            "name": "Mouth nearfield",
+            "positionMm": [
+              118,
+              -50,
+              118
+            ],
+            "sampling": "fixed-trilinear",
+            "pressure": [
+              0.15482512425475997,
+              -11.145091730227794
+            ]
+          }
+        ],
+        "settling": 0.005257277465362303,
+        "settled": true
+      },
+      {
+        "cellMm": 16,
+        "paddingMm": 180,
+        "shift": [
+          0,
+          0,
+          0
+        ],
+        "geometry": "conservative-cut-cell",
+        "volumeError": 0,
+        "pistonCoverage": [
+          1.0000000000000004,
+          1.0000000000000004
+        ],
+        "drivers": [
+          {
+            "id": "primary",
+            "impedance": [
+              8.08238513511553,
+              -0.989136306515533
+            ]
+          }
+        ],
+        "probes": [
+          {
+            "name": "Primary rear air",
+            "positionMm": [
+              118,
+              468,
+              118
+            ],
+            "sampling": "fixed-trilinear",
+            "pressure": [
+              0.035455396427131074,
+              5.508898426498142
+            ]
+          },
+          {
+            "name": "Mouth nearfield",
+            "positionMm": [
+              118,
+              -50,
+              118
+            ],
+            "sampling": "fixed-trilinear",
+            "pressure": [
+              0.9144569576074768,
+              -10.433711360610182
+            ]
+          }
+        ],
+        "settling": 0.006003118435593214,
+        "settled": true
+      },
+      {
+        "cellMm": 12,
+        "paddingMm": 180,
+        "shift": [
+          0,
+          0,
+          0
+        ],
+        "geometry": "conservative-cut-cell",
+        "volumeError": 0,
+        "pistonCoverage": [
+          1,
+          1
+        ],
+        "drivers": [
+          {
+            "id": "primary",
+            "impedance": [
+              8.083161815262567,
+              -0.985009598449432
+            ]
+          }
+        ],
+        "probes": [
+          {
+            "name": "Primary rear air",
+            "positionMm": [
+              118,
+              468,
+              118
+            ],
+            "sampling": "fixed-trilinear",
+            "pressure": [
+              -0.18175073590722768,
+              5.659650633480044
+            ]
+          },
+          {
+            "name": "Mouth nearfield",
+            "positionMm": [
+              118,
+              -50,
+              118
+            ],
+            "sampling": "fixed-trilinear",
+            "pressure": [
+              0.8762493480474135,
+              -10.673633166767878
+            ]
+          }
+        ],
+        "settling": 0.0037124607758633565,
+        "settled": true
+      },
+      {
+        "cellMm": 12,
+        "paddingMm": 180,
+        "shift": [
+          3.24,
+          2.2800000000000002,
+          3.7199999999999998
+        ],
+        "geometry": "conservative-cut-cell",
+        "volumeError": 7.549516567451064e-15,
+        "pistonCoverage": [
+          0.9999999999999998,
+          0.9999999999999998
+        ],
+        "drivers": [
+          {
+            "id": "primary",
+            "impedance": [
+              8.08416578656679,
+              -0.994688173733059
+            ]
+          }
+        ],
+        "probes": [
+          {
+            "name": "Primary rear air",
+            "positionMm": [
+              118,
+              468,
+              118
+            ],
+            "sampling": "fixed-trilinear",
+            "pressure": [
+              -0.23746909205057082,
+              5.605376067623906
+            ]
+          },
+          {
+            "name": "Mouth nearfield",
+            "positionMm": [
+              118,
+              -50,
+              118
+            ],
+            "sampling": "fixed-trilinear",
+            "pressure": [
+              1.0411039397891972,
+              -10.684143468195662
+            ]
+          }
+        ],
+        "settling": 0.003719844378601643,
+        "settled": true
+      },
+      {
+        "cellMm": 12,
+        "paddingMm": 240,
+        "shift": [
+          0,
+          0,
+          0
+        ],
+        "geometry": "conservative-cut-cell",
+        "volumeError": 0,
+        "pistonCoverage": [
+          1,
+          1
+        ],
+        "drivers": [
+          {
+            "id": "primary",
+            "impedance": [
+              8.083277045655217,
+              -0.983977542852922
+            ]
+          }
+        ],
+        "probes": [
+          {
+            "name": "Primary rear air",
+            "positionMm": [
+              118,
+              468,
+              118
+            ],
+            "sampling": "fixed-trilinear",
+            "pressure": [
+              -0.263927167614259,
+              5.670362944863641
+            ]
+          },
+          {
+            "name": "Mouth nearfield",
+            "positionMm": [
+              118,
+              -50,
+              118
+            ],
+            "sampling": "fixed-trilinear",
+            "pressure": [
+              1.0247515786313997,
+              -10.65404510953311
+            ]
+          }
+        ],
+        "settling": 0.0037337232112527106,
+        "settled": true
+      }
+    ],
+    "refinements": [
+      {
+        "from": 20,
+        "to": 16,
+        "impedance": 0.0005332093375378894,
+        "pressure": 0.1101127349157618,
+        "sameProbes": true
+      },
+      {
+        "from": 16,
+        "to": 12,
+        "impedance": 0.000515680090943145,
+        "pressure": 0.046691716645762174,
+        "sameProbes": true
+      }
+    ],
+    "shift": {
+      "from": 12,
+      "to": 12,
+      "impedance": 0.0011946411795604613,
+      "pressure": 0.015388278404407655,
+      "sameProbes": true
+    },
+    "padding": {
+      "from": 12,
+      "to": 12,
+      "impedance": 0.00012752981635471506,
+      "pressure": 0.014599080071957893,
+      "sameProbes": true
+    },
+    "issues": [
+      "Grid response changes exceed the declared 1% impedance / 2% pressure limits."
+    ],
+    "jobs": [
+      {
+        "id": "15d994ce-0114-40a8-b53e-662f21fe80a0",
+        "projectRevision": 2,
+        "artifact": {
+          "id": "6e0665a3-5c9a-4a53-a19c-46a18032dbec",
+          "name": "15d994ce-0114-40a8-b53e-662f21fe80a0.aegir-field.zip",
+          "path": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-quality-ui-Mcylg1\\agent\\files\\fields\\15d994ce-0114-40a8-b53e-662f21fe80a0.aegir-field.zip",
+          "mimeType": "application/zip",
+          "size": 2032806,
+          "projectRevision": 2,
+          "createdAt": "2026-11-03T22:24:36.288Z"
+        }
+      },
+      {
+        "id": "b718029a-66e9-4763-b795-76904b2046d4",
+        "projectRevision": 2,
+        "artifact": {
+          "id": "d83eb164-e018-4dee-a811-9b501ea97d74",
+          "name": "b718029a-66e9-4763-b795-76904b2046d4.aegir-field.zip",
+          "path": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-quality-ui-Mcylg1\\agent\\files\\fields\\b718029a-66e9-4763-b795-76904b2046d4.aegir-field.zip",
+          "mimeType": "application/zip",
+          "size": 3138784,
+          "projectRevision": 2,
+          "createdAt": "2026-11-03T22:24:39.191Z"
+        }
+      },
+      {
+        "id": "5a056b47-8935-45d5-99d1-c3208b1cc329",
+        "projectRevision": 2,
+        "artifact": {
+          "id": "bae9b5c2-d9f6-4941-9401-b50c4e1ee2c5",
+          "name": "5a056b47-8935-45d5-99d1-c3208b1cc329.aegir-field.zip",
+          "path": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-quality-ui-Mcylg1\\agent\\files\\fields\\5a056b47-8935-45d5-99d1-c3208b1cc329.aegir-field.zip",
+          "mimeType": "application/zip",
+          "size": 5547257,
+          "projectRevision": 2,
+          "createdAt": "2026-11-03T22:24:46.072Z"
+        }
+      },
+      {
+        "id": "89726bef-bb3c-4c7a-9a3e-5a19042c845c",
+        "projectRevision": 2,
+        "artifact": {
+          "id": "f57c40ec-c5a1-48e7-95cf-4dcb4d02a271",
+          "name": "89726bef-bb3c-4c7a-9a3e-5a19042c845c.aegir-field.zip",
+          "path": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-quality-ui-Mcylg1\\agent\\files\\fields\\89726bef-bb3c-4c7a-9a3e-5a19042c845c.aegir-field.zip",
+          "mimeType": "application/zip",
+          "size": 5452412,
+          "projectRevision": 2,
+          "createdAt": "2026-11-03T22:24:51.625Z"
+        }
+      },
+      {
+        "id": "5c20b193-cb77-483b-ac4c-833e2392b1d8",
+        "projectRevision": 2,
+        "artifact": {
+          "id": "996612ec-6d73-418c-9523-22d783cc8e9a",
+          "name": "5c20b193-cb77-483b-ac4c-833e2392b1d8.aegir-field.zip",
+          "path": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-quality-ui-Mcylg1\\agent\\files\\fields\\5c20b193-cb77-483b-ac4c-833e2392b1d8.aegir-field.zip",
+          "mimeType": "application/zip",
+          "size": 7546384,
+          "projectRevision": 2,
+          "createdAt": "2026-11-03T22:24:59.984Z"
+        }
+      }
+    ],
+    "stale": false
+  },
+  "modal": {
+    "job": "2d60f877-44be-4fde-bf2b-a2d48e38b486",
+    "result": {
+      "studies": [
+        {
+          "meta": {
+            "cellMm": 20,
+            "dimensions": [
+              10,
+              26,
+              10
+            ],
+            "pitchMm": [
+              20,
+              19.923076923076923,
+              20
+            ],
+            "cells": 2600,
+            "geometry": "conservative-cut-cell",
+            "cavityLitres": 20.72,
+            "bodyCavityLitres": 19.999999999999865,
+            "cadCavityLitres": 20,
+            "volumeScope": "Modal air includes the stock-depth mouth neck; CAD cavity volume is the inner cabinet body.",
+            "mouthAreaMm2": 40000,
+            "boundary": "Rigid walls and driver apertures; p=0 on physical mouth plane, including stock-depth outlet neck.",
+            "method": "Conservative cut cells; symmetric volume-mass-normalized orthogonal flux graph. Refine mesh; this is not an exact curved-surface FEM."
+          },
+          "frequenciesHz": [
+            165.515365720727,
+            495.94214954227414,
+            824.5592942433942,
+            869.8699878360202
+          ],
+          "relativeResiduals": [
+            4.4033072226202583e-13,
+            5.023343971064565e-14,
+            3.3976833340136712e-12,
+            1.0631439037932128e-10
+          ]
+        },
+        {
+          "meta": {
+            "cellMm": 16,
+            "dimensions": [
+              13,
+              33,
+              13
+            ],
+            "pitchMm": [
+              15.384615384615385,
+              15.696969696969697,
+              15.384615384615385
+            ],
+            "cells": 5577,
+            "geometry": "conservative-cut-cell",
+            "cavityLitres": 20.720000000000002,
+            "bodyCavityLitres": 20.0000000000007,
+            "cadCavityLitres": 20,
+            "volumeScope": "Modal air includes the stock-depth mouth neck; CAD cavity volume is the inner cabinet body.",
+            "mouthAreaMm2": 40000.00000000001,
+            "boundary": "Rigid walls and driver apertures; p=0 on physical mouth plane, including stock-depth outlet neck.",
+            "method": "Conservative cut cells; symmetric volume-mass-normalized orthogonal flux graph. Refine mesh; this is not an exact curved-surface FEM."
+          },
+          "frequenciesHz": [
+            165.52491292559333,
+            496.1997716106109,
+            825.7505782182125,
+            871.2825108200409
+          ],
+          "relativeResiduals": [
+            8.346875038908757e-13,
+            1.1329683850815078e-13,
+            3.7762713688013507e-11,
+            6.982958838056317e-11
+          ]
+        },
+        {
+          "meta": {
+            "cellMm": 12,
+            "dimensions": [
+              17,
+              44,
+              17
+            ],
+            "pitchMm": [
+              11.764705882352942,
+              11.772727272727273,
+              11.764705882352942
+            ],
+            "cells": 12716,
+            "geometry": "conservative-cut-cell",
+            "cavityLitres": 20.720000000000006,
+            "bodyCavityLitres": 19.99999999999705,
+            "cadCavityLitres": 20,
+            "volumeScope": "Modal air includes the stock-depth mouth neck; CAD cavity volume is the inner cabinet body.",
+            "mouthAreaMm2": 39999.999999999905,
+            "boundary": "Rigid walls and driver apertures; p=0 on physical mouth plane, including stock-depth outlet neck.",
+            "method": "Conservative cut cells; symmetric volume-mass-normalized orthogonal flux graph. Refine mesh; this is not an exact curved-surface FEM."
+          },
+          "frequenciesHz": [
+            165.53174989825786,
+            496.3843045266944,
+            826.604292468919,
+            872.1334633808073
+          ],
+          "relativeResiduals": [
+            1.5467241256142762e-12,
+            1.6613330924115432e-13,
+            2.047834142669395e-11,
+            1.3889865092992918e-10
+          ]
+        }
+      ],
+      "convergencePercent": [
+        0.004130479541530896,
+        0.03718923841591337,
+        0.10338645509018196,
+        0.09766666382013955
+      ],
+      "meshStableWithin1Percent": true,
+      "geometryAcceptable": true,
+      "refinement": {
+        "modes": [
+          {
+            "status": "stable",
+            "stable": true,
+            "changes": [
+              0.00005767835607087254,
+              0.00004130308939966115
+            ],
+            "observedOrder": null,
+            "extrapolated": null,
+            "discretizationEstimate": null,
+            "relativeTolerance": 0.01,
+            "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+          },
+          {
+            "status": "stable",
+            "stable": true,
+            "changes": [
+              0.0005191902194968228,
+              0.00037175413162876444
+            ],
+            "observedOrder": null,
+            "extrapolated": null,
+            "discretizationEstimate": null,
+            "relativeTolerance": 0.01,
+            "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+          },
+          {
+            "status": "stable",
+            "stable": true,
+            "changes": [
+              0.0014426680480064279,
+              0.00103279677892382
+            ],
+            "observedOrder": null,
+            "extrapolated": null,
+            "discretizationEstimate": null,
+            "relativeTolerance": 0.01,
+            "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+          },
+          {
+            "status": "stable",
+            "stable": true,
+            "changes": [
+              0.0016211997446055253,
+              0.0009757136911908633
+            ],
+            "observedOrder": null,
+            "extrapolated": null,
+            "discretizationEstimate": null,
+            "relativeTolerance": 0.01,
+            "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+          }
+        ],
+        "volume": {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            1.7146301538612454e-16,
+            1.7146301538612452e-16
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        "modeAssociation": "frequency-order; crossings/degenerate modes require shape comparison"
+      },
+      "note": "Requires at least three mesh levels and consistent refinement. Numerical stationarity is not physical validation; sorted frequencies can change identity near crossings."
+    }
+  },
+  "projectUnchanged": true,
+  "persisted": true,
+  "errors": []
+}

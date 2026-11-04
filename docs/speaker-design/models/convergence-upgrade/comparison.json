@@ -1,0 +1,397 @@
+{
+  "version": 1,
+  "frequencyHz": 100,
+  "status": "refine-further",
+  "passed": false,
+  "scope": "Numerical sensitivity at one frequency and these physical probes only. This does not establish broadband convergence, material calibration, independent solver agreement or physical accuracy.",
+  "limits": {
+    "volume": 0.005,
+    "pistonArea": 0.005,
+    "impedance": 0.01,
+    "pressure": 0.02,
+    "settling": 0.01
+  },
+  "studies": [
+    {
+      "cellMm": 20,
+      "paddingMm": 180,
+      "shift": [
+        0,
+        0,
+        0
+      ],
+      "geometry": "conservative-cut-cell",
+      "volumeError": 0,
+      "pistonCoverage": [
+        0.9999999999999997,
+        0.9999999999999997
+      ],
+      "drivers": [
+        {
+          "id": "primary",
+          "impedance": [
+            9.595389428206971,
+            -12.57435278828526
+          ]
+        }
+      ],
+      "probes": [
+        {
+          "name": "Primary rear air",
+          "positionMm": [
+            118,
+            1682.5,
+            118
+          ],
+          "sampling": "fixed-trilinear",
+          "pressure": [
+            -4.186027609852091,
+            -3.6856079514796174
+          ]
+        },
+        {
+          "name": "Mouth nearfield",
+          "positionMm": [
+            118,
+            -50,
+            118
+          ],
+          "sampling": "fixed-trilinear",
+          "pressure": [
+            3.371792912416383,
+            4.217199206508951
+          ]
+        }
+      ],
+      "settling": 0.0011813162722536456,
+      "settled": true
+    },
+    {
+      "cellMm": 16,
+      "paddingMm": 180,
+      "shift": [
+        0,
+        0,
+        0
+      ],
+      "geometry": "conservative-cut-cell",
+      "volumeError": 0,
+      "pistonCoverage": [
+        1.0000000000000004,
+        1.0000000000000004
+      ],
+      "drivers": [
+        {
+          "id": "primary",
+          "impedance": [
+            9.58291385661533,
+            -12.543482827326201
+          ]
+        }
+      ],
+      "probes": [
+        {
+          "name": "Primary rear air",
+          "positionMm": [
+            118,
+            1682.5,
+            118
+          ],
+          "sampling": "fixed-trilinear",
+          "pressure": [
+            -3.9182283913733813,
+            -3.268504275989555
+          ]
+        },
+        {
+          "name": "Mouth nearfield",
+          "positionMm": [
+            118,
+            -50,
+            118
+          ],
+          "sampling": "fixed-trilinear",
+          "pressure": [
+            3.226952726925648,
+            4.14404601087686
+          ]
+        }
+      ],
+      "settling": 0.0013444840234220683,
+      "settled": true
+    },
+    {
+      "cellMm": 12,
+      "paddingMm": 180,
+      "shift": [
+        0,
+        0,
+        0
+      ],
+      "geometry": "conservative-cut-cell",
+      "volumeError": 0,
+      "pistonCoverage": [
+        1,
+        1
+      ],
+      "drivers": [
+        {
+          "id": "primary",
+          "impedance": [
+            9.551513276618897,
+            -12.460643343136438
+          ]
+        }
+      ],
+      "probes": [
+        {
+          "name": "Primary rear air",
+          "positionMm": [
+            118,
+            1682.5,
+            118
+          ],
+          "sampling": "fixed-trilinear",
+          "pressure": [
+            -3.998855867306637,
+            -3.4935116502894634
+          ]
+        },
+        {
+          "name": "Mouth nearfield",
+          "positionMm": [
+            118,
+            -50,
+            118
+          ],
+          "sampling": "fixed-trilinear",
+          "pressure": [
+            3.1710072939471026,
+            4.172378127922269
+          ]
+        }
+      ],
+      "settling": 0.001368526856576677,
+      "settled": true
+    },
+    {
+      "cellMm": 12,
+      "paddingMm": 180,
+      "shift": [
+        3.24,
+        2.28,
+        3.72
+      ],
+      "geometry": "conservative-cut-cell",
+      "volumeError": 9.281464485866309e-14,
+      "pistonCoverage": [
+        0.9999999999999998,
+        0.9999999999999998
+      ],
+      "drivers": [
+        {
+          "id": "primary",
+          "impedance": [
+            9.552046310538804,
+            -12.464405487185472
+          ]
+        }
+      ],
+      "probes": [
+        {
+          "name": "Primary rear air",
+          "positionMm": [
+            118,
+            1682.5,
+            118
+          ],
+          "sampling": "fixed-trilinear",
+          "pressure": [
+            -3.9736840702256373,
+            -3.451024882682567
+          ]
+        },
+        {
+          "name": "Mouth nearfield",
+          "positionMm": [
+            118,
+            -50,
+            118
+          ],
+          "sampling": "fixed-trilinear",
+          "pressure": [
+            3.1568752389182246,
+            4.145589524158108
+          ]
+        }
+      ],
+      "settling": 0.0013941823158480527,
+      "settled": true
+    },
+    {
+      "cellMm": 12,
+      "paddingMm": 240,
+      "shift": [
+        0,
+        0,
+        0
+      ],
+      "geometry": "conservative-cut-cell",
+      "volumeError": 0,
+      "pistonCoverage": [
+        1,
+        1
+      ],
+      "drivers": [
+        {
+          "id": "primary",
+          "impedance": [
+            9.543981554465244,
+            -12.465420008515295
+          ]
+        }
+      ],
+      "probes": [
+        {
+          "name": "Primary rear air",
+          "positionMm": [
+            118,
+            1682.5,
+            118
+          ],
+          "sampling": "fixed-trilinear",
+          "pressure": [
+            -3.952003937043805,
+            -3.50762573458163
+          ]
+        },
+        {
+          "name": "Mouth nearfield",
+          "positionMm": [
+            118,
+            -50,
+            118
+          ],
+          "sampling": "fixed-trilinear",
+          "pressure": [
+            3.1118644110699027,
+            4.182207276256681
+          ]
+        }
+      ],
+      "settling": 0.0014110481171556615,
+      "settled": true
+    }
+  ],
+  "refinements": [
+    {
+      "from": 20,
+      "to": 16,
+      "impedance": 0.002109295441985044,
+      "pressure": 0.09714296143547822,
+      "sameProbes": true
+    },
+    {
+      "from": 16,
+      "to": 12,
+      "impedance": 0.005642639457526201,
+      "pressure": 0.04501311200428578,
+      "sameProbes": true
+    }
+  ],
+  "shift": {
+    "from": 12,
+    "to": 12,
+    "impedance": 0.00024196476942705397,
+    "pressure": 0.009383078462887105,
+    "sameProbes": true
+  },
+  "padding": {
+    "from": 12,
+    "to": 12,
+    "impedance": 0.0005680887542296136,
+    "pressure": 0.011501051896602194,
+    "sameProbes": true
+  },
+  "issues": [
+    "Grid response changes exceed the declared 1% impedance / 2% pressure limits.",
+    "Successive grid differences are not decreasing; further refinement is required."
+  ],
+  "jobs": [
+    {
+      "id": "c2563169-aa95-44c5-bab0-645a2364014d",
+      "projectRevision": 4,
+      "artifact": {
+        "id": "94439120-c87c-4a0d-84d9-97710a149cee",
+        "name": "c2563169-aa95-44c5-bab0-645a2364014d.aegir-field.zip",
+        "path": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-convergence-vSP39f\\agent\\files\\fields\\c2563169-aa95-44c5-bab0-645a2364014d.aegir-field.zip",
+        "mimeType": "application/zip",
+        "size": 7928624,
+        "projectRevision": 4,
+        "createdAt": "2026-11-03T22:03:45.197Z"
+      }
+    },
+    {
+      "id": "00178666-5bdc-47f6-be5a-ce8e24ea0baa",
+      "projectRevision": 4,
+      "artifact": {
+        "id": "aa7e2101-28b5-4a05-b309-5c088a1b8f89",
+        "name": "00178666-5bdc-47f6-be5a-ce8e24ea0baa.aegir-field.zip",
+        "path": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-convergence-vSP39f\\agent\\files\\fields\\00178666-5bdc-47f6-be5a-ce8e24ea0baa.aegir-field.zip",
+        "mimeType": "application/zip",
+        "size": 3166715,
+        "projectRevision": 4,
+        "createdAt": "2026-11-03T22:04:30.773Z"
+      }
+    },
+    {
+      "id": "0dcd614a-8dc3-42f6-a171-36cb5b6bce98",
+      "projectRevision": 4,
+      "artifact": {
+        "id": "647e85a6-a665-45e5-99b1-2cb5057c24ce",
+        "name": "0dcd614a-8dc3-42f6-a171-36cb5b6bce98.aegir-field.zip",
+        "path": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-convergence-vSP39f\\agent\\files\\fields\\0dcd614a-8dc3-42f6-a171-36cb5b6bce98.aegir-field.zip",
+        "mimeType": "application/zip",
+        "size": 5572932,
+        "projectRevision": 4,
+        "createdAt": "2026-11-03T22:07:00.407Z"
+      }
+    },
+    {
+      "id": "fe2bfd0c-49cb-442b-b671-b531781b753c",
+      "projectRevision": 4,
+      "artifact": {
+        "id": "985c0586-53a0-4842-8836-fbcf91c2e0ae",
+        "name": "fe2bfd0c-49cb-442b-b671-b531781b753c.aegir-field.zip",
+        "path": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-convergence-vSP39f\\agent\\files\\fields\\fe2bfd0c-49cb-442b-b671-b531781b753c.aegir-field.zip",
+        "mimeType": "application/zip",
+        "size": 5352033,
+        "projectRevision": 4,
+        "createdAt": "2026-11-03T22:09:08.276Z"
+      }
+    },
+    {
+      "id": "54fd5230-cd0a-4d89-8ca7-2a15a30ffdac",
+      "projectRevision": 4,
+      "artifact": {
+        "id": "90789925-e6a9-440d-a3b3-91f9c5b1b4ed",
+        "name": "54fd5230-cd0a-4d89-8ca7-2a15a30ffdac.aegir-field.zip",
+        "path": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-convergence-vSP39f\\agent\\files\\fields\\54fd5230-cd0a-4d89-8ca7-2a15a30ffdac.aegir-field.zip",
+        "mimeType": "application/zip",
+        "size": 7167365,
+        "projectRevision": 4,
+        "createdAt": "2026-11-03T22:12:32.043Z"
+      }
+    }
+  ],
+  "stale": false,
+  "artifact": {
+    "id": "ea414fbc-6e1c-4f54-b396-cd917ea2cc6e",
+    "name": "field-check-5f4214b1-7a81-4b5e-9e64-5387a23f48c5.json",
+    "path": "C:\\Users\\DANIEV~1\\AppData\\Local\\Temp\\aegir-convergence-vSP39f\\agent\\files\\field-check-5f4214b1-7a81-4b5e-9e64-5387a23f48c5.json",
+    "mimeType": "application/json",
+    "size": 9578,
+    "projectRevision": 4,
+    "createdAt": "2026-11-03T22:12:33.563Z"
+  }
+}

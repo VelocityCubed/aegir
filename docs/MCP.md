@@ -1,5 +1,19 @@
 # Control ÆGIR with an agent
 
+Numerical check0.9.5: run `field_run` with identical projects and steady-tone
+conditions, `geometry:'fitted'`, at three decreasing cell sizes. Add a finest-grid
+`gridShiftMm` (at most half a cell) and a finest-grid larger `paddingMm` case.
+Call `field_compare({ids:[...]})` after all jobs complete. The JSON artifact records
+settings, complex impedance/pressure, limits and reasons for failure. Different
+physical projects or loss/stimulus assumptions are rejected. This is numerical
+sensitivity at one frequency, never physical validation.
+
+The studio now uses Shape / Simulate / Export. For chart capture set
+`view_set({tab:'field',study:'response'})`; for geometry capture use `tab:'design'`.
+`study` also accepts `waves`, `resonances`, `measurements` and `variations`.
+Normal simulation jobs follow actual CAD geometry. Legacy reference profiles are
+reserved for explicit developer comparisons. See [studio contract](STUDIO.md).
+
 Version 0.6.0 exposes the live desktop through a local stdio MCP server. The agent and GUI use the same revisioned workspace; edits appear in the app and survive restart. No API key, cloud account or paid licence is required. Your MCP client supplies the language model; ÆGIR supplies deterministic geometry, physics, search and manufacturing exports.
 
 `view_set` accepts `mode:"guided"` or `mode:"advanced"`. The guided desktop is the default; agent capabilities and project IDs are unchanged. View patches merge without resetting mode or unrelated settings.
@@ -103,7 +117,7 @@ Resources: `aegir://workspace`, `aegir://schema`, `aegir://capabilities`, `aegir
 - Driver Sd is cm², Vas is litres, Le is mH, Xmax is one-way peak mm. Acoustic section distance is metres and area in the geometry manifest is mm². Output excursion/air velocity is peak; SPL is RMS dB re 20 µPa at 1 m.
 - Generated `design.length`, `areaRatio`, `laneWidth` and `folds` describe the generated cabinet. In custom mode, outer dimensions, baffles, mouth and route control geometry. Source positions use explicit mounts when present. Searches address existing numeric paths such as `mounts.1.position`, `layout.baffles.0.end.0`, `design.damping` or `driver.qes`; no expressions run. Include `retrace:true` when a geometry search should derive a new route. Hard size/fit/length constraints still apply.
 
-This is a segmented small-signal **1D** model, not spatial FEM/BEM. It supports variable clear area and multiple coupled drivers along one dominant route. Fold scattering, ambiguous branching cavities, independent ports, diffusion, rooms, diffraction, crossovers, structural resonance and nonlinear distortion are outside scope. Coarse bypass and collision checks do not establish leak-tight joinery. Predictions need a measured prototype. See [PHYSICS.md](PHYSICS.md) for equations and definitions.
+This is a segmented small-signal **1D** model, not spatial FEM/BEM. It supports variable clear area and multiple coupled drivers along one dominant route. Fold scattering, ambiguous branching cavities, independent ports, diffusion, rooms, diffraction, structural resonance and nonlinear distortion are outside scope. Coarse bypass and collision checks do not establish leak-tight joinery. Predictions need a measured prototype. See [PHYSICS.md](PHYSICS.md) for equations and definitions.
 
 ## Diagnostics and verification
 
@@ -146,3 +160,26 @@ analysis is available and valid. Physically valid spatial projects export
 manifest, STEP, bundle and geometry report without a single-route response.
 `field.run` uses actual solids regardless of route intent. See
 [the cabinet editor guide](CABINET-EDITOR.md) for coordinates and model limits.
+
+
+## Visual circuits and coupled fields (0.9)
+
+`project.replace` and `project.patch` accept optional `circuit` (set null to remove
+with patch). This version-1 graph stores parts, wires and drawing positions. R/L/C
+values are SI ohm/H/F; optional resistance is DCR/ESR in ohm. Driver parts reference
+mount IDs. Input parts carry gain/phase and optional active HP/LP filters. The graph
+controls all drive/filtering when present; legacy per-mount crossovers are ignored.
+Drawing position/routing never changes electrical connectivity.
+
+`field.run` includes loaded RLC, active filters and Re/Le/RpLp with acoustic back
+EMF on CPU and GPU. Frequency-dependent duct/filling and legacy line attenuation
+require `settings.signal: "steady"`, at least eight periods and64 frames. The
+final four cycles are recorded after numerical relaxation; inspect
+`meta.steadyState.settled` and warnings. Pulse/tone work with air and circuits.
+Material startup is not broadband physics. `field.result` traces omit numerical
+startup for steady mode. The explicit legacy `basicWaveModel:true` diagnostic
+removes circuit/material losses in a separate archived input and never alters the
+saved project; it is outside the normal UI. Do not select it to make a failed
+full-model study appear successful.
+
+See [the circuit model and equations](CROSSOVER-BUILDER.md).

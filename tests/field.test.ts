@@ -1,10 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { defaultProject } from "../src/core/defaults";
+import { defaultProject as baseProject } from "../src/core/defaults";
+const defaultProject=structuredClone(baseProject);
+defaultProject.design.damping=0; // These fixtures explicitly model unfilled air.
 import { editableLayout } from "../src/core/geometry";
 import { prepareField } from "../src/field/grid";
 import { FieldKernel, runFieldCpu } from "../src/field/cpu";
 import { encodeField, decodeField } from "../src/field/archive";
 import { fieldDefaults, type PreparedField } from "../src/field/types";
+import {fittedTimeStep} from '../src/field/cut-cells';
+import {anatomyCases} from '../scripts/anatomy-cases';
 
 function box(nx = 48, ny = 6, nz = 5): PreparedField {
   const n = nx * ny * nz,
@@ -85,7 +89,7 @@ function energy(kernel: FieldKernel) {
     xy = nx * ny;
   let value = 0;
   for (let i = 0; i < n; i++) {
-    value += p[i] ** 2 / (2 * bulk);
+    value += (g.fitted?.[4*i]??1)*p[i] ** 2 / (2 * bulk);
     for (const [velocity, bit, offset] of [
       [vx, 2, 1],
       [vy, 4, nx],
@@ -95,13 +99,51 @@ function energy(kernel: FieldKernel) {
         g.flags[i] & bit
           ? velocity[i] - (dt / (rho * h)) * (p[i + offset] - p[i])
           : 0;
-      value += (rho / 2) * velocity[i] * next;
+      const axis=bit===2?0:bit===4?1:2;
+      value += (g.fitted?.[4*i+axis+1]??1)*(rho / 2) * velocity[i] * next;
     }
   }
   return value * h ** 3;
 }
 
 describe("3D spatial acoustic field", () => {
+  it('recovers the analytic frequency of a rigid tube with fractional end cells',()=>{
+    const errors:number[]=[],L=.435,origin=-.0073;
+    for(const h of [.02,.016,.012]){
+      const n=Math.ceil((L-origin)/h),g=box(n,1,1),fit=g.fitted=new Float64Array(n*4);g.meta.h=h;
+      const centres:number[]=[];
+      for(let i=0;i<n;i++){const lo=Math.max(0,origin+i*h),hi=Math.min(L,origin+(i+1)*h);centres.push((lo+hi)/2);fit[4*i]=(hi-lo)/h;fit[4*i+1]=i<n-1?1:0;}
+      const dt=fittedTimeStep(fit,g.meta.dimensions,h,g.meta.rho,g.meta.bulk);g.meta.dt=dt;
+      for(let i=0;i<g.aux.length;i+=4)g.aux.set([1,dt,1,dt],i);
+      const exact=g.meta.c/(2*L),steps=Math.ceil(14/(exact*dt));g.meta.steps=steps;g.recordSteps=new Uint32Array(steps).fill(0xffffffff);
+      const k=new FieldKernel(g),shape=centres.map(x=>Math.cos(Math.PI*x/L));for(let i=0;i<n;i++)k.p[i]=k.px[i]=shape[i];
+      const projection=()=>k.p.reduce((s,p,i)=>s+fit[4*i]*shape[i]*p,0),crossings:number[]=[];let previous=projection();
+      for(let s=0;s<steps;s++){k.step();const value=projection();if(previous>0&&value<=0&&s*dt>2/exact)crossings.push((s+previous/(previous-value))*dt);previous=value;}
+      const measured=(crossings.length-1)/(crossings.at(-1)!-crossings[0]);errors.push(Math.abs(measured/exact-1));
+    }
+    expect(errors[0]).toBeLessThan(.002);expect(errors[1]).toBeLessThan(errors[0]);expect(errors[2]).toBeLessThan(errors[1]);
+  });
+  it('conserves weighted acoustic energy and volume flux on unequal cut-cell volumes',()=>{
+    const g=box(19,4,3),n=g.meta.cells,fit=g.fitted=new Float64Array(n*4);
+    for(let i=0;i<n;i++){fit[4*i]=.12+.88*((i*13%29)/29);for(let a=0;a<3;a++)fit[4*i+a+1]=g.flags[i]&(2<<a)?.3+.7*((i*17%23)/23):0;}
+    const dt=fittedTimeStep(fit,g.meta.dimensions,g.meta.h,g.meta.rho,g.meta.bulk);g.meta.dt=dt;
+    for(let i=0;i<g.aux.length;i+=4)g.aux.set([1,dt,1,dt],i);
+    const k=new FieldKernel(g);for(let i=0;i<n;i++)k.p[i]=k.px[i]=Math.sin(i*.9)+.2;
+    const e=energy(k),volumeSum=()=>k.p.reduce((s,p,i)=>s+fit[4*i]*p,0),initial=volumeSum();
+    let drift=0;for(let s=0;s<1500;s++){k.step();if(s%50===0){drift=Math.max(drift,Math.abs(energy(k)/e-1));expect(volumeSum()).toBeCloseTo(initial,10);}}
+    expect(drift).toBeLessThan(1e-11);
+  });
+  it('keeps fitted piston coupling passive and preserves the intended volume and physical probe positions',()=>{
+    const p=anatomyCases().empty;p.system!.physics!.ductLoss='none';
+    const g=prepareField(p,{cellMm:20,paddingMm:180,durationMs:8,frames:12,volume:false}),k=new FieldKernel(g);
+    expect(g.meta.quality!.voxelCavityLitres).toBeCloseTo(68.58,8);expect(g.meta.quality!.pistonCoverage!.every(v=>Math.abs(v-1)<1e-10)).toBe(true);
+    expect(g.meta.probes.every(v=>v.sampling==='fixed-trilinear')).toBe(true);
+    g.models[7]=0;k.drivers[1]=.0001;const e0=.5*k.drivers[1]**2/g.models[2];let maximum=0;
+    for(let s=0;s<g.meta.steps;s++){k.step();if(s%20===0)maximum=Math.max(maximum,energy(k)+.5*g.models[0]*k.drivers[2]**2+.5*k.drivers[1]**2/g.models[2]+.5*g.models[5]*k.drivers[3]**2);}
+    expect(maximum/e0).toBeLessThan(1.000001);
+    const b=prepareField(p,{cellMm:16,paddingMm:180,durationMs:8,frames:12,volume:false,gridShiftMm:[3,2,4]});
+    expect(b.meta.probes).toEqual(g.meta.probes);expect(b.meta.quality!.voxelCavityLitres).toBeCloseTo(68.58,8);
+  },20000);
   it("records pressure and velocity at the same physical time for acoustic intensity", () => {
     const g = box(48, 3, 3),
       nx = 48,
@@ -181,7 +223,7 @@ describe("3D spatial acoustic field", () => {
   it("voxelizes actual solids, seals piston faces and permits spatial bypasses rather than forcing the route", () => {
     const p = editableLayout(structuredClone(defaultProject)),
       settings = {
-        cellMm: 30,
+        geometry: 'staircase' as const, cellMm: 30,
         paddingMm: 300,
         durationMs: 5,
         frames: 12,
@@ -211,7 +253,7 @@ describe("3D spatial acoustic field", () => {
   });
   it("couples voltage, electrical current, cone motion and a 3D pressure field, and roundtrips the recording", async () => {
     const settings = {
-        cellMm: 30,
+        geometry: 'staircase' as const, cellMm: 30,
         paddingMm: 300,
         durationMs: 8,
         frequency: 700,
@@ -302,7 +344,7 @@ describe("3D spatial acoustic field", () => {
   }, 20000);
   it("keeps the unpowered coupled electrical, mechanical and acoustic system passive", () => {
     const g = prepareField(defaultProject, {
-        cellMm: 30,
+        geometry: 'staircase' as const, cellMm: 30,
         paddingMm: 300,
         durationMs: 40,
         frames: 12,

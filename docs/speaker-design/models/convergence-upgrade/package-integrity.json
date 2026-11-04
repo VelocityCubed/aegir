@@ -1,0 +1,68 @@
+{
+  "version": "0.9.5",
+  "archive": "release/win-unpacked/resources/app.asar",
+  "files": [
+    {
+      "name": "engine/service.cjs",
+      "sha256": "c37ad598ed4df425a5e831cce599b3992bd1147c45384da9c866580ea9cc316a",
+      "bytes": 1686399
+    },
+    {
+      "name": "engine/worker.cjs",
+      "sha256": "ef378797e8d59dd9e1ca6672e3162f2f760b94a9baa42daed20d5fa9b2e76ed6",
+      "bytes": 966280
+    },
+    {
+      "name": "dist/index.html",
+      "sha256": "989c871fd7063ec8c0722c2d8eeacf75ec515208d69dd206bff34f01eea6bbe8",
+      "bytes": 648
+    },
+    {
+      "name": "dist/assets/circuit.worker-ns_iDdDP.js",
+      "sha256": "b4ed50aff7c54fbae22cd663f9242866250011a3ba34ecf56efbd0949f93ea4e",
+      "bytes": 103098
+    },
+    {
+      "name": "dist/assets/field.worker-gg_5kxah.js",
+      "sha256": "dadb7ca8c5378a8d333804bfe9e6d7f4609e881e9b050a64bfaacffa29ed8408",
+      "bytes": 198054
+    },
+    {
+      "name": "dist/assets/index-CD2hpGfD.js",
+      "sha256": "5df790f72745cc07ed34aa5b220975c139a15ea6d54b1ed9a5706c8363fb77a5",
+      "bytes": 1261895
+    },
+    {
+      "name": "dist/assets/pressure.worker-B4lbwA7X.js",
+      "sha256": "24f97c672c9d63c19fe688bfd958c1f25349b63455595dfc6cd36e600bbcfc9d",
+      "bytes": 133272
+    },
+    {
+      "name": "dist/assets/simulation.worker-Bx5XXwEN.js",
+      "sha256": "04bc50ca9b69eb05bb0b1f52154a5d0822edea20b255332e31becac2a629a5ba",
+      "bytes": 143547
+    },
+    {
+      "name": "electron/main.cjs",
+      "sha256": "855521b25462e2063a2c43947581b7433cfc59bb1d29d52e1d4eb3ca488f850d",
+      "bytes": 5683
+    },
+    {
+      "name": "electron/agent.cjs",
+      "sha256": "9a9152084efb9a8a8dcc5fa05a6ea8c1b8c27cebd0e81a66e6ede6859d292fec",
+      "bytes": 7608
+    },
+    {
+      "name": "docs/SPATIAL-FIELD.md",
+      "sha256": "2f25d8754dbbd49f5e12166be139de57da42cef04f7b8bc9a68aa19705311828",
+      "bytes": 22540
+    },
+    {
+      "name": "docs/VALIDATION.md",
+      "sha256": "93394855722fbbc996ca6b865b436b73aa8b5d69db1042b7171424bf2fec765c",
+      "bytes": 19883
+    }
+  ],
+  "sourceBuildMatchesPackage": true,
+  "desktopAndBundledDocsMatch": true
+}

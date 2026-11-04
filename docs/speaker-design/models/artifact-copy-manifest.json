@@ -1,0 +1,37 @@
+[
+  {
+    "kind": "project",
+    "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-TL-bass-study-final.aegir.json",
+    "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-TL-bass-study-final.aegir.json"
+  },
+  {
+    "kind": "report",
+    "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-TL-bass-study-final.md",
+    "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-TL-bass-study-final.md"
+  },
+  {
+    "kind": "manifest",
+    "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-TL-bass-study-final.geometry.json",
+    "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-TL-bass-study-final.geometry.json"
+  },
+  {
+    "kind": "bundle",
+    "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-TL-bass-study-final.zip",
+    "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-TL-bass-study-final.zip"
+  },
+  {
+    "kind": "step",
+    "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\Satori-TL-bass-study-final.step",
+    "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-TL-bass-study-final.step"
+  },
+  {
+    "kind": "coarse-field",
+    "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\fields\\677450da-0a30-4760-9419-bf1f8ab28409.aegir-field.zip",
+    "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-12.7mm.aegir-field.zip"
+  },
+  {
+    "kind": "fine-field",
+    "source": "C:\\Users\\DanievanderSchyff\\AppData\\Roaming\\WaveLab TL Studio\\agent\\files\\fields\\7c14a38a-a327-4ecc-8f3b-7cd30c45c471.aegir-field.zip",
+    "destination": "C:\\dev\\speakerDesigner\\docs\\speaker-design\\models\\Satori-10mm.aegir-field.zip"
+  }
+]

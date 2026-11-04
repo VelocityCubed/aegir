@@ -13,6 +13,8 @@ export interface Driver {
   cutout: number;
   frame: number;
   depth: number;
+  /** Rp || jωLp in series with Re + jωLe, for published lossy-inductance fits. */
+  lossyInductance?: { resistance: number; inductance: number };
 }
 export interface Design {
   length: number;
@@ -36,6 +38,7 @@ export interface Targets {
   maxVelocity: number;
 }
 export interface Project {
+  circuit?: import('./circuit-schema').Circuit;
   version: 1;
   name: string;
   driver: Driver;
@@ -43,6 +46,7 @@ export interface Project {
   targets: Targets;
   layout?: CustomLayout;
   mounts?: DriverMount[];
+  system?: SystemStudy;
 }
 export type XY = [number, number];
 export type XYZ = [number, number, number];
@@ -80,7 +84,88 @@ export interface DriverMount {
   phase: number;
   /** Face-plane mm from outer cabinet origin. Front/back X,Y; sides Z,Y; top/bottom X,Z. */
   at?: XY;
+  /** T/S data for a factory sealed-back unit already includes its rear chamber. */
+  rearLoading?: "cabinet" | "sealed-back";
+  crossover?: Crossover;
+  acousticOffsetMm?: XYZ;
+  measurements?: MountedMeasurements;
 }
+export interface FrequencyTrace { source:string; samples:[number,number,number|null][]; }
+export interface MountedMeasurements {
+  impedance?:FrequencyTrace;
+  response?:{trace:FrequencyTrace;voltage:number|null;distanceM:number|null;timing:"common"|"unknown";includesBaffle:boolean;includesTerminus:boolean;microphoneMm:XYZ|null};
+}
+/** Ladder order runs from amplifier to driver. Values are SI (ohm, H, F). */
+export interface CircuitElement {
+  connection: "series" | "shunt";
+  kind: "R" | "L" | "C";
+  value: number;
+  resistance?: number;
+}
+export interface Crossover {
+  passive?: CircuitElement[];
+  active?: { kind: "lowpass" | "highpass"; frequency: number; order: 1 | 2 }[];
+}
+export interface AcousticProfile {
+  source: string;
+  evidence: "derived" | "digitized";
+  /** Explicit acoustic equivalent, independent of fabrication solids. mm, mm², Np/m. */
+  sections: Section[];
+  mouthArea: number;
+}
+export interface ReferenceCurve {
+  trace?: "calculated-solid" | "measured-dashed" | "unspecified";
+  frequencyUncertaintyPercent?: number;
+  id: string;
+  title: string;
+  source: string;
+  evidence: "published-simulation" | "published-measurement";
+  metric: "spl" | "coneSpl" | "terminusSpl" | "impedance";
+  conditions: { voltage: number | null; distanceM: number | null; radiation: "half-space" | "anechoic" | "near-field" | "in-room"; stuffing: "empty" | "stuffed"; crossover: "bypass" | "passive" | "active"; notes?: string; microphoneMm?:XYZ };
+  /** Absolute error limit in the metric's native units; no fitted level offset. */
+  tolerance: number;
+  uncertainty: number;
+  samples: [number, number][];
+}
+export interface SystemStudy {
+  /** Explicit ambient constants, e.g. measured test conditions. SI units. */
+  air?: { densityKgM3: number; soundSpeedMs: number; source: string };
+  /** Optional integration cap along the actual/equivalent 1D profile. */
+  numerics?: { lineStepMm: number };
+  physics?: {
+    ductLoss: "none" | "thermoviscous" | "mjk-2003";
+    radiation: "low-ka" | "piston";
+    stuffing?: StuffingRegion[];
+  };
+  observation?: { positionMm: XYZ; space: "half-space" | "free-field"; baffle: "infinite" | "sphere-transition"; baffleRadiusMm?: number; operator?:"far-field"|"rayleigh" };
+  profile?: AcousticProfile;
+  sweep: [number, number];
+  distanceM: number;
+  references?: ReferenceCurve[];
+  modalReference?: { source: string; frequencies: number[]; tolerancePercent: number };
+}
+export interface StuffingRegion {
+  start: number;
+  end: number;
+  source: string;
+  calibration: "assumed" | "measured" | "reference-fit";
+  /** Omitted means full cross-section, preserving version-1 projects. */
+  placement?: { kind: "lining"; thicknessMm: number };
+  presetId?: string;
+  /** Retained use/evidence range of this sample, not a universal model limit. */
+  frequencyRangeHz?: [number, number];
+  material: PorousMaterial;
+}
+export type PorousMaterial = { model: "mjk-2003"; densityKgM3: number }
+  | { model: "miki"; flowResistivity: number }
+  | { model: "empirical-power-law"; flowResistivity: number;
+      /** NASA Allen/Schiller convention X=rho_air*f/sigma; coefficients C1..C8. */
+      coefficients: [number,number,number,number,number,number,number,number] }
+  | { model: "jca"; flowResistivity: number; porosity: number; tortuosity: number;
+      viscousLengthUm: number; thermalLengthUm: number }
+  | { model: "jcal"; flowResistivity: number; porosity: number; tortuosity: number;
+    viscousLengthUm: number; thermalLengthUm: number; thermalPermeability: number;
+  };
 export interface Section {
   distance: number;
   area: number;
@@ -105,6 +190,10 @@ export interface Point {
     excursion: number;
     impedance: number;
     current: number;
+    inputCurrent?: number;
+    spl?: number;
+    pressureRe?: number;
+    pressureIm?: number;
   }[];
 }
 export interface Simulation {
@@ -118,6 +207,7 @@ export interface Simulation {
   ripple: number;
   f3: number | null;
   impedanceConvention?: "common-parallel-input" | "first-driven-source";
+  limitations?: string[];
 }
 export interface Hole {
   x: number;
@@ -156,16 +246,9 @@ export interface Geometry {
   analysisErrors?: string[];
   lineLength: number;
   sections: Section[];
-  mounts: {
-    id: string;
-    driver: Driver;
+  mounts: (DriverMount & {
     center: XYZ;
-    face: CabinetFace;
-    position: number;
-    voltageScale: number;
-    phase: number;
-    at?: XY;
-  }[];
+  })[];
 }
 export interface Candidate {
   project: Project;

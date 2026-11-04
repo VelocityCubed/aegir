@@ -1,0 +1,351 @@
+{
+  "scope": "Unloaded pressure-release cavity, independent analytic spectrum check; source generic driver sealed. Satori preprocessing is volume/mesh integrity only, not source mode agreement.",
+  "studies": [
+    {
+      "meta": {
+        "cellMm": 20,
+        "dimensions": [
+          10,
+          87,
+          10
+        ],
+        "pitchMm": [
+          20,
+          19.913793103448278,
+          20
+        ],
+        "cells": 8700,
+        "geometry": "conservative-cut-cell",
+        "cavityLitres": 69.30000000000001,
+        "bodyCavityLitres": 68.58000000001032,
+        "cadCavityLitres": 68.58,
+        "volumeScope": "Modal air includes the stock-depth mouth neck; CAD cavity volume is the inner cabinet body.",
+        "mouthAreaMm2": 40000,
+        "boundary": "Rigid walls and driver apertures; p=0 on physical mouth plane, including stock-depth outlet neck.",
+        "method": "Conservative cut cells; symmetric volume-mass-normalized orthogonal flux graph. Refine mesh; this is not an exact curved-surface FEM."
+      },
+      "frequenciesHz": [
+        49.4942772166416,
+        148.4666975612295,
+        247.3907208994272,
+        346.23410008980335,
+        444.9646142792293,
+        543.5500794061833,
+        641.9583586920744,
+        740.1573731171513
+      ],
+      "relativeResiduals": [
+        3.4088697395793443e-12,
+        4.848356440661367e-13,
+        2.460260860037362e-13,
+        1.367515658897516e-13,
+        2.101505004591119e-13,
+        1.0543548566159311e-13,
+        4.602709583115047e-14,
+        1.264559601627717e-10
+      ],
+      "analyticFrequenciesHz": [
+        49.494949494949495,
+        148.4848484848485,
+        247.4747474747475,
+        346.4646464646465,
+        445.4545454545455,
+        544.4444444444445,
+        643.4343434343434,
+        742.4242424242425
+      ],
+      "relativeErrors": [
+        -0.00001358276581253648,
+        -0.0001222409141687919,
+        -0.0003395359574166479,
+        -0.000665425396777497,
+        -0.0010998454956078207,
+        -0.0016427112947654532,
+        -0.002293916632411852,
+        -0.003053334168734989
+      ]
+    },
+    {
+      "meta": {
+        "cellMm": 16,
+        "dimensions": [
+          13,
+          109,
+          13
+        ],
+        "pitchMm": [
+          15.384615384615385,
+          15.894495412844037,
+          15.384615384615385
+        ],
+        "cells": 18421,
+        "geometry": "conservative-cut-cell",
+        "cavityLitres": 69.30000000000001,
+        "bodyCavityLitres": 68.58000000000253,
+        "cadCavityLitres": 68.58,
+        "volumeScope": "Modal air includes the stock-depth mouth neck; CAD cavity volume is the inner cabinet body.",
+        "mouthAreaMm2": 40000.00000000001,
+        "boundary": "Rigid walls and driver apertures; p=0 on physical mouth plane, including stock-depth outlet neck.",
+        "method": "Conservative cut cells; symmetric volume-mass-normalized orthogonal flux graph. Refine mesh; this is not an exact curved-surface FEM."
+      },
+      "frequenciesHz": [
+        49.49452120762721,
+        148.47328496583853,
+        247.42121488798185,
+        346.31776219817675,
+        445.14238879132654,
+        543.8745714982994,
+        642.4938063480289,
+        740.9796128256263
+      ],
+      "relativeResiduals": [
+        6.907054051893302e-12,
+        1.0124144461841757e-12,
+        4.583594084626462e-13,
+        2.4133020508048093e-13,
+        1.5321322092541188e-13,
+        2.1504073231655494e-13,
+        1.6239559145218245e-13,
+        1.3139864399797766e-11
+      ],
+      "analyticFrequenciesHz": [
+        49.494949494949495,
+        148.4848484848485,
+        247.4747474747475,
+        346.4646464646465,
+        445.4545454545455,
+        544.4444444444445,
+        643.4343434343434,
+        742.4242424242425
+      ],
+      "relativeErrors": [
+        -0.00000865315202169814,
+        -0.00007787676067938509,
+        -0.00021631535060406826,
+        -0.00042395167290099067,
+        -0.0007007598562057682,
+        -0.00104670541128693,
+        -0.0014617452361873617,
+        -0.0019458276226258509
+      ]
+    },
+    {
+      "meta": {
+        "cellMm": 12,
+        "dimensions": [
+          17,
+          145,
+          17
+        ],
+        "pitchMm": [
+          11.764705882352942,
+          11.948275862068966,
+          11.764705882352942
+        ],
+        "cells": 41905,
+        "geometry": "conservative-cut-cell",
+        "cavityLitres": 69.30000000000001,
+        "bodyCavityLitres": 68.57999999995266,
+        "cadCavityLitres": 68.58,
+        "volumeScope": "Modal air includes the stock-depth mouth neck; CAD cavity volume is the inner cabinet body.",
+        "mouthAreaMm2": 39999.999999999905,
+        "boundary": "Rigid walls and driver apertures; p=0 on physical mouth plane, including stock-depth outlet neck.",
+        "method": "Conservative cut cells; symmetric volume-mass-normalized orthogonal flux graph. Refine mesh; this is not an exact curved-surface FEM."
+      },
+      "frequenciesHz": [
+        49.494707474262206,
+        148.47831399901992,
+        247.4444959353909,
+        346.3816391630618,
+        445.2781329696025,
+        544.1223714129784,
+        642.9027546835545,
+        741.6076904653845
+      ],
+      "relativeResiduals": [
+        1.320037788854777e-11,
+        1.6886303084710775e-12,
+        7.535685237918348e-13,
+        7.159561547725162e-13,
+        3.895882054818108e-13,
+        4.165825417641983e-13,
+        3.9041778318419414e-13,
+        8.755352208701894e-11
+      ],
+      "analyticFrequenciesHz": [
+        49.494949494949495,
+        148.4848484848485,
+        247.4747474747475,
+        346.4646464646465,
+        445.4545454545455,
+        544.4444444444445,
+        643.4343434343434,
+        742.4242424242425
+      ],
+      "relativeErrors": [
+        -0.000004889805722774199,
+        -0.000044007761702657966,
+        -0.00012224091413481908,
+        -0.00023958375676047527,
+        -0.00039602802742311205,
+        -0.0005915627108560306,
+        -0.0008261740396876549,
+        -0.001099845495604601
+      ]
+    }
+  ],
+  "comparison": {
+    "convergencePercent": [
+      0.00037633788640967225,
+      0.0033871636790028248,
+      0.00940947906169498,
+      0.018444611237833364,
+      0.030494552236315364,
+      0.04556195999316781,
+      0.0636501599680761,
+      0.08476314717527078
+    ],
+    "meshStableWithin1Percent": true,
+    "refinement": {
+      "modes": [
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            0.000004929656447949316,
+            0.000003763364701058973
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            0.00004436760869506856,
+            0.00003387048954111991
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            0.00012324726708841377,
+            0.0000940859376202727
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            0.00024157614048547782,
+            0.00018441209828375208
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            0.00039936549871142697,
+            0.00030485255894033156
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            0.0005966303797255264,
+            0.0004554121052504197
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            0.0008333895995013772,
+            0.0006360967230990558
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        },
+        {
+          "status": "stable",
+          "stable": true,
+          "changes": [
+            0.0011096657644054017,
+            0.0008469136011306228
+          ],
+          "observedOrder": null,
+          "extrapolated": null,
+          "discretizationEstimate": null,
+          "relativeTolerance": 0.01,
+          "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+        }
+      ],
+      "volume": {
+        "status": "stable",
+        "stable": true,
+        "changes": [
+          0,
+          0
+        ],
+        "observedOrder": null,
+        "extrapolated": null,
+        "discretizationEstimate": null,
+        "relativeTolerance": 0.01,
+        "note": "Stability/conditional Richardson estimate only; geometry, boundary and physical-model errors remain separate."
+      },
+      "modeAssociation": "frequency-order; crossings/degenerate modes require shape comparison"
+    },
+    "note": "Requires at least three mesh levels and consistent refinement. Numerical stationarity is not physical validation; sorted frequencies can change identity near crossings."
+  },
+  "baffleGeometry": [
+    {
+      "h": 16,
+      "error": "Error: Modal grid contains 256 cells with disconnected air across a thin panel. Refine the grid or use whole-cell preview explicitly."
+    },
+    {
+      "h": 12,
+      "error": "Error: Modal grid contains 66 cells with disconnected air across a thin panel. Refine the grid or use whole-cell preview explicitly."
+    },
+    {
+      "h": 9,
+      "error": "Error: Modal grid contains 29 cells with disconnected air across a thin panel. Refine the grid or use whole-cell preview explicitly."
+    },
+    {
+      "h": 8,
+      "error": "Error: Modal grid contains 32 cells with disconnected air across a thin panel. Refine the grid or use whole-cell preview explicitly."
+    }
+  ]
+}

@@ -2,7 +2,9 @@ import { describe, it, expect } from "vitest";
 import {numericPath} from "../src/agent/jobs";
 import * as THREE from "three";
 import { unzipSync, strFromU8 } from "fflate";
-import { defaultProject, drivers } from "../src/core/defaults";
+import { defaultProject as baseProject, drivers } from "../src/core/defaults";
+const defaultProject=structuredClone(baseProject);
+defaultProject.design.damping=0; // These fixtures explicitly model unfilled air.
 import { buildGeometry } from "../src/core/geometry";
 import { cabinetDraft, foldedMultiway } from "../src/core/cabinetEditing";
 import {
@@ -48,7 +50,7 @@ function box(): Project {
   return p;
 }
 const settings = {
-  cellMm: 30,
+  geometry: 'staircase' as const, cellMm: 30,
   paddingMm: 270,
   durationMs: 5,
   frequency: 150,

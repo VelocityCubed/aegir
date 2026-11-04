@@ -1,0 +1,249 @@
+PDF PAGE 1
+J. Acoust. Soc. Jpn. (E)11, 1 (1990)
+Acoustical properties of porous materials
+Modifications of Delany-Bazley (cid:129)\ models(cid:129)\
+Yasushi Miki
+Faculty of Engineering, Takushoku University,
+815-1, Tatemachi, Hachioji, 193 Jap an
+(Received 11 March 1989)
+The characteristic impedance and propagation constant of porous materials are dis-
+cussed from a viewpoint of physical realizability, and new regression models based on
+experimental data by Delany and Bazley are derived. Modifications from their original
+models are so made that the impedance function satisfies the positive-real property and
+that the propagation constant written in terms of complex variables becomes a regular
+function in the right half-plane. The new models are shown to be useful for the predic-
+tion of acoustical behavior of porous materials, especially in the double-layer case,
+even outside the frequency range of validity of the original models.
+PACS number: 43. 55. Ev
+assumed, each electric element is given as
+1. INTRODUCTION
+Acoustical properties of porous materials are (1)
+specified by the characteristic acoustic impedance
+and the propagation constant. The experimental (2)
+model for each value was given by Delany and
+Bazley,1) and it has been used widely to predict an (3)
+acoustical behavior of a ground surface. In the
+case of a multiple layer, however, the real part of the
+(4)
+surface impedance when computed from their models
+sometimes becomes negative at low frequency range.
+where A is the area of the tube, S the circumference
+This phenomenon is due to the fact that the existing
+of the tube, ƒÏ0, the density of air, c0 the speed of
+impedance must be a positive-real function whereas
+sound, p the viscosity coefficient, A the coefficient of
+that of their model cannot satisfy this property. In
+heat conduction, G the specific heat of air at constant
+this paper, new models for the impedance and propa-
+pressure, and ƒÅ the ratio of specific heats. Note
+gation constant are presented. They are the modifi-
+that the resistance R and the conductance G are both
+cations of Delany-Bazley models and satisfy the
+proportional to .(cid:129)ãƒÖ at high frequencies, and that R
+positive-real property.
+converges to a constant value
+2. ELECTRICAL ANALOGY OF
+( 5 )
+POROUS MATERIALS
+Porous materials are usually considered as an as ƒÖ O (Poiseuille's law). This value is called the
+assembly of capillary tubes. A single cylindrical flow resistivity of a tube.
+tube is described equivalently by an electric circuit The electric circuit shown above is known as a
+shown in Fig. 1.2) If time-dependence exp (jƒÖt) is two-port network. It is of course passive and linear.
+19
+
+PDF PAGE 2
+J. Acoust. Soc. Jpn. (E) 11, 1 (1990)
+The model derived by Delany and Bazley,1) however,
+cannot satisfy that property. If the impedance func-
+tion is of the form
+(12)
+the positive-real conditions are given as follows:
+(13)
+(14)
+(a) Cylindrical tube (b) Equivalent circuit
+(15)
+Fig. 1 Cylindrical tube of area A and its
+where * denotes the complex conjugate and H [-]
+equivalent circuit.
+means Hilbert transform. For Delany-Bazley type
+functions
+Defining (16)
+(6) the condition (15) can be satisfied if
+(7)
+(17)
+we can write the characteristic impedance Z and the
+propagation constant y of the tube as Here, we used the relation
+(8) (18)
+(9) and the condition (13) was assumed. These results
+also satisfy the condition (14) if a (cid:129)† O.
+respectively. If we assume Eq. (5) and G=0, Eqs.
+(8) and (9) can be expressed as
+3.2 Property of the Propagation Constant
+Let ƒÁ(s) be the propagation constan t of a porous
+(10)
+material. The transfer function
+(19)
+(11)
+is a regular function in the right half of the complex
+respectively. s-plane. Therefore, the function ƒÁ(s) is also regular
+Porous material in general may be described as a in the same region if G(s)(cid:129)‚0. Assuming a single
+combination of similar but more complicated two- power-law relation for ƒÁ(s), we can write
+port networks. If a material is homogeneous and
+(20)
+has infinite thickness, it is described as a one-port
+network composed of an infinite number of two-port Substitution of s =jƒÖ(co> 0) into Eq. (20) yields
+networks in cascade connection. The impedance
+of this one-port network represents the surface im-
+pedance of the material.
+One of other factors which affect acoustical prop-
+erties of porous materials may be a porosity. How-
+ever, we restrict our discussions to material whose
+(21)
+porosity is near unity since Delany and Bazley gave
+experimental data only for those materials. According to Delany and Bazley, we can rewrite
+Eq. (21) as follows:
+3. NEW MODELS
+(22)
+3.1 Positive-Real Property of the Impedance Func-
+tion
+The impedance function of a linear passive one-
+port network must be a positive real function." (23)
+20
+
+PDF PAGE 3
+Y. MIKI: MODIFICATIONS OF DELANY-BAZLEY MODELS
+The relation between p and q is expressed as It is clear that Eqs. (25) and (26) do not satisfy Eqs.
+(17) and (24), respectively. Using experimental data
+(24) by Delany and Bazley, we make new regression
+models subject to the constraint conditions (17) and
+Thus, the real and imaginary parts of the propaga-
+(24). New sets of values are given as follows:
+tion constant cannot be determined independently.
+a=5.50, c=-8.43, b=d=-0.632 , (27)
+3.3 Modifications of Delany-Bazley Models
+p=7.81, q=11.41, r=-0.618. (28)
+The constants for the normalized imp edance shown
+The results are shown in Fig. 2 in comparison with
+in Eq. (16) were given by Delany and Bazley as
+the original ones.
+a=9.08, b=-0.75, c=-11.9, d=-0.7 3,
+(25) 3.4 The New Models in SI Units
+and those for the propagation constant shown in We formulate the new mod els in SI units.
+Eq. (23) as (1) The characteristic impedance normalized
+with respect to air :
+(26)
+Z(f)= R(f)+ . jX(f),(29)
+Fig. 2 New regression models for the characteristic impedance and propagation constant
+(thick lines). Thin lines show the original models. Dots show the experiment al data
+by Delany and Bazley.
+21
+
+PDF PAGE 4
+J. Acoust. Soc. .Jpn. (E) 11, 1 (1990)
+at frequencies below 1 kHz and that the real part of
+(30)
+the former becomes negative with decreasing fre-
+quency. As stated above, such an impedance can-
+(31)
+not be realized. This frequency range is found to
+(2) The propagation constant: be coincident with the range flƒÐ<0.01 (a. in MKS
+units) to which Delany and Bazley gave a warning
+(32)
+not to extrapolate their models. Although it has
+not been verified yet that the new models provide a
+(33)
+good prediction of the acoustic behavior in this fre-
+quency range, it can be said at least that the new
+(34)
+models are well behaved in that range. Some ex-
+amples of model fitting will be shown in the next
+In above equations, a. is the flow resistivity of a
+section.
+material.
+4. IMPEDANCE OF DOUBLE LAYER 4.2 Model Fitting for Experimental Results
+Figure 4 shows the normalized surface impedance
+4.1 Comparison between Original and New Models
+data obtained by C. Suzuki, H. Yano and H. Tachi-
+Consider a rigidly backed layer. The surfa ce im-
+bana4) for a rigidly backed glass wool of 50 mm
+pedance is given as
+thickness with 32 kg/m3 density. The thick curves
+(35)
+show the impedance computed from the new models
+where Zo(f), ƒÁ(f) and ƒÇ are the characteristic im- with ƒÐ=9,000 MKS units. The value of ƒÐ was so
+pedance, the propagation constant and the thickness determined that the curves provide the best fit in the
+of the layer, respectively. Figure 3 shows the nor- range fl-> 0.02 or f> 200 Hz. The thin curves
+malized surface impedance computed from the origi- show the impedance computed from the original
+nal models (thin lines) and the new models (thick
+lines) with ƒÐ=100,000 MKS units and ƒÇ=10 mm.
+It is seen that these results show a distinct difference
+Fig. 4 Comparison between measured and
+predicted surface impedance. Dots are
+the measured data by Suzuki et al. Thic k
+Fig. 3 Comparison between the surface im- curves and thin curves show the prediction s
+pedance predicted from the new model a nd from the new model and the or iginal, re-
+that from the oridinal model with cr ƒÐ= spectively, with ƒÐ=9,000 MKS units an d
+100,000 MKS units and ƒÇ=10 mm. =50 mm. ƒÇ
+22
+
+PDF PAGE 5
+Y. MIKI: MODIFICATIONS OF DELANY-BAZLEY MODELS
+Fig. 5 Comparison between measured and predicted surface impedance. Dots are the
+measured data by Nakajima et al. Thick curves and thin curves show the predictions
+from the new model and the original, respectively, withƒÐ=41,000 MKS unit s and (a)
+=50 mm, (b)ƒÇ=100 mm. ƒÇ
+models with the same ƒÐ-value. It seems that the outside the range of validity of the original model.
+latter curves show the better agreement. Since all
+5. CONCLUSIONS
+of the data lie in the range of validity of the original
+models, the acoustical behavior outside that range The characteristic impedance and propagation
+constant of porous mateirals were considered from
+remains unverified.
+Figure 5 shows the normalized surface impedance a viewpoint of physical realizability, and the new
+regression models based on the experimental data by
+data obtained by T. Nakajima and T. Kawai5) for a
+rigidly backed rockwool of 50 and 100 mm thickness Delany and Bazley were derived. It may not be
+expected that single power-law relations provide a
+with 150 kg/m3 density. The thick curves in each
+figure show the impedance computed from the new perfect prediction of acoustical behavior over the
+models with ƒÐ=41,000 MKS units. The ƒÐ-value entire frequency range. However, if the single
+was so determined that the curves provide the best power-law relation is used for the impedance func-
+tion, it must be at least a physically realizable one.
+fit over the whole frequency range of measurement,
+Otherwise it may cause significant errors in the low
+and equal values was obtained from either set of data
+fa range. The new models thus obtained are found
+(Fig. 5(a) and (b)). The thin curves show the im-
+to be useful for the prediction of acoustical behavior
+pedance computed from the original models with
+even outside the range of validity of the original
+the same ƒÐ-value. If theƒÐ•-value is determined
+model. Further modifications for the porosity and
+from data in the range fla> 0.02 or f> 800 Hz, it
+the structure factor6)will be discussed in a future
+varies from 38,000 to 40,000 MKS units according
+to models and data sets. Since it differs little from paper.
+the value ƒÐ=41,000 MKS units, this value was
+ACKNOWLEDGMENTS
+adopted as a typical value of the flow resistivity of
+the material. In this example, it may be said that The author would like to express his gratitude to
+the prediction from the new models is superior to Dr. M. E. Delany for supplying experimental data
+that from the original over the whole frequency measured 20 years ago. Without these data the
+range, especially in the range f< 400 Hz, which is new models would not have been proposed with
+23
+
+PDF PAGE 6
+J. Acoust. Soc. Jpn. (E) 11, 1 (1990)
+confidence. Thanks are also due to Prof. H. Tachi- (McGraw-Hill, New York, 1962), p.244.
+bana and Mr. T. Nakajima for supplying experi- 4) C. Suzuki, H. Yano, and H. Tachibana, "A new
+mental results. method of measuring normal incident sound ab-
+sorption characteristics of materials using acous tic
+tube," J. Acoust. Soc. Jpn. (E), 2, 161-167 ( 1981).
+REFERENCES 5) T. Nakajima and T. Kawai, "Measurement of
+1) M. E. Delany and E. N. Bazley, "Acoustical prop- acoustic impedance ratio of ground by standin g
+erties of fibrous absorbent materials," A ppl. wave method," Proc. Autumn Meet. Acou st. Soc.
+Acoust. 3, 105-116 (1970). Jpn., 231-232 (1980) (in Japanese).
+2) J. L. Flanagan, Speech Analysis Synthesis and 6) Y. Miki, "On the acoustical properties of porous
+Perception (Springer-Verlag, Berlin, 1965), p.31. materials," Tech. Rep. Inst. Electron. Com mun.
+3) L. Weinberg, Network Analysis and Synthesis Eng. EA81-68, 7-14 (1982) (in Japanese).
+24

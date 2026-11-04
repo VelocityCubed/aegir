@@ -14,7 +14,7 @@ export function scoreProject(p:Project):Candidate|null {
   const score=2*rms+0.35*s.ripple+2*Math.max(0,s.bandMean-lowMean-3)+12*Math.max(0,ex-1)+8*Math.max(0,speed-1)+0.012*g.airVolume-0.025*s.bandMean;
   return {project:p,score,simulation:s,geometry:g};
 }
-export async function optimize(project:Project,onProgress:(progress:number,valid:number)=>void,aborted:()=>boolean=()=>false):Promise<Candidate[]> {
+export async function optimize(project:Project,onProgress:(progress:number,valid:number)=>void,aborted:()=>boolean=()=>false,iterations=1000):Promise<Candidate[]> {
   let seed=72819;
   const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)|0;return (seed>>>0)/4294967296;};
   const results:Candidate[]=[], seen=new Set<string>();
@@ -24,10 +24,10 @@ export async function optimize(project:Project,onProgress:(progress:number,valid
     const candidate=scoreProject(p); if(candidate) results.push(candidate);
   };
   consider(project);
-  const total=1000,t=project.targets;
+  const total=iterations,t=project.targets;
   for(let i=0;i<total;i++) {
     if(aborted()) break;
-    const refine=i>650 && results.length>0;
+    const refine=i>total*.65 && results.length>0;
     const base=refine?[...results].sort((a,b)=>a.score-b.score)[Math.floor(random()*Math.min(8,results.length))].project:project;
     const n=refine?base.design.folds:1+Math.floor(random()*4);
     const length=refine?base.design.length+(random()-.5)*.32:t.minLength+random()*(t.maxLength-t.minLength);

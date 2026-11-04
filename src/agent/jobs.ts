@@ -6,6 +6,10 @@ import { scoreProject, optimize } from "../core/optimizer";
 import { validateProject } from "../core/validation";
 import { traceRoute } from "../core/layout";
 import type { Project, Candidate } from "../core/types";
+import { analysisGeometry, referenceReport } from '../core/system';
+import { sensitivity } from '../core/diagnostics';
+import { designInput } from '../core/design-input';
+import { measuredSystem } from '../core/measurements';
 export function numericPath(p: Project, path: string, value?: number): number {
   const parts = path.split(".");
   if (
@@ -55,6 +59,12 @@ export async function runJob(
   progress: (progress: number, valid?: number) => void,
 ) {
   if (kind === "field") return runFieldCpu(project, args, progress);
+  if(kind==='sensitivity'){progress(.05);return sensitivity(project,args.referenceId,args.parameters);}
+  if(kind==='measured'){progress(.05);return measuredSystem(project,args.samples??400);}
+  if (kind === 'reference') {
+    progress(.05);const simulation=simulate(project,args.samples??600);
+    progress(.6);return {simulation,reference:referenceReport(project,simulation)};
+  }
   if (kind === "simulation") {
     progress(0.05);
     return simulate(project, args.samples ?? 240);
@@ -66,7 +76,7 @@ export async function runJob(
       try {
         numericPath(p, args.path, args.values[i]);
         validateProject(p);
-        const g = buildGeometry(p);
+        const g = analysisGeometry(p);
         if (g.errors.length) throw Error(g.errors.join(" "));
         const s = simulate(p, args.samples ?? 100);
         results.push({
@@ -95,7 +105,7 @@ export async function runJob(
     for (let i = 0; i < args.projects.length; i++) {
       const item = args.projects[i],
         p = {
-          ...item.project,
+          ...designInput(item.project),
           targets: project.targets,
           design: { ...item.project.design, voltage: project.design.voltage },
         };
@@ -124,7 +134,7 @@ export async function runJob(
         throw Error(
           "Custom-layout optimisation requires explicit parameter ranges.",
         );
-      return optimize(project, (p, v) => progress(p, v));
+      return optimize(project, (p, v) => progress(p, v), () => false, args.iterations ?? 1000);
     }
     const parameters = args.parameters as {
       path: string;

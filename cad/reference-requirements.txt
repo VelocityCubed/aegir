@@ -1,0 +1,3 @@
+# Optional developer reference solver; not required to run the app.
+-r requirements.txt
+gmsh==4.15.2

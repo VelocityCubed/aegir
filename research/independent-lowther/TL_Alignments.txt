@@ -1,0 +1,596 @@
+
+===== PAGE 1 =====
+Classic Transmission Line Enclosure Alignments
+Martin J. King
+40 Dorsman Dr.
+Clifton Park, NY 12065
+MJKing57@aol.com
+.
+
+===== PAGE 2 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Introduction :
+Ever since I first made my MathCad transmission line worksheets available, now
+over 20 years ago, the subject of alignment tables has come up again and again.
+Different alignment schemes for transmission line speakers can be found on the Internet
+and in print articles by transmission line designers and builders. The problem with these
+various attempts at alignment tables is that they are limited in scope to specific driver
+parameters or specific enclosure geometries. I have never seen a set of general
+transmission line alignment tables that encompass a wide range of potential drivers and
+span the same amount of enclosure design space as the alignment tables available for
+sealed and ported enclosures.
+Alignments for sealed and ported speaker systems are based on the lumped
+parameter circuit models used in the classic papers by Thiele(1) and Small(2-4). These
+papers derive alignments using the coefficients of 2nd and 4th order high pass filters.
+Vance Dickason’s Loudspeaker Design Cookbook(5) contains comprehensive tables,
+covering a large range of Thiele / Small driver parameters, again fit to various types of
+high pass filters. In the tables, the enclosure volume and system tuning frequency are
+expressed as functions of the driver’s Thiele / Small parameters. These alignment tables
+are a proven method for designing sealed and ported enclosures with predictable
+results.
+If available, similar comprehensive alignment tables for transmission line
+enclosures would allow quick scoping analyses of drivers and enclosure geometries with
+similar predictable results. These scoping calculations could become the basis for a final
+transmission line enclosure design or the starting point for further optimization using
+simulation software.
+Over the past few years as I continued to work on transmission line enclosure
+theory and designs, I accumulated several interesting observations in my personal
+notes. Keeping in mind the desire for alignment tables, about a year ago I tried a method
+for specifying the transmission line enclosure geometry as a function of a driver’s Thiele
+/ Small parameters using the alignment tables for ported enclosures. Looking back at it
+now a design procedure was there, and I just failed to see it. Maybe others have already
+discovered this method, but I have not seen it presented or discussed (or maybe it also
+went unnoticed at the time).
+What follows is a description of the procedure and sample problems showing the
+calculated SPL response of a ported enclosure and a family of transmission line
+enclosures derived from the same ported enclosure alignment tables. I have exercised
+the method on quite a few different drivers, with vastly different Thiele / Small
+parameters, and it has worked consistently.
+Page 1 of 24
+
+===== PAGE 3 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Method Description :
+To design a bass reflex enclosure using the alignment tables in the Loudspeaker
+Design Cookbook(5), enter one of the tables and for the driver’s Q obtain values for the
+ts
+parameters H, α, and f /f . The value of α is used to calculate the volume of air in the
+3 s
+enclosure V from the driver’s V property. The value of H is used to calculate the
+b as
+enclosure tuning frequency f from the driver’s resonant frequency f . Finally, the -3 dB
+b s
+point can be calculated relative to the driver’s resonant frequency f using the ratio f /f .
+s 3 s
+V = V / α and f = H x f
+b as b s
+To size a ported enclosure, knowing the enclosure volume and the tuning
+frequency, a physical port length L is then calculated based on the port’s internal
+port
+radius r . In the equation below, the resulting calculated port length will have units
+port
+consistent with those of c, r , and V (be very careful). The last term accounts for
+port b
+acoustic boundary conditions at the port’s entry and exit.
+L = [c2 / (4 x π)] x [(r )2 / (f 2 x V )] – 1.463 x r
+port port b b port
+That’s it, you have a volume and port internal radius and physical length that
+when combined with the driver’s small signal Thiele / Small parameters produces a
+predictable SPL response curve. The shape of the enclosure, the position of the driver,
+and the position of the port are not important for the enclosure alignment calculation (in
+reality, these are acoustically important and impact the speaker’s performance).
+To size a transmission line enclosure, the same alignment table procedure is
+followed to determine the enclosure volume V using α and the tuning frequency f using
+b b
+H. Knowing the enclosure volume and tuning frequency, a line length L is calculated
+consistent with the tuning frequency f and the transmission line’s taper ratio, TR = S /
+b L
+S , as defined in Figure 1. Unlike the ported enclosure, the internal geometry of the
+0
+transmission line enclosure determines the tuning frequency.
+V = ½ x (S + S ) x L
+b 0 L
+Substituting V = V / α and S = TR x S into this equation, solve for the cross-
+b as L 0
+sectional areas at the closed end S and the open end S .
+0 L
+S = (V / α) x {1 / [1/2 x (1 + TR) x L]} and S = TR x S
+0 as L 0
+Make sure that a consistent set of units is used in the calculations so that the resulting
+areas make sense. I usually express the cross-sectional areas as multiples of the
+driver’s cone area S to eliminate the unit issue which some people find helpful, and
+d
+others do not like at all.
+The best way to demonstrate and investigate the trade-offs in transmission line
+design, using the ported enclosure alignment tables, is with a sample problem.
+Page 2 of 24
+
+===== PAGE 4 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 1 : Classic Transmission Line Geometries
+Driver S0 > SL Open End
+Driver S0 = SL Open End
+Driver S0 < SL Open End
+Length
+where : L = length of the pipe
+S = cross-sectional area at the closed end, Length = 0
+0
+S = cross-sectional area at the open end, Length = L
+L
+TR = taper ratio, TR = S / S
+L 0
+D = density of fiber stuffing
+Note : The woofer is not offset along the length of the transmission line, the figures
+depict an end loaded transmission line geometry. Offsetting the woofer and adding fiber
+stuffing are common methods used to mitigate the ripple produced in a transmission
+line’s SPL response.
+Page 3 of 24
+
+===== PAGE 5 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Driver Selection :
+The driver selected for the sample problem is the SB Acoustics Satori WO24P-4.
+The Thiele / Small parameters were copied from the manufacturer’s data sheet (they are
+consistent which is a nice result from a manufacturer) and shown in Figure 2.
+Figure 2 : Satori WO24P-4 Manufacturer’s Thiele / Small Parameters
+Sample Design Problem :
+The alignment selected for this sample problem comes from Table 2.3 of Vance
+Dickason’s Loudspeaker Design Cookbook(5) which corresponds to a BB4 alignment with
+a Q of 15. Moving down the table until reaching the entries corresponding to a Q of
+L ts
+0.395 (non-rounded value derived from Q and Q in Figure 2) yields the following
+ms es
+parameters.
+H = f / f = 1.0000
+b s
+α = V / V = 1.5198
+as b
+f / f = 1.1059
+3 s
+This means the enclosure will be tuned to the driver’s resonant frequency of 28 Hz, have
+an internal volume V of 71 liters / 1.5198 ~ 47 liters, and produce a -3 dB frequency of
+ab
+1.1059 x 28 Hz ~ 31 Hz. These are the input parameters used to design the ported
+enclosure and a family of transmission line enclosures.
+Page 4 of 24
+
+===== PAGE 6 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+For the ported enclosure, all that remains is to calculate the port dimensions.
+Assuming r = 1 inch, the port length is calculated in inches using the equation
+port
+previously shown.
+L = 1.463 x 107 x (1)2 / (282 x 2868) – 1.463 x 1 ~ 5.0 inches
+port
+The design of the equivalent tapered transmission line enclosure, top geometry
+in Figure 1, is a little more challenging. The tuning of a transmission line is set by the
+length, but the length is tied to the taper ratio TR. One of the most common mistakes in
+transmission line design is to calculate the length for any geometry using the classic
+equation.
+L = c / (4 x f )
+b
+This equation is only accurate for a straight constant cross-sectional area
+transmission line, S = S as shown in the middle geometry in Figure 1. Table 1 contains
+0 L
+the corrected length equation for classic transmission line enclosures. The length is a
+function of both the tuning frequency f and the taper ratio TR. A scale factor SF is
+b
+applied to the classic length equation, shown above, to account for the transmission
+line’s geometry. Most transmission lines are tapered, TR < 1. Expanding transmission
+lines, TR > 1, are sometimes referred to as TQWTs (Tapered Quarter Wave Tubes) or
+Voigt Pipes and often labeled as BLHs (Back Loaded Horns) in Internet discussions.
+Table 1 : Transmission Line Length Calculation
+Length = SF x (344 m/sec) / (4 x f ) result is in meters
+b
+TR = S / S SF
+L 0
+0.1 0.62 Tapered
+0.2 0.71 |
+0.33 0.80 |
+0.5 0.87 V
+1.0 1.00 Straight
+2.0 1.14 |
+3.0 1.22 |
+5.0 1.32 V
+10.0 1.42 Expanding
+Assume a tapered transmission line geometry with S : S = 5 : 1 corresponding
+0 L
+to a taper ratio TR = 0.2. The length and cross-sectional areas are calculated below for
+the enclosure volume V .
+b
+L = 0.71 x (344 m/sec) / (4 x 28 Hz) = 2.181 m
+S = [(0.071 m3) / 1.5198] x {1 / [1/2 x (1 + 0.2) x 2.181 m]} = 0.0357 m2 = 1.4002 x S
+0 d
+S = 0.2 x S = 0.0071 m2 = 0.2800 x S
+L 0 d
+V = 1/2 x (0.0357 m2 + 0.0071 m2) x 2.181 m = 0.0467 m3 ~ 47 liters (check)
+TL
+Page 5 of 24
+
+===== PAGE 7 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Reversing the taper to create an expanding transmission line, assume S : S = 1
+0 L
+: 5 corresponding to a taper ratio TR = 5.0. The length and cross-sectional areas are
+calculated below for the enclosure volume V .
+b
+L = 1.32 x (344 m/sec) / (4 x 28 Hz) = 4.0543 m
+S = [(0.071 m3) / 1.5198] x {1 / [1/2 x (1 + 5) x 4.054 m]} = 0.00384 m2 = 0.1506 x S
+0 d
+S = 5.0 x S = 0.0192 m2 = 0.7531 x S
+L 0 d
+V = 1/2 x (0.00384 m2 + 0.0192 m2) x 4.0543 m = 0.0467 m3 ~ 47 liters (check)
+TL
+The bass reflex enclosure and the two transmission line enclosures were both
+modeled in my latest MathCad worksheets. The bass reflex enclosure was simulated as
+a stand mounted speaker and the transmission line enclosures as floor standing
+speakers. All three speakers have the same internal volume V same tuning frequency
+b,
+f , and are initially modeled without fiber stuffing to show the internal standing wave
+b
+resonances. Figures 3, 4, and 5 present the results for the ported and the two
+transmission line enclosures respectively.
+The models shown in Figures 3, 4, and 5 include the effects of the baffle shape
+and size, the location of the woofer and open-end (port or terminus) on the baffle, a
+second order low pass crossover designed to also correct for baffle step and exclude the
+effects of room boundaries (anechoic response). The driver is located at a height of 27
+inches above the floor, the mic is located at a height of 33 inches (anticipated tweeter
+position) above the floor on the driver’s axis, and the distance from the front baffle to the
+mic is defined as 3 meters. For the idealized transmission line models, the cross-
+sectional area is assumed to be monotonically changing along the length without any
+sudden discontinuities created by folds or a constriction at the terminus. In both
+transmission line models the driver is offset along the length to eliminate the 3/4
+standing wave resonance cleaning up the plots below 100 Hz. The simulation results are
+intended to be accurate representations of the actual driver, baffle, and the enclosure
+geometry in free space. These methods have been verified using measurements on
+previously designed and built speaker systems.
+The SPL response plots all show the woofer output (dashed red curve), the port
+or terminus output (dashed blue curve) and the combined system output (solid red
+curve). The enclosure tuning frequency can be easily identified by the first deep null in
+the woofer’s SPL response which as expected occurs at 28 Hz. The impact of internal
+standing waves can be seen as sharp peaks and narrow dips in the SPL plots at
+frequencies above 100 Hz. The response plots for the bass reflex and the tapered
+transmission line correlate well below 100 Hz with any differences driven mainly by the
+baffle size and the source locations. The expanding transmission line has a similar SPL
+response but there are some differences which will be discussed later. In general, the
+bass outputs are comparable in all three simulations. Looking at results from simplified
+modeling (not shown), typically used in most share-ware program that assume the
+woofer and open-end are coincident and the speaker is mounted in an infinite baffle (2 pi
+radiation), the calculated SPL curves become even closer below 100 Hz and the -3 dB
+point is located just above 30 Hz as predicted.
+Page 6 of 24
+
+===== PAGE 8 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 3 : Bass Reflex Enclosure Results
+Page 7 of 24
+
+===== PAGE 9 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 4 : Tapered Transmission Line Enclosure Results
+Page 8 of 24
+
+===== PAGE 10 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 5 : Expanding Transmission Line Enclosure Results
+Page 9 of 24
+
+===== PAGE 11 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Digging a little deeper into the SPL plots presented in Figures 3, 4, and 5; the
+simulation results were replotted between 10 and 1000 Hz. The SPL, electrical
+impedance, driver cone displacement, and port or terminus oscillating air velocity are
+shown from top to bottom respectively in Figures 6, 7, and 8. Again these results do not
+include any fiber stuffing so enclosure resonances are easily identified in the curves.
+Remember the alignment selected for this sample problem specified H = 1, so f
+b
+= f . Starting with the electrical impedance plots (second from the top in Figures 6, 7, and
+s
+8) and focusing on the frequency range 10 to 100 Hz. The dashed blue curve is the
+driver’s impedance in an infinite baffle, the impedance peak at 28 Hz corresponds to the
+driver’s resonant frequency and the enclosure’s tuning frequency. When the driver and
+enclosure are combined into a speaker system, the electrical impedance becomes the
+solid red curve which now shows a pair of resonance peaks at approximately 15 Hz and
+50 Hz (there are no longer any resonances at the tuning frequency of 28 Hz). Looking
+closely at the frequencies and magnitudes of the two peaks, the bass reflex exhibits the
+tallest (strongest, maximum Q) peaks followed by the tapered and then the expanding
+transmission line systems. The lower peaks in the tapered and expanding transmission
+lines also drop a little in frequency compared to the lower peak in the bass reflex design.
+The low frequency range of an electrical impedance curve is a function of the
+driver’s cone velocity which in turn generates the driver’s SPL output. Three features of
+the speaker system impedance curve are important properties to identify and track. The
+two resonance peaks in the impedance curve are produced by maximums in the driver
+cone’s velocity response (derivative of the cone displacement curve, third plot from the
+top in each figure). Between the two impedance peaks is a valley which approaches R
+e
+indicating that the driver’s cone velocity is significantly attenuated in this frequency
+range. If the two peaks and valley of an impedance measurement match the simulated
+impedance then the model has accurately captured the driver cone’s motion as it passes
+through the system resonant frequencies.
+The key take-away from the impedance curves is that a resonant driver is
+combined with equivalent resonant enclosures (volume and tuning) to produce very
+similar speaker system electrical impedances regardless of the enclosure geometry.
+Two new resonances result, one below and one above the original resonant frequency f
+s
+of the woofer and the tuning frequency f of the enclosure. The bass reflex enclosure
+b
+exhibits stronger resonances due to the lumped nature of the mass (port volume) and
+stiffness (enclosure volume) while the transmission lines produce an infinite number of
+resonances (standing waves) due to the continuous distributions of mass and stiffness
+along the enclosure lengths. The resulting pair of low frequency resonances for the
+transmission line are slightly weaker than the corresponding resonances for the bass
+reflex enclosure. This series of resonances produced by transmission line enclosures
+creates the differences in the low frequency impedance curves compared to the simpler
+bass reflex enclosure.
+Moving up to the top plots, the SPL responses in Figures 6, 7, and 8, the
+observations made about the impedance curves are reflected in these results. The
+motions of the driver and the air at the exits of the port or terminus are similar for the
+different enclosures as seen in the dashed red and blue curves in the SPL plots. At the
+first system resonances, at approximately 15 Hz, the driver and the port or terminus
+outputs are out of phase combining destructively resulting in the solid curve system SPL
+response being below both dashed curves. At the second system resonances, at
+Page 10 of 24
+
+===== PAGE 12 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+approximately 50 Hz, the driver and the port or terminus outputs are in phase combining
+constructively resulting in the solid curve system SPL response being above both
+dashed curves.
+At the original tuning frequency of 28 Hz, the impedance curves indicated that
+the driver’s cone motion has been significantly attenuated which can be seen in the
+woofer’s SPL output (dashed red curves) as the deep null. The broad humps in the port
+or the terminus responses (dashed blue curves) at 28 Hz are produced by the first two
+system resonances combining and yielding a maximum air velocity in the port or at the
+terminus of the transmission lines. At this frequency, the outputs from the port and
+terminus reach a maximum producing almost all the bass output from the speaker
+system.
+But as the two peaks in the electrical impedance plots spread in frequency and
+decrease in magnitude for the tapered and expanding transmission lines, a flattening
+and then a depression is produced in the terminus output compared to the nicely
+rounded bass reflex port’s output (dashed blue curves). At the original tuning frequency,
+a resonance no longer exists but the linear combination of the first two system
+resonances at approximately 15 and 50 Hz results in attenuation of the driver’s motion
+and a maximum port vibration or a quarter wavelength standing wave in the transmission
+line’s air column. The flattening and slight depression in the transmission line terminus
+SPL output can be restored to the more rounded shape seen in the bass reflex design
+by increasing the internal volume of the transmission line, this also causes the
+impedance peaks to align better with the bass reflex impedance peaks, but that changes
+the assumed system alignment (more comments on this later).
+Finally, the lower two plots in Figures 6, 7, and 8 present the driver’s cone
+displacements (dashed curves for an infinite baffle and solid curves for the enclosure
+results) and the port or terminus oscillating air velocities as functions of frequency. As
+expected, the woofer’s cone displacements show a deep null at the original tuning
+frequency of 28 Hz. The real interesting result is that the oscillating air velocity in the
+terminus of a transmission lines is significantly reduced compared to the bass reflex port
+since the terminus typically has a much larger cross-sectional area. This is probably the
+most significant difference between a transmission line and a bass reflex enclosure, the
+chuffing or compression sometimes heard at higher volume levels in a bass reflex
+design may be avoided by using a transmission line design.
+Page 11 of 24
+
+===== PAGE 13 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 6 : Bass Reflex Enclosure w/o Fiber Stuffing
+Page 12 of 24
+
+===== PAGE 14 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 7 : Tapered 5:1 Transmission Line Enclosure w/o Fiber Stuffing
+Page 13 of 24
+
+===== PAGE 15 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 8 : Expanding 1:5 Transmission Line Enclosure w/o Fiber Stuffing
+Page 14 of 24
+
+===== PAGE 16 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+The primary methods for controlling the peaks and dips in a transmission line
+enclosure’s SPL response are driver offset (already included in Figures 6, 7, and 8) and
+fiber stuffing or foam. Polyester fiber stuffing was added to the models in Figures 6, 7,
+and 8 and the results are plotting in Figures 9, 10, and 11. I do not have adequate data
+for foam at this time so I can’t address the pros and cons relative to fiber stuffing. The
+impact and properties of different foam materials is of great interest and will be
+investigated in a future transmission line build.
+The bass reflex results shown in Figure 9 include 0.25 ln/ft^3 of fiber stuffing
+distributed evenly in the enclosure volume (the port is left empty). The density of fiber
+stuffing was selected to just damp the internal standing waves. Comparing the results in
+Figures 6 and 9 shows that the changes are minimal; the most obvious difference is a
+cleaning up of the higher frequency internal standing waves (above 300 Hz) seen in
+Figure 6.
+The tapered and expanding transmission line results shown in Figures 10 and 11
+respectively include 0.5 lb/ft^3 of stuffing in the first 3/4 of the line’s length. Changing the
+amount and location of fiber stuffing in a transmission line is a tweak often used to fine
+tune a transmission line’s SPL results. In Figures 10 and 11 the sharp peaks and nulls in
+the SPL results (top plot) of Figures 7 and 8 have been reduced to a ripple which looks
+reasonable for the tapered transmission line but is still significant for the expanding
+transmission line.
+The interesting results in Figures 10 and 11 start with the electrical impedance
+plots (second from the top). The lower peak has been reduced to almost flat and the
+upper peak has been significantly attenuated and broadened. The first two system
+resonant frequencies and mode shapes are highly damped by the fiber stuffing.
+Damping these resonances in the transmission line enclosures leads to a rolling-off of
+the bass SPL response. Consequentially the transmission line does not reach as deep
+compared to the equivalent bass reflex enclosure in Figure 9 producing a less resonant
+(dryer) low frequency response. A benefit of the transmission line design is seen in the
+driver’s cone displacement, third plot from the top, which is much better controlled
+compared to the bass reflex enclosure result. And finally, the terminus output shown in
+the very bottom plots is also cleaned up with the addition of the fiber stuffing.
+As mentioned earlier, increasing the internal volume of the transmission line
+enclosure can push the unstuffed SPL response and electrical impedance results seen
+in Figures 7 and 8 closer to the bass reflex enclosure’s results shown in Figure 6. But
+after adding fiber stuffing the benefits are much less apparent, the first two resonances
+in the impedance plot are still heavily damped in the larger transmission line enclosure.
+There is a slight increase in bass extension but in my opinion not enough to justify the
+required significant increase in the transmission line enclosure’s size.
+Page 15 of 24
+
+===== PAGE 17 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 9 : Bass Reflex Enclosure w/ 0.25 lb/ft^3 of Fiber Stuffing
+Page 16 of 24
+
+===== PAGE 18 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 10 : Tapered 5:1 Transmission Line Enclosure w/ 0.5 lb/ft^3 of Fiber Stuffing
+Page 17 of 24
+
+===== PAGE 19 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 11 : Expanding 1:5 Transmission Line Enclosure w/ 0.5 lb/ft^3 of Fiber Stuffing
+Page 18 of 24
+
+===== PAGE 20 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figures 12 and 13 are a comparison set of plots spanning the range of classic
+transmission line geometries defined in Figure 1 and Table 1. The top plots are
+calculated for a 10 : 1 tapered transmission line, the middle plots are for a 1 : 1 straight
+transmission line, and the bottom plots are for a 1 : 10 expanding transmission line.
+Each model includes an offset driver to suppress the 3/4 wavelength resonance and has
+monotonically changing cross-sectional area along the length as depicted in Figure 1.
+Figure 12 shows the results for empty transmission lines and Figure 13 adds 0.75 lb/ft^3
+of fiber stuffing to the first 3/4 of each transmission line’s length. The observations made
+earlier while discussing Figures 7 and 8 and then Figures 10 and 11 are all still
+applicable to this last set of results. Visualize a gradual transition in the SPL response
+curve properties, as you move from the top to the bottom plots in Figures 12 and 13, to
+picture the responses of the intermediate geometries in Table 1.
+Reviewing the plots in Figures 12 and 13, the advantages of tapered
+transmission line geometries is clear. The taper pushes the standing waves higher in
+frequency where the fiber damping is more effective producing a smoother SPL
+response. The top plot in Figure 13 is the best result for the different transmission line
+geometries in Table 1. Expanding transmission lines, sometimes referred to as TQWTs
+(Tapered Quarter Wave Tubes) or Voigt Pipes and often labeled as BLHs (Back Loaded
+Horns), drop the standing waves lower in frequency resulting in significant ripples in the
+SPL response even with dense fiber stuffing. To make an expanding transmission line
+workable requires design effort beyond the alignment table geometries such as including
+a coupling volume behind the driver, stub tubes or resonance trap volumes placed along
+the length, sudden transitions in cross-sectional area at the folds, or a significant mass
+loading (constriction) at the terminus end.
+Page 19 of 24
+
+===== PAGE 21 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 12 : Comparison of SPL Responses for 10 : 1, 1 : 1, and 1 : 10 Constant Volume
+Empty Transmission Lines
+Page 20 of 24
+
+===== PAGE 22 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 13 : Comparison of SPL Responses for 10 : 1, 1 : 1, and 1 : 10 Constant Volume
+Transmission Lines w/ 0.75 lb/ft^3 of Fiber Stuffing
+Page 21 of 24
+
+===== PAGE 23 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Conclusions :
+Equivalent bass reflex and transmission line enclosures have equal internal air
+volumes V and tuning frequencies f . These two types of enclosures have more
+b b
+acoustic properties in common than different. If a driver works well in a bass reflex
+enclosure, it should also work well in an equivalent transmission line enclosure. An
+apples-to-apples comparison between the performance of a bass reflex enclosure and
+an equivalent transmission line enclosure requires the same internal volume and tuning
+frequency, anything else is an apples-to-oranges comparison.
+The ported enclosure alignment tables can be used to define an enclosure’s
+internal volume V and tuning frequency f . With V and f , either a bass reflex or a
+b b b b
+transmission line enclosure (preferably tapered) can be sized and simulated yielding
+comparable low frequency performance before the addition of fiber stuffing. Undamped
+bass reflex and transmission line enclosure designs with common alignments are
+approximately the same size and can produce very similar low frequency SPL, electrical
+impedance, and cone displacement responses.
+Adding fiber stuffing to a transmission line enclosure will roll-off the bass output
+compared to the equivalent bass reflex enclosure. But on the plus side, the stuffing will
+better control the driver’s cone displacement while taming the higher quarter-wave
+harmonics reducing the ripple often associated with a transmission line’s SPL response.
+Another advantage of the transmission line enclosure design is a much lower oscillating
+terminus air velocity compared to the equivalent bass reflex port oscillating air velocity.
+Figure 14 shows a comparison of equivalent bass reflex and tapered
+transmission line designs. Claims that a transmission line enclosure produces
+significantly deeper bass compared to a bass reflex enclosure is probably misguided and
+not accurate for equivalent enclosure alignments as demonstrated in this figure. The
+claims are probably based on an apples-to-oranges comparison where the enclosures
+have different internal volumes.
+While alignment tables have been the mainstay for designing ported enclosures,
+there is still a huge continuum of additional potential enclosure volumes and tuning
+frequencies that lie outside of these tables. Designing equivalent bass reflex and
+transmission line enclosures, using the same volume and tuning frequency, outside of
+the alignment tables, and then relying totally on simulations is also a good method for
+predicting an enclosure design’s performance and optimizing the results. All the
+observations regarding the behavioral properties of the enclosures are still applicable to
+these non-table-based alignments.
+I hope this document is useful and enlightening. As always, questions and
+comments are welcome, they help me to move my own understanding of transmission
+lines forward.
+Page 22 of 24
+
+===== PAGE 24 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+Figure 14 : Performance of Equivalent Bass Reflex and Transmission Line Enclosures
+Page 23 of 24
+
+===== PAGE 25 =====
+Classic Transmission Line Enclosure Alignments
+By Martin J. King, 12/27/2021
+Copyright  2021 by Martin J. King. All Rights Reserved.
+References :
+1) Loudspeakers in Vented Boxes Parts I and II by A. N. Thiele; Loudspeakers an
+Anthology, Volume 1 through 25 of the Journal of the Audio Engineering Society,
+pages 181-205.
+2) Direct Radiator Loudspeaker System Analysis by R. H. Small; Loudspeakers an
+Anthology, Volume 1 through 25 of the Journal of the Audio Engineering Society,
+pages 271-284.
+3) Closed-Box Loudspeaker Systems Parts I and II by R. H. Small; Loudspeakers an
+Anthology, Volume 1 through 25 of the Journal of the Audio Engineering Society,
+pages 285-303.
+4) Vented-Box Loudspeaker Systems Parts I, II, III, and IV by R. H. Small;
+Loudspeakers an Anthology, Volume 1 through 25 of the Journal of the Audio
+Engineering Society, pages 316-343.
+5) The Loudspeaker Design Cookbook 3rd Edition, ©1987, by Vance Dickason.
+Page 24 of 24

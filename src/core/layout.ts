@@ -503,7 +503,7 @@ export function buildCustomGeometry(p: Project, editing = false): Geometry {
         `Driver ${m.id} clearance envelope intersects an internal baffle. Move the driver or board.`,
       );
     envelopes.push(envelope);
-    if (m.at && !spatialOnly) {
+    if (m.at && !spatialOnly && m.rearLoading!=='sealed-back') {
       const from: XY = [
           Math.max(0.1, Math.min(w - 0.1, center[0] - t)),
           Math.max(0.1, Math.min(h - 0.1, center[1] - t)),
@@ -523,7 +523,7 @@ export function buildCustomGeometry(p: Project, editing = false): Geometry {
         }
       }
     }
-    return { ...m, center, position: m.at ? near.fraction : m.position };
+    return { ...m, center, position: m.at && m.rearLoading!=='sealed-back' ? near.fraction : m.position };
   });
   for (let i = 0; i < mounts.length; i++)
     for (let j = i + 1; j < mounts.length; j++) {

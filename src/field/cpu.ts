@@ -1,3 +1,5 @@
+import { fieldSteadyState } from "./steady";
+import { CircuitState } from "./circuit";
 import { prepareField } from "./grid";
 import type { Project } from "../core/types";
 import type {
@@ -11,9 +13,9 @@ export function excitation(
   t: number,
   frequency: number,
   phase: number,
-  signal: "burst" | "tone",
+  signal: "burst" | "tone" | "steady",
 ) {
-  if (signal === "tone")
+  if (signal !== "burst")
     return (
       Math.cos(2 * Math.PI * frequency * t + phase) *
       (0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, (t * frequency) / 2)))
@@ -36,6 +38,7 @@ export class FieldKernel {
   readonly vy: Float64Array;
   readonly vz: Float64Array;
   readonly old: Float64Array;
+  readonly electrical?: CircuitState;
   stepIndex = 0;
   constructor(readonly grid: PreparedField) {
     const n = grid.meta.cells;
@@ -47,6 +50,11 @@ export class FieldKernel {
         this.state.subarray(i * n, (i + 1) * n),
       );
     this.drivers = new Float64Array(1 + 5 * grid.meta.sources.length);
+    if (grid.electrical)
+      this.electrical = new CircuitState(
+        grid.electrical,
+        grid.meta.sources.length,
+      );
     this.data = new Float32Array(grid.meta.layout.total);
   }
   step() {
@@ -70,6 +78,25 @@ export class FieldKernel {
           if (!(f & 1)) continue;
           const ax = ox + x * 4,
             base = p[i];
+          if (g.medium) {
+            const a = i * 12;
+            vx[i] =
+              f & 2
+                ? g.medium[a + 6] * vx[i] -
+                  (g.medium[a + 7] / h) * (p[i + 1] - base)
+                : 0;
+            vy[i] =
+              f & 4
+                ? g.medium[a + 8] * vy[i] -
+                  (g.medium[a + 9] / h) * (p[i + nx] - base)
+                : 0;
+            vz[i] =
+              f & 8
+                ? g.medium[a + 10] * vz[i] -
+                  (g.medium[a + 11] / h) * (p[i + xy] - base)
+                : 0;
+            continue;
+          }
           vx[i] =
             f & 2
               ? aux[ax + 2] * vx[i] -
@@ -97,15 +124,31 @@ export class FieldKernel {
           if (!(flags[i] & 1)) continue;
           const ax = ox + x * 4;
           old[i] = p[i];
-          px[i] =
-            aux[ax] * px[i] -
-            ((aux[ax + 1] * bulk) / h) * (vx[i] - (x ? vx[i - 1] : 0));
-          py[i] =
-            aux[ay] * py[i] -
-            ((aux[ay + 1] * bulk) / h) * (vy[i] - (y ? vy[i - nx] : 0));
-          pz[i] =
-            aux[az] * pz[i] -
-            ((aux[az + 1] * bulk) / h) * (vz[i] - (z ? vz[i - xy] : 0));
+          const fit = g.fitted,
+            alpha = fit?.[4 * i] ?? 1;
+          const dx =
+            ((fit?.[4 * i + 1] ?? 1) * vx[i] -
+              (x ? (fit?.[4 * (i - 1) + 1] ?? 1) * vx[i - 1] : 0)) /
+            alpha;
+          const dy =
+            ((fit?.[4 * i + 2] ?? 1) * vy[i] -
+              (y ? (fit?.[4 * (i - nx) + 2] ?? 1) * vy[i - nx] : 0)) /
+            alpha;
+          const dz =
+            ((fit?.[4 * i + 3] ?? 1) * vz[i] -
+              (z ? (fit?.[4 * (i - xy) + 3] ?? 1) * vz[i - xy] : 0)) /
+            alpha;
+          if (g.medium) {
+            const a = i * 12;
+            px[i] = g.medium[a] * px[i] - (g.medium[a + 1] / h) * dx;
+            py[i] = g.medium[a + 2] * py[i] - (g.medium[a + 3] / h) * dy;
+            pz[i] = g.medium[a + 4] * pz[i] - (g.medium[a + 5] / h) * dz;
+            p[i] = px[i] + py[i] + pz[i];
+            continue;
+          }
+          px[i] = aux[ax] * px[i] - ((aux[ax + 1] * bulk) / h) * dx;
+          py[i] = aux[ay] * py[i] - ((aux[ay + 1] * bulk) / h) * dy;
+          pz[i] = aux[az] * pz[i] - ((aux[az + 1] * bulk) / h) * dz;
           p[i] = px[i] + py[i] + pz[i];
         }
       }
@@ -114,81 +157,130 @@ export class FieldKernel {
       vMid = new Float64Array(nd),
       volts = new Float64Array(nd),
       t = (this.stepIndex + 0.5) * dt;
-    for (let d = 0; d < nd; d++) {
-      let avg = 0;
-      for (let k = 0; k < g.sourceCells.length; k++) {
-        const i = g.sourceCells[k];
-        avg += g.weights[k * nd + d] * (old[i] + p[i]) * 0.5;
-      }
-      const at = d * 9,
-        s = 1 + d * 5,
-        mass = g.models[at],
-        cms = g.models[at + 2],
-        bl = g.models[at + 3],
-        re = g.models[at + 4],
-        le = g.models[at + 5],
-        sd = g.models[at + 6],
-        ze = re + (2 * le) / dt;
-      volts[d] =
-        m.project.design.voltage *
-        Math.SQRT2 *
-        g.models[at + 7] *
-        excitation(
-          t,
-          m.settings.frequency,
-          g.models[at + 8],
-          m.settings.signal,
+    if (this.electrical) {
+      const pressure = new Float64Array(nd);
+      for (let d = 0; d < nd; d++)
+        for (let k = 0; k < g.sourceCells.length; k++) {
+          const i = g.sourceCells[k];
+          pressure[d] += g.weights[k * nd + d] * (old[i] + p[i]) * 0.5;
+        }
+      const out = this.electrical.step(
+        (gain, phase) =>
+          m.project.design.voltage *
+          Math.SQRT2 *
+          gain *
+          excitation(t, m.settings.frequency, phase, m.settings.signal),
+        pressure,
+      );
+      for (let d = 0; d < nd; d++) {
+        const s = 1 + 5 * d;
+        vMid[d] = out[d];
+        this.drivers[s] = out[3 * nd + 2 * d];
+        this.drivers[s + 1] = out[3 * nd + 2 * d + 1];
+        this.drivers[s + 2] = 2 * out[nd + d] - this.drivers[s + 2];
+        this.drivers[s + 3] = out[d];
+        this.drivers[s + 4] = out[nd + d];
+        this.data.set(
+          [this.drivers[s], out[d], out[nd + d], out[2 * nd + d]],
+          m.layout.driverOffset + (this.stepIndex * nd + d) * 4,
         );
-      rhs[d] =
-        ((2 * mass) / dt) * this.drivers[s + 1] -
-        this.drivers[s] / cms +
-        (bl * (volts[d] + ((2 * le) / dt) * this.drivers[s + 2])) / ze -
-        sd * avg;
-    }
-    for (let i = 0; i < nd; i++) {
-      let v = rhs[i];
-      for (let j = 0; j < i; j++) v -= g.chol[i * nd + j] * vMid[j];
-      vMid[i] = v / g.chol[i * nd + i];
-    }
-    for (let i = nd - 1; i >= 0; i--) {
-      let v = vMid[i];
-      for (let j = i + 1; j < nd; j++) v -= g.chol[j * nd + i] * vMid[j];
-      vMid[i] = v / g.chol[i * nd + i];
-    }
-    for (let d = 0; d < nd; d++) {
-      const at = d * 9,
-        s = 1 + d * 5,
-        bl = g.models[at + 3],
-        re = g.models[at + 4],
-        le = g.models[at + 5],
-        im =
-          (volts[d] + ((2 * le) / dt) * this.drivers[s + 2] - bl * vMid[d]) /
-          (re + (2 * le) / dt);
-      this.drivers[s] += dt * vMid[d];
-      this.drivers[s + 1] = 2 * vMid[d] - this.drivers[s + 1];
-      this.drivers[s + 2] = le
-        ? 2 * im - this.drivers[s + 2]
-        : (volts[d] - bl * this.drivers[s + 1]) / re;
-      this.drivers[s + 3] = vMid[d];
-      this.drivers[s + 4] = im;
-      const out = m.layout.driverOffset + (this.stepIndex * nd + d) * 4;
-      this.data.set([this.drivers[s], vMid[d], im, volts[d]], out);
+      }
+    } else {
+      for (let d = 0; d < nd; d++) {
+        let avg = 0;
+        for (let k = 0; k < g.sourceCells.length; k++) {
+          const i = g.sourceCells[k];
+          avg += g.weights[k * nd + d] * (old[i] + p[i]) * 0.5;
+        }
+        const at = d * 9,
+          s = 1 + d * 5,
+          mass = g.models[at],
+          cms = g.models[at + 2],
+          bl = g.models[at + 3],
+          re = g.models[at + 4],
+          le = g.models[at + 5],
+          sd = g.models[at + 6],
+          ze = re + (2 * le) / dt;
+        volts[d] =
+          m.project.design.voltage *
+          Math.SQRT2 *
+          g.models[at + 7] *
+          excitation(
+            t,
+            m.settings.frequency,
+            g.models[at + 8],
+            m.settings.signal,
+          );
+        rhs[d] =
+          ((2 * mass) / dt) * this.drivers[s + 1] -
+          this.drivers[s] / cms +
+          (bl * (volts[d] + ((2 * le) / dt) * this.drivers[s + 2])) / ze -
+          sd * avg;
+      }
+      for (let i = 0; i < nd; i++) {
+        let v = rhs[i];
+        for (let j = 0; j < i; j++) v -= g.chol[i * nd + j] * vMid[j];
+        vMid[i] = v / g.chol[i * nd + i];
+      }
+      for (let i = nd - 1; i >= 0; i--) {
+        let v = vMid[i];
+        for (let j = i + 1; j < nd; j++) v -= g.chol[j * nd + i] * vMid[j];
+        vMid[i] = v / g.chol[i * nd + i];
+      }
+      for (let d = 0; d < nd; d++) {
+        const at = d * 9,
+          s = 1 + d * 5,
+          bl = g.models[at + 3],
+          re = g.models[at + 4],
+          le = g.models[at + 5],
+          im =
+            (volts[d] + ((2 * le) / dt) * this.drivers[s + 2] - bl * vMid[d]) /
+            (re + (2 * le) / dt);
+        this.drivers[s] += dt * vMid[d];
+        this.drivers[s + 1] = 2 * vMid[d] - this.drivers[s + 1];
+        this.drivers[s + 2] = le
+          ? 2 * im - this.drivers[s + 2]
+          : (volts[d] - bl * this.drivers[s + 1]) / re;
+        this.drivers[s + 3] = vMid[d];
+        this.drivers[s + 4] = im;
+        const out = m.layout.driverOffset + (this.stepIndex * nd + d) * 4;
+        this.data.set([this.drivers[s], vMid[d], im, volts[d]], out);
+      }
     }
     for (let k = 0; k < g.sourceCells.length; k++) {
       let q = 0;
       for (let d = 0; d < nd; d++)
         q += g.weights[k * nd + d] * g.models[d * 9 + 6] * vMid[d];
       const i = g.sourceCells[k],
-        delta = ((bulk * dt) / (h * h * h)) * q;
-      p[i] += delta;
-      px[i] += delta / 3;
-      py[i] += delta / 3;
-      pz[i] += delta / 3;
+        delta = ((bulk * dt) / ((g.fitted?.[4 * i] ?? 1) * h * h * h)) * q;
+      if (g.medium) {
+        const a = i * 12,
+          s = q / (3 * (g.fitted?.[4 * i] ?? 1) * h * h * h),
+          dx = g.medium[a + 1] * s,
+          dy = g.medium[a + 3] * s,
+          dz = g.medium[a + 5] * s;
+        px[i] += dx;
+        py[i] += dy;
+        pz[i] += dz;
+        p[i] += dx + dy + dz;
+      } else {
+        p[i] += delta;
+        px[i] += delta / 3;
+        py[i] += delta / 3;
+        pz[i] += delta / 3;
+      }
     }
-    for (let k = 0; k < g.probeCells.length; k++)
+    for (let k = 0; k < g.probeCells.length; k++) {
+      let value = p[g.probeCells[k]];
+      if (g.probeNodes && g.probeWeights) {
+        value = 0;
+        for (let q = 0; q < 8; q++)
+          value += p[g.probeNodes[8 * k + q]] * g.probeWeights[8 * k + q];
+      }
       this.data[
         m.layout.probeOffset + this.stepIndex * g.probeCells.length + k
-      ] = p[g.probeCells[k]];
+      ] = value;
+    }
     const frame = g.recordSteps[this.stepIndex];
     // Linear acoustics: integrate each small fluid displacement at its fixed
     // equilibrium position using the existing midpoint velocity. Observation only.
@@ -223,6 +315,15 @@ export class FieldKernel {
                 : Math.floor(i / xy),
           coeff = g.coeffOffsets[axis] + coordinate * 4,
           value = [vx, vy, vz][axis][i];
+        if (g.medium) {
+          const a = i * 12 + 6 + axis * 2;
+          return (
+            0.5 *
+            (value +
+              g.medium[a] * value -
+              (g.medium[a + 1] / h) * (p[i + offset] - p[i]))
+          );
+        }
         return (
           0.5 *
           (value +
@@ -284,12 +385,31 @@ export function finishField(
     1e-6,
     levels[Math.floor(levels.length * 0.995)] ?? peak,
   );
+  if (meta.settings.signal === "steady") {
+    meta.steadyState = fieldSteadyState(
+      meta,
+      data,
+      grid.recordMask,
+      grid.volumeMask,
+    );
+    if (!meta.steadyState.settled)
+      meta.warnings.push(
+        `Steady-tone field is still settling (${(meta.steadyState.relativeChange * 100).toFixed(2)}% phasor change). Increase the settling duration before interpreting it as a frequency response.`,
+      );
+  }
   meta.backend = backend;
   meta.seconds = seconds;
   for (let d = 0; d < meta.sources.length; d++) {
     let ex = 0,
       current = 0;
-    for (let s = 0; s < meta.steps; s++) {
+    for (
+      let s =
+        meta.settings.signal === "steady"
+          ? Math.max(0, Math.floor(meta.times[0] / meta.dt) - 1)
+          : 0;
+      s < meta.steps;
+      s++
+    ) {
       const at = meta.layout.driverOffset + (s * meta.sources.length + d) * 4;
       if (!Number.isFinite(data[at]) || !Number.isFinite(data[at + 2]))
         throw Error("Driver state diverged.");

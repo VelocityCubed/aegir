@@ -4,6 +4,7 @@ import { zipSync, strToU8 } from "fflate";
 import type { Panel, Project, Simulation } from "./types";
 import { buildGeometry } from "./geometry";
 import { panelGeometry } from "./meshes";
+import { analysisGeometry, referenceReport, systemLimitations } from './system';
 export const safeName = (s: string) =>
   s.replace(/[^a-zA-Z0-9_-]/g, "-").slice(0, 80) || "enclosure";
 export const xml = (s: string) =>
@@ -186,7 +187,10 @@ export function makeBundle(p: Project, s?: Simulation) {
     JSON.stringify({ project: p, panels: g.panels }, null, 2),
   );
   text("cut-list.csv", cutList(p));
-  if (s && !g.errors.length) text("response.csv", responseCsv(s));
+  if (s && !analysisGeometry(p).errors.length) {
+    text("response.csv", responseCsv(s));
+    if(p.system?.references?.length||p.system?.modalReference)text('reference-comparison.json',JSON.stringify(referenceReport(p,s),null,2));
+  }
   else
     text(
       "MODEL-NOTES.txt",
@@ -223,7 +227,7 @@ export function makeBundle(p: Project, s?: Simulation) {
     : `Generated uniform cabinet with ${p.design.folds} passes. Clear turn height ${g.lane.toFixed(2)} mm. Mouth is ${p.design.folds % 2 === 0 ? "top" : "bottom"}; keep it open.\n`;
   text(
     "BUILD-NOTES.txt",
-    `Custom layout: ${p.layout ? "yes" : "no"}. Route guide length: ${g.lineLength.toFixed(4)} m.\nPanel-specific machining notes:\n${g.panels.flatMap((panel) => (panel.notes ?? []).map((note) => panel.id + ": " + note)).join("\n")}\n\nÆONFORGE ÆGIR — ${p.name}\nAll geometry units: mm. STL has no unit metadata; import as mm.\n\n${routeNotes}One enclosure, ${g.panels.length} panels. Front/back overlap the sides. Caps and internal boards fit between front/back. Driver source cutouts follow the actual mounting centres. Verify mounting screws, basket, recess and magnet against your physical driver.\nThe 3D driver is a visual placeholder and is not part of fabrication exports.\n\nDXF/SVG files are 1:1 individual panel cutting outlines. No kerf, tool-radius offsets, nesting, tabs, screw holes or pockets are applied. Use your CAM software for toolpaths.\nAssembly STL is a reference assembly of touching panel shells. Use individual panel STL files for separate manufacturing.\nRun python enclosure.py to make a B-rep STEP assembly with CadQuery. The app can also generate STEP if the optional CAD backend is installed.\n\nSmall-signal linear 1D model; ${p.design.voltage} V RMS, 1 m, ideal half-space co-located cone/mouth. Damping ${p.design.damping} Np/m at 100 Hz, alpha proportional to sqrt(f/100). No material calibration or slowed sound speed.\nNo fold losses, diffraction, room, crossover, thermal compression, structural modes or nonlinear distortion. Driver displacement and bracing are not subtracted. Lossless sound speed from temperature.\nPredictions have analytic regression checks, but no independent physical validation. Prototype and measure before committing to a final build.\n\nWarnings:\n${g.warnings.join("\n")}\n`,
+    `Custom layout: ${p.layout ? "yes" : "no"}. Route guide length: ${g.lineLength.toFixed(4)} m.\nPanel-specific machining notes:\n${g.panels.flatMap((panel) => (panel.notes ?? []).map((note) => panel.id + ": " + note)).join("\n")}\n\nÆONFORGE ÆGIR — ${p.name}\nAll geometry units: mm. STL has no unit metadata; import as mm.\n\n${routeNotes}One enclosure, ${g.panels.length} panels. Front/back overlap the sides. Caps and internal boards fit between front/back. Driver source cutouts follow the actual mounting centres. Verify mounting screws, basket, recess and magnet against your physical driver.\nThe 3D driver is a visual placeholder and is not part of fabrication exports.\n\nDXF/SVG files are 1:1 individual panel cutting outlines. No kerf, tool-radius offsets, nesting, tabs, screw holes or pockets are applied. Use your CAM software for toolpaths.\nAssembly STL is a reference assembly of touching panel shells. Use individual panel STL files for separate manufacturing.\nRun python enclosure.py to make a B-rep STEP assembly with CadQuery. The app can also generate STEP if the optional CAD backend is installed.\n\nSmall-signal linear 1D model; ${p.design.voltage} V RMS. Observation: ${JSON.stringify(p.system?.observation ?? {distanceM:p.system?.distanceM??1,space:"half-space",sources:"co-located"})}.\n${systemLimitations(p).map(v=>"- "+v).join("\n")}\nNo structural modes, thermal compression or nonlinear distortion. Driver displacement and bracing are not subtracted.\nPredictions have analytic regression checks, but no independent physical validation. Prototype and measure before committing to a final build.\n\nWarnings:\n${g.warnings.join("\n")}\n`,
   );
   return zipSync(files, { level: 6 });
 }

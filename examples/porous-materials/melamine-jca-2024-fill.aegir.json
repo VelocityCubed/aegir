@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "name": "Material study · Melamine foam · measured research sample · fill",
+  "driver": {
+    "id": "mjk-anatomy-generic-2006",
+    "name": "King 2006 · published generic driver",
+    "note": "SOURCE: Martin J. King, Anatomy of a Transmission Line Loudspeaker, revised 2006-10-18, http://quarter-wave.com/TLs/TL_Anatomy.pdf; PDF p25/printed p24: Fs50Hz, Re8ohm, Le0mH, Sd200cm², Qms6, Qts0.4, Vas21.920L. DERIVED Qes=3/7. Generic simulation data, not a manufacturer driver. ASSUMED schematic-only cutout160/frame180/depth60mm and Xmax1mm (unknown actual limit); do not infer headroom or fabricate from these placeholders.",
+    "fs": 50,
+    "re": 8,
+    "le": 0,
+    "sd": 200,
+    "qms": 6,
+    "qes": 0.42857142857142855,
+    "vas": 21.92,
+    "cutout": 160,
+    "frame": 180,
+    "depth": 60,
+    "xmax": 1
+  },
+  "design": {
+    "length": 1.7145,
+    "areaRatio": 2,
+    "laneWidth": 200,
+    "folds": 1,
+    "thickness": 18,
+    "driverPosition": 0.01,
+    "damping": 0,
+    "voltage": 2.8284271247461903,
+    "temperature": 20
+  },
+  "targets": {
+    "low": 30,
+    "high": 200,
+    "maxHeight": 2500,
+    "maxWidth": 600,
+    "maxDepth": 600,
+    "minLength": 0.5,
+    "maxLength": 3,
+    "maxVelocity": 17
+  },
+  "layout": {
+    "width": 236,
+    "height": 1750.5,
+    "depth": 236,
+    "baffles": [],
+    "route": [
+      [
+        100,
+        1714.5
+      ],
+      [
+        100,
+        0
+      ]
+    ],
+    "mouth": {
+      "side": "bottom",
+      "offset": 100,
+      "width": 200
+    }
+  },
+  "mounts": [
+    {
+      "id": "primary",
+      "driver": {
+        "id": "mjk-anatomy-generic-2006",
+        "name": "King 2006 · published generic driver",
+        "note": "SOURCE: Martin J. King, Anatomy of a Transmission Line Loudspeaker, revised 2006-10-18, http://quarter-wave.com/TLs/TL_Anatomy.pdf; PDF p25/printed p24: Fs50Hz, Re8ohm, Le0mH, Sd200cm², Qms6, Qts0.4, Vas21.920L. DERIVED Qes=3/7. Generic simulation data, not a manufacturer driver. ASSUMED schematic-only cutout160/frame180/depth60mm and Xmax1mm (unknown actual limit); do not infer headroom or fabricate from these placeholders.",
+        "fs": 50,
+        "re": 8,
+        "le": 0,
+        "sd": 200,
+        "qms": 6,
+        "qes": 0.42857142857142855,
+        "vas": 21.92,
+        "cutout": 160,
+        "frame": 180,
+        "depth": 60,
+        "xmax": 1
+      },
+      "position": 0.0001,
+      "face": "top",
+      "at": [
+        118,
+        118
+      ],
+      "voltageScale": 1,
+      "phase": 0,
+      "rearLoading": "cabinet"
+    }
+  ],
+  "system": {
+    "sweep": [
+      10,
+      1000
+    ],
+    "distanceM": 1,
+    "air": {
+      "densityKgM3": 1.21,
+      "soundSpeedMs": 343,
+      "source": "SOURCE c343m/s: Martin J. King, Anatomy of a Transmission Line Loudspeaker, revised 2006-10-18, http://quarter-wave.com/TLs/TL_Anatomy.pdf, PDF p18. ASSUMED rho1.21kg/m³ from King's historical air convention; p25 derived table suggests c342 instead. Sensitivity retained, no graph fitting."
+    },
+    "numerics": {
+      "lineStepMm": 10
+    },
+    "physics": {
+      "ductLoss": "none",
+      "radiation": "piston",
+      "stuffing": [
+        {
+          "start": 0,
+          "end": 1,
+          "source": "Sgard, Atalla & Robin, 2024, On the use of the local reflection coefficient to assess the diffuse field sound absorption coefficient of a porous material, Table1. doi:10.3389/facou.2024.1414356. https://www.frontiersin.org/journals/acoustics/articles/10.3389/facou.2024.1414356/full",
+          "calibration": "assumed",
+          "presetId": "melamine-jca-2024",
+          "material": {
+            "model": "jca",
+            "flowResistivity": 8644,
+            "porosity": 0.97,
+            "tortuosity": 1.02,
+            "viscousLengthUm": 123,
+            "thermalLengthUm": 168
+          }
+        }
+      ]
+    },
+    "references": []
+  }
+}
